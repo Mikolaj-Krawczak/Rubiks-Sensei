@@ -1,0 +1,88 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+}
+
+
+.background-container {
+    background-image: url('../assets/images/background.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 100%;
+    height: 50vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cubes-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 4vh 0;
+}
+
+.cubes-row {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 4vh;
+    margin-top: 4vh;
+}
+
+.cube-tile {
+    background-color: #000;
+    color: #fff;
+    width: 20vh;
+    height: 26vh;
+    border-radius: 1vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0 0.4vh 0.8vh rgba(0,0,0,0.3);
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.cube-tile:hover {
+    animation: wobble 0.6s ease-in-out infinite;
+}
+
+.cube-tile:hover .cube-image img {
+    animation: wobble 0.6s ease-in-out infinite;
+}
+
+.cube-image {
+    width: 100%;
+    height: 18vh;
+    padding: 2vh;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cube-image img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.cube-title {
+    font-family: 'DungeonFont', monospace;
+    font-size: 3rem;
+    color: white;
+    padding: 2vh;
+}
+
+@keyframes wobble {
+    0%, 100% { transform: translateY(-1vh) rotate(-2deg); }
+    50%     { transform: translateY(-1vh) rotate(2deg); }
+}
+
+#pyraminx {
+    font-size: 2.2rem;
+}
