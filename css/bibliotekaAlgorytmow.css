@@ -1,0 +1,64 @@
+body {
+    margin: 0;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: row-reverse;
+}
+canvas {
+    display: block;
+    width: 50vw !important;
+    height: 100vh !important;
+}
+#cubespace {
+    width: 50%;
+    height: 100vh;
+    position: relative;
+    float: right;
+    clear: both;
+}
+.controls {
+    position: absolute;
+    bottom: 20px;
+    left: 25%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.7);
+    padding: 10px;
+    border-radius: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 80%;
+}
+.control-btn {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    background: #3498db;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+.control-btn:hover {
+    background: #2980b9;
+}
+.face-controls {
+    display: flex;
+    flex-direction: column;
+    margin: 0 10px;
+    align-items: center;
+}
+.face-label {
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+.instructions {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: rgba(255, 255, 255, 0.7);
+    padding: 10px;
+    border-radius: 10px;
+}

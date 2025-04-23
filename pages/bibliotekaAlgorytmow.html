@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rubik's Sensei - Biblioteka Algorytmów</title>
+    <link rel="stylesheet" href="../css/bibliotekaAlgorytmow.css">
+</head>
+<body>
+<div id="cubespace"></div>
+<div class="instructions">
+    <button onclick="openPage('home.html')">Powrót do strony głównej</button>
+    <p>Drag to rotate the entire cube</p>
+    <p>Use buttons to rotate individual faces</p>
+</div>
+<div class="controls">
+    <div class="face-controls">
+        <div class="face-label">Front (F)</div>
+        <div>
+            <button class="control-btn" data-face="F" data-dir="clockwise"
+            >F</button
+            >
+            <button class="control-btn" data-face="F" data-dir="counterclockwise"
+            >F'</button
+            >
+        </div>
+    </div>
+    <div class="face-controls">
+        <div class="face-label">Back (B)</div>
+        <div>
+            <button class="control-btn" data-face="B" data-dir="clockwise"
+            >B</button
+            >
+            <button class="control-btn" data-face="B" data-dir="counterclockwise"
+            >B'</button
+            >
+        </div>
+    </div>
+    <div class="face-controls">
+        <div class="face-label">Up (U)</div>
+        <div>
+            <button class="control-btn" data-face="U" data-dir="clockwise"
+            >U</button
+            >
+            <button class="control-btn" data-face="U" data-dir="counterclockwise"
+            >U'</button
+            >
+        </div>
+    </div>
+    <div class="face-controls">
+        <div class="face-label">Down (D)</div>
+        <div>
+            <button class="control-btn" data-face="D" data-dir="clockwise"
+            >D</button
+            >
+            <button class="control-btn" data-face="D" data-dir="counterclockwise"
+            >D'</button
+            >
+        </div>
+    </div>
+    <div class="face-controls">
+        <div class="face-label">Left (L)</div>
+        <div>
+            <button class="control-btn" data-face="L" data-dir="clockwise"
+            >L</button
+            >
+            <button class="control-btn" data-face="L" data-dir="counterclockwise"
+            >L'</button
+            >
+        </div>
+    </div>
+    <div class="face-controls">
+        <div class="face-label">Right (R)</div>
+        <div>
+            <button class="control-btn" data-face="R" data-dir="clockwise"
+            >R</button
+            >
+            <button class="control-btn" data-face="R" data-dir="counterclockwise"
+            >R'</button
+            >
+        </div>
+    </div>
+    <button class="control-btn" id="reset-btn">Reset Cube</button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
+<script src="../scripts/generateCube.js"></script>
+<script src="../scripts/handleNavigation.js"></script>
+</body>
+</html>
