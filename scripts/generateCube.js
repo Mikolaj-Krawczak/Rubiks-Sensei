@@ -1,4 +1,3 @@
-// Constants
 const CUBE_SIZE = 1;
 const GAP = 0.05;
 const ANIMATION_DURATION = 500; // ms
@@ -6,10 +5,16 @@ const cubespace = document.getElementById("cubespace");
 
 // Scene setup
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0xfff);
+const loader = new THREE.TextureLoader();
+loader.load(
+    '../assets/images/background2.png',
+    (texture) => { scene.background = texture; },
+    undefined,
+    (error) => { console.error('Background load failed:', error); scene.background = new THREE.Color(0xc2c2c2); }
+);
 
 const camera = new THREE.PerspectiveCamera(
-    75,
+    55,
     cubespace.clientWidth / cubespace.clientHeight,
     0.1,
     1000
@@ -39,12 +44,12 @@ scene.add(cubeGroup);
 
 // Colors for the cube faces
 const colors = {
-    front: 0xff0000, // Red
-    back: 0xffa500, // Orange
+    front: 0x00ff00, // Green
+    back: 0x0000ff, // Blue
     up: 0xffffff, // White
     down: 0xffff00, // Yellow
-    left: 0x00ff00, // Green
-    right: 0x0000ff, // Blue
+    left: 0xffa500, // Orange
+    right: 0xff0000 // Red
 };
 
 // Create the 27 small cubes (3x3x3)
@@ -55,7 +60,6 @@ const offset = totalSize / 2 - CUBE_SIZE / 2;
 for (let x = 0; x < 3; x++) {
     for (let y = 0; y < 3; y++) {
         for (let z = 0; z < 3; z++) {
-            // Skip the center piece (completely internal)
             if (x === 1 && y === 1 && z === 1) continue;
 
             const geometry = new THREE.BoxGeometry(
@@ -65,43 +69,31 @@ for (let x = 0; x < 3; x++) {
             );
             const materials = [];
 
-            // Determine colors for each face
-            // Right face (x = 2)
             materials.push(
                 new THREE.MeshLambertMaterial({
                     color: x === 2 ? colors.right : 0x111111,
                 })
             );
-
-            // Left face (x = 0)
             materials.push(
                 new THREE.MeshLambertMaterial({
                     color: x === 0 ? colors.left : 0x111111,
                 })
             );
-
-            // Top face (y = 2)
             materials.push(
                 new THREE.MeshLambertMaterial({
                     color: y === 2 ? colors.up : 0x111111,
                 })
             );
-
-            // Bottom face (y = 0)
             materials.push(
                 new THREE.MeshLambertMaterial({
                     color: y === 0 ? colors.down : 0x111111,
                 })
             );
-
-            // Front face (z = 2)
             materials.push(
                 new THREE.MeshLambertMaterial({
                     color: z === 2 ? colors.front : 0x111111,
                 })
             );
-
-            // Back face (z = 0)
             materials.push(
                 new THREE.MeshLambertMaterial({
                     color: z === 0 ? colors.back : 0x111111,
@@ -109,16 +101,11 @@ for (let x = 0; x < 3; x++) {
             );
 
             const cube = new THREE.Mesh(geometry, materials);
-
-            // Position the cube
             cube.position.x = (x - 1) * (CUBE_SIZE + GAP);
             cube.position.y = (y - 1) * (CUBE_SIZE + GAP);
             cube.position.z = (z - 1) * (CUBE_SIZE + GAP);
-
-            // Store the original position and index
             cube.userData.originalPosition = cube.position.clone();
             cube.userData.currentPosition = { x, y, z };
-
             cubeGroup.add(cube);
             cubes.push(cube);
         }
@@ -131,74 +118,67 @@ let animationStartTime = 0;
 let animationGroup = null;
 let animationAxis = null;
 let animationAngle = 0;
+let moveQueue = [];
+let moveHistory = [];
+let currentMoveIndex = -1;
 
 // Function to get cubes on a specific face
 function getCubesOnFace(face) {
     const faceCubes = [];
-
     switch (face) {
-        case "F": // Front face (z = 2)
+        case "F":
             cubes.forEach((cube) => {
                 if (cube.userData.currentPosition.z === 2) faceCubes.push(cube);
             });
             break;
-        case "B": // Back face (z = 0)
+        case "B":
             cubes.forEach((cube) => {
                 if (cube.userData.currentPosition.z === 0) faceCubes.push(cube);
             });
             break;
-        case "U": // Up face (y = 2)
+        case "U":
             cubes.forEach((cube) => {
                 if (cube.userData.currentPosition.y === 2) faceCubes.push(cube);
             });
             break;
-        case "D": // Down face (y = 0)
+        case "D":
             cubes.forEach((cube) => {
                 if (cube.userData.currentPosition.y === 0) faceCubes.push(cube);
             });
             break;
-        case "L": // Left face (x = 0)
+        case "L":
             cubes.forEach((cube) => {
                 if (cube.userData.currentPosition.x === 0) faceCubes.push(cube);
             });
             break;
-        case "R": // Right face (x = 2)
+        case "R":
             cubes.forEach((cube) => {
                 if (cube.userData.currentPosition.x === 2) faceCubes.push(cube);
             });
             break;
     }
-
     return faceCubes;
 }
 
 // Function to start a face rotation
-function rotateFace(face, direction) {
+function rotateFace(face, direction, isReplay = false) {
     if (isAnimating) return;
-
     const faceCubes = getCubesOnFace(face);
     if (faceCubes.length === 0) return;
 
-    // Create a temporary group for rotation
     animationGroup = new THREE.Group();
     scene.add(animationGroup);
-
-    // Add selected cubes to the group
     faceCubes.forEach((cube) => {
         const worldPos = new THREE.Vector3();
         cube.getWorldPosition(worldPos);
-
         const worldRot = new THREE.Quaternion();
         cube.getWorldQuaternion(worldRot);
-
         cubeGroup.remove(cube);
         animationGroup.add(cube);
-
         cube.position.copy(worldPos);
         cube.quaternion.copy(worldRot);
     });
 
-    // Set rotation axis based on face
     switch (face) {
         case "F":
             animationAxis = new THREE.Vector3(0, 0, 1);
@@ -220,12 +200,19 @@ function rotateFace(face, direction) {
             break;
     }
 
-    // Set rotation angle based on direction
-    animationAngle = ((direction === "clockwise" ? 1 : -1) * Math.PI) / 2;
+    animationAngle = ((direction === "clockwise" ? -1 : 1) * Math.PI) / 2;
 
-    // Start animation
     isAnimating = true;
     animationStartTime = Date.now();
+
+    if (!isReplay) {
+        // Add to history if not replaying a move
+        if (currentMoveIndex < moveHistory.length - 1) {
+            moveHistory = moveHistory.slice(0, currentMoveIndex + 1);
+        }
+        moveHistory.push({ face, direction });
+        currentMoveIndex = moveHistory.length - 1;
+    }
 }
 
 // Function to update cube positions after rotation
@@ -236,79 +223,139 @@ function updateCubePositions(face, direction) {
         const pos = cube.userData.currentPosition;
 
         switch (face) {
-            case "F": // Front face (z = 2)
+            case "F":
                 if (pos.z === 2) {
-                    const oldX = pos.x;
-                    const oldY = pos.y;
-                    pos.x = clockwise ? 2 - oldY : oldY;
-                    pos.y = clockwise ? oldX : 2 - oldX;
-                }
-                break;
-            case "B": // Back face (z = 0)
-                if (pos.z === 0) {
                     const oldX = pos.x;
                     const oldY = pos.y;
                     pos.x = clockwise ? oldY : 2 - oldY;
                     pos.y = clockwise ? 2 - oldX : oldX;
                 }
                 break;
-            case "U": // Up face (y = 2)
-                if (pos.y === 2) {
+            case "B":
+                if (pos.z === 0) {
                     const oldX = pos.x;
-                    const oldZ = pos.z;
-                    pos.x = clockwise ? oldZ : 2 - oldZ;
-                    pos.z = clockwise ? 2 - oldX : oldX;
+                    const oldY = pos.y;
+                    pos.x = clockwise ? 2 - oldY : oldY;
+                    pos.y = clockwise ? oldX : 2 - oldX;
                 }
                 break;
-            case "D": // Down face (y = 0)
-                if (pos.y === 0) {
+            case "U":
+                if (pos.y === 2) {
                     const oldX = pos.x;
                     const oldZ = pos.z;
                     pos.x = clockwise ? 2 - oldZ : oldZ;
                     pos.z = clockwise ? oldX : 2 - oldX;
                 }
                 break;
-            case "L": // Left face (x = 0)
+            case "D":
+                if (pos.y === 0) {
+                    const oldX = pos.x;
+                    const oldZ = pos.z;
+                    pos.x = clockwise ? oldZ : 2 - oldZ;
+                    pos.z = clockwise ? 2 - oldX : oldX;
+                }
+                break;
+            case "L":
                 if (pos.x === 0) {
                     const oldY = pos.y;
                     const oldZ = pos.z;
-                    pos.y = clockwise ? oldZ : 2 - oldZ; // Swap Y and Z correctly
-                    pos.z = clockwise ? 2 - oldY : oldY;
+                    pos.y = clockwise ? 2 - oldZ : oldZ;
+                    pos.z = clockwise ? oldY : 2 - oldY;
                 }
                 break;
-            case "R": // Right face (x = 2)
+            case "R":
                 if (pos.x === 2) {
                     const oldY = pos.y;
                     const oldZ = pos.z;
-                    pos.y = clockwise ? 2 - oldZ : oldZ; // Swap Y and Z correctly
-                    pos.z = clockwise ? oldY : 2 - oldY;
+                    pos.y = clockwise ? oldZ : 2 - oldZ;
+                    pos.z = clockwise ? 2 - oldY : oldY;
                 }
                 break;
         }
     });
 }
 
+// Function to parse a sequence string and play it
+function playSequence(sequence) {
+    if (isAnimating || moveQueue.length > 0) return;
+
+    // Clear history for a new sequence
+    moveHistory = [];
+    currentMoveIndex = -1;
+
+    // Remove brackets and split into moves
+    const cleanedSequence = sequence.replace(/[()]/g, '').trim();
+    const moves = cleanedSequence.split(/\s+/);
+    moveQueue = [];
+
+    for (const move of moves) {
+        const match = move.match(/^([FBLRUD])(['’]?|2)$/);
+        if (!match) {
+            console.warn(`Invalid move: ${move}`);
+            continue;
+        }
+
+        const face = match[1];
+        const modifier = match[2];
+        const isCounterclockwise = modifier === "'" || modifier === "’";
+        const isDoubleMove = modifier === "2";
+
+        // Add move(s) to queue
+        const moveObj = {
+            face,
+            direction: isCounterclockwise ? "counterclockwise" : "clockwise"
+        };
+        moveQueue.push(moveObj);
+        if (isDoubleMove) {
+            moveQueue.push(moveObj); // Add the same move again for double move
+        }
+    }
+
+    if (moveQueue.length > 0) {
+        processNextMove();
+    }
+}
+
+// Function to process the next move in the queue
+function processNextMove() {
+    if (moveQueue.length === 0 || isAnimating) return;
+    const move = moveQueue.shift();
+    rotateFace(move.face, move.direction);
+}
+
+// Function to step forward in the move history
+function stepForward() {
+    if (isAnimating || currentMoveIndex >= moveHistory.length - 1) return;
+    const nextMove = moveHistory[currentMoveIndex + 1];
+    currentMoveIndex++;
+    rotateFace(nextMove.face, nextMove.direction, true);
+}
+
+// Function to step backward in the move history
+function stepBackward() {
+    if (isAnimating || currentMoveIndex < 0) return;
+    const currentMove = moveHistory[currentMoveIndex];
+    currentMoveIndex--;
+    // Reverse the move
+    const reverseDirection = currentMove.direction === "clockwise" ? "counterclockwise" : "clockwise";
+    rotateFace(currentMove.face, reverseDirection, true);
+}
+
 // Animation loop
 function animate() {
     requestAnimationFrame(animate);
 
-    // Handle ongoing animation
     if (isAnimating) {
         const elapsed = Date.now() - animationStartTime;
         const progress = Math.min(elapsed / ANIMATION_DURATION, 1);
-
-        // Apply rotation based on progress
         const rotationAmount = animationAngle * progress;
         animationGroup.setRotationFromAxisAngle(
             animationAxis,
             rotationAmount
         );
 
-        // Animation complete
         if (progress === 1) {
             isAnimating = false;
-
-            // Determine the face and direction from the animation
             const face =
                 animationAxis.x !== 0
                     ? animationAxis.x > 0
@@ -322,43 +369,35 @@ function animate() {
                             ? "F"
                             : "B";
             const direction =
-                animationAngle > 0 ? "clockwise" : "counterclockwise";
+                animationAngle > 0 ? "counterclockwise" : "clockwise";
 
-            // Update logical positions
             updateCubePositions(face, direction);
 
-            // Apply the final rotation to individual cubes
             const finalRotation = new THREE.Quaternion().setFromAxisAngle(
                 animationAxis,
                 animationAngle
             );
 
-            // Move cubes back to the main group
             while (animationGroup.children.length > 0) {
                 const cube = animationGroup.children[0];
-
-                // Apply the rotation to the cube's orientation
                 cube.quaternion.multiplyQuaternions(
                     finalRotation,
                     cube.quaternion
                 );
-
-                // Ensure cube face materials remain consistent by updating position
                 const pos = cube.userData.currentPosition;
                 cube.position.set(
                     (pos.x - 1) * (CUBE_SIZE + GAP),
                     (pos.y - 1) * (CUBE_SIZE + GAP),
                     (pos.z - 1) * (CUBE_SIZE + GAP)
                 );
-
-                // Remove from animation group and add to main group
                 animationGroup.remove(cube);
                 cubeGroup.add(cube);
             }
-
-            // Remove the temporary group
             scene.remove(animationGroup);
             animationGroup = null;
+
+            // Process the next move in the queue
+            processNextMove();
         }
     }
 
@@ -373,15 +412,21 @@ window.addEventListener("resize", () => {
     renderer.setSize(cubespace.clientWidth, cubespace.clientHeight);
 });
 
-// Button event listeners
-document.querySelectorAll(".control-btn").forEach((button) => {
-    if (button.id === "reset-btn") {
-        button.addEventListener("click", resetCube);
+// Event listeners for control elements
+document.querySelectorAll(".control-btn").forEach((element) => {
+    if (element.id === "reset-btn") {
+        element.addEventListener("click", resetCube);
+    } else if (element.id === "step-back-btn") {
+        element.addEventListener("click", stepBackward);
+    } else if (element.id === "step-forward-btn") {
+        element.addEventListener("click", stepForward);
     } else {
-        button.addEventListener("click", () => {
-            const face = button.getAttribute("data-face");
-            const direction = button.getAttribute("data-dir");
-            rotateFace(face, direction);
+        element.addEventListener("click", () => {
+            const pElement = element.querySelector("p");
+            const sequence = pElement ? pElement.textContent : "";
+            if (sequence) {
+                playSequence(sequence);
+            }
         });
     }
 });
@@ -389,28 +434,29 @@ document.querySelectorAll(".control-btn").forEach((button) => {
 // Reset cube function
 function resetCube() {
     if (isAnimating) return;
-
-    // Reset cube positions and orientations
+    moveQueue = []; // Clear the move queue
+    moveHistory = []; // Clear the move history
+    currentMoveIndex = -1;
     cubes.forEach((cube) => {
         const originalX =
-            Math.round(cube.userData.originalPosition.x / (CUBE_SIZE + GAP)) +
-            1;
+            Math.round(cube.userData.originalPosition.x / (CUBE_SIZE + GAP)) + 1;
         const originalY =
-            Math.round(cube.userData.originalPosition.y / (CUBE_SIZE + GAP)) +
-            1;
+            Math.round(cube.userData.originalPosition.y / (CUBE_SIZE + GAP)) + 1;
         const originalZ =
-            Math.round(cube.userData.originalPosition.z / (CUBE_SIZE + GAP)) +
-            1;
-
+            Math.round(cube.userData.originalPosition.z / (CUBE_SIZE + GAP)) + 1;
         cube.userData.currentPosition = {
             x: originalX,
             y: originalY,
             z: originalZ,
         };
         cube.position.copy(cube.userData.originalPosition);
-        cube.quaternion.set(0, 0, 0, 1); // Reset rotation
+        cube.quaternion.set(0, 0, 0, 1);
     });
 }
 
 // Start animation loop
-animate();
+try {
+    animate();
+} catch (error) {
+    console.error("Animation loop failed:", error);
+}
