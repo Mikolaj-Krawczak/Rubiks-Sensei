@@ -1,0 +1,73 @@
+@font-face {
+    font-family: 'DungeonFont';
+    src: url('../assets/DungeonFont.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-size: 1.5rem;
+    font-family: 'DungeonFont', serif;
+}
+
+.background-container {
+    background-image: url('../assets/images/background.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 100%;
+    height: 50vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.karate-belt {
+    background-color: #fdfd7a;
+    width: 100%;
+    height: 8vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.menu-row {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 2vh;
+    margin: 2vh 2vh 0;
+}
+
+.menu-tile {
+    font-size: 5vh;
+    background-color: #000;
+    color: #fff;
+    width: 20vh;
+    height: 26vh;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+@keyframes wobble {
+    0%, 100% {
+        transform: translateY(-1vh) rotate(-2deg);
+    }
+    50% {
+        transform: translateY(-1vh) rotate(2deg);
+    }
+}
+
+.menu-tile:hover {
+    animation: wobble 0.6s ease-in-out 1;
+    transform: translateY(-1vh)
+}
