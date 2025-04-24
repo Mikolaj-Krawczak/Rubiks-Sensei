@@ -1,64 +1,124 @@
-body {
+@font-face {
+    font-family: 'DungeonFont';
+    src: url('../assets/DungeonFont.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+* {
+    padding: 0;
     margin: 0;
-    overflow: hidden;
-    font-family: Arial, sans-serif;
+    box-sizing: border-box;
+    font-family: 'DungeonFont', serif;
+}
+
+body {
     display: flex;
-    flex-direction: row-reverse;
+    flex-direction: row;
+    overflow: hidden;
 }
-canvas {
-    display: block;
-    width: 50vw !important;
-    height: 100vh !important;
+
+h2 {
+    font-size: 4rem;
 }
+
+h3 {
+    font-size: 2rem;
+}
+
+p {
+    font-size: 2rem;
+}
+
+#control-panel {
+    position: fixed;
+    bottom: 0;
+    right: 25%;
+    transform: translateX(+50%);
+    padding: 0.5rem 0.5rem;
+    background-color: #fff;
+    border: 2px solid black;
+    display: flex;
+    gap: 0.5rem;
+}
+
+#control-panel button {
+    height: 100%;
+    cursor: pointer;
+    font-size: 2rem;
+    padding: 0.25rem 1rem;
+    background-color: black;
+    color: white;
+    border: none;
+    transition: background-color 0.2s ease-in-out;
+}
+
+#control-panel button:hover {
+    background-color: #383838;
+}
+
+#left-panel {
+    width: 50%;
+    height: 100vh;
+    padding: 2rem;
+}
+
+.container {
+    width: 100%;
+    /*padding: 0 1rem 1rem;*/
+    display: flex;
+    flex-direction: column;
+    border: 2px solid black;
+    gap: 0.5rem;
+    height: 100%;
+    overflow-y: scroll;
+}
+
+.algorithm-list-header {
+    position: sticky;
+    top: 0;
+    background-color: white;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+}
+
+.algorithm-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding-bottom: 1rem;
+}
+
+.algorithm-item {
+    padding: 0.25rem 1rem;
+    display: flex;
+    gap: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.algorithm-item img {
+    width: 82px;
+    height: 82px;
+}
+
+.algorithm-item-description {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.algorithm-item-description p {
+    width: 100%;
+}
+
+.algorithm-item:hover {
+    background-color: #ececec;
+}
+
 #cubespace {
     width: 50%;
     height: 100vh;
-    position: relative;
-    float: right;
-    clear: both;
-}
-.controls {
-    position: absolute;
-    bottom: 20px;
-    left: 25%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: 10px;
-    background: rgba(255, 255, 255, 0.7);
-    padding: 10px;
-    border-radius: 10px;
-    flex-wrap: wrap;
-    justify-content: center;
-    max-width: 80%;
-}
-.control-btn {
-    padding: 8px 12px;
-    border: none;
-    border-radius: 5px;
-    background: #3498db;
-    color: white;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background 0.3s;
-}
-.control-btn:hover {
-    background: #2980b9;
-}
-.face-controls {
-    display: flex;
-    flex-direction: column;
-    margin: 0 10px;
-    align-items: center;
-}
-.face-label {
-    margin-bottom: 5px;
-    font-weight: bold;
-}
-.instructions {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    background: rgba(255, 255, 255, 0.7);
-    padding: 10px;
-    border-radius: 10px;
 }

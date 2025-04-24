@@ -1,87 +1,99 @@
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rubik's Sensei - Biblioteka Algorytmów</title>
+    <title>Rubik's Sensei - Algorithms</title>
     <link rel="stylesheet" href="../css/bibliotekaAlgorytmow.css">
 </head>
 <body>
+<div id="left-panel">
+    <div id="control-panel">
+        <button onclick="openPage('home.html')">Home</button>
+        <button class="control-btn" id="reset-btn">Reset Cube</button>
+        <button class="control-btn" id="step-back-btn">Step Back</button>
+        <button class="control-btn" id="step-forward-btn">Step Forward</button>
+    </div>
+    <div class="container">
+        <div class="algorithm-list-header">
+            <h2>Algorithms</h2>
+            <p>Beginner's Method / CFOP / OLL / Roux / Petrus </p>
+        </div>
+        <div class="algorithm-list">
+            <div class="algorithm-item control-btn">
+                <img src="../assets/images/algorithms/R U R' U' R U' R' F' U' F R U R'.png"/>
+                <div class="algorithm-item-description">
+                    <h3>Awkward Shape</h3>
+                    <p>R U R' U' R U' R' F' U' F R U R'</p>
+                </div>
+            </div>
+            <div class="algorithm-item control-btn">
+                <img src="../assets/images/algorithms/F R' F R2 U' R' U' R U R' F2.png"/>
+                <div class="algorithm-item-description">
+                    <h3>Awkward Shape</h3>
+                    <p>F R' F R2 U' R' U' R U R' F2</p>
+                </div>
+            </div>
+            <div class="algorithm-item control-btn">
+                <img src="../assets/images/algorithms/R U R' U R U2 R' F R U R' U' F'.png"/>
+                <div class="algorithm-item-description">
+                    <h3>Awkward Shape</h3>
+                    <p>R U R' U R U2 R' F R U R' U' F'</p>
+                </div>
+            </div>
+            <div class="algorithm-item control-btn">
+                <img src="../assets/images/algorithms/L F' L' U' L U F U' L'.png"/>
+                <div class="algorithm-item-description">
+                    <h3>Big Lightning Bolt</h3>
+                    <p>L F' L' U' L U F U' L'</p>
+                </div>
+            </div>
+            <div class="algorithm-item control-btn">
+                <img src="../assets/images/algorithms/R' F R U R' U' F' U R.png"/>
+                <div class="algorithm-item-description">
+                    <h3>Big Lightning Bolt</h3>
+                    <p>R' F R U R' U' F' U R</p>
+                </div>
+            </div>
+            <div class="algorithm-item control-btn">
+                <img src="../assets/images/algorithms/R U R2 U' R' F R U R U' F'.png"/>
+                <div class="algorithm-item-description">
+                    <h3>C Shape</h3>
+                    <p>R U R2 U' R' F R U R U' F'</p>
+                </div>
+            </div>
+            <div class="algorithm-item control-btn">
+                <img src="../assets/images/algorithms/R U2 R2 U' R2 U' R2 U2 R.png"/>
+                <div class="algorithm-item-description">
+                    <h3>Cross</h3>
+                    <p>R U2 R2 U' R2 U' R2 U2 R</p>
+                </div>
+            </div>
+            <div class="algorithm-item control-btn">
+                <img src="../assets/images/algorithms/R U2 R' U' R U' R'.png"/>
+                <div class="algorithm-item-description">
+                    <h3>Cross</h3>
+                    <p>R U2 R' U' R U' R'</p>
+                </div>
+            </div>
+            <div class="algorithm-item control-btn">
+                <img src="../assets/images/algorithms/R U2 R2 F R F' U2 R' F R F'.png"/>
+                <div class="algorithm-item-description">
+                    <h3>Dot</h3>
+                    <p>R U2 R2 F R F' U2 R' F R F'</p>
+                </div>
+            </div>
+            <div class="algorithm-item control-btn">
+                <img src="../assets/images/algorithms/R' U' F U R U' R' F' R.png"/>
+                <div class="algorithm-item-description">
+                    <h3>P Shape</h3>
+                    <p>R' U' F U R U' R' F' R</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <div id="cubespace"></div>
-<div class="instructions">
-    <button onclick="openPage('home.html')">Powrót do strony głównej</button>
-    <p>Drag to rotate the entire cube</p>
-    <p>Use buttons to rotate individual faces</p>
-</div>
-<div class="controls">
-    <div class="face-controls">
-        <div class="face-label">Front (F)</div>
-        <div>
-            <button class="control-btn" data-face="F" data-dir="clockwise"
-            >F</button
-            >
-            <button class="control-btn" data-face="F" data-dir="counterclockwise"
-            >F'</button
-            >
-        </div>
-    </div>
-    <div class="face-controls">
-        <div class="face-label">Back (B)</div>
-        <div>
-            <button class="control-btn" data-face="B" data-dir="clockwise"
-            >B</button
-            >
-            <button class="control-btn" data-face="B" data-dir="counterclockwise"
-            >B'</button
-            >
-        </div>
-    </div>
-    <div class="face-controls">
-        <div class="face-label">Up (U)</div>
-        <div>
-            <button class="control-btn" data-face="U" data-dir="clockwise"
-            >U</button
-            >
-            <button class="control-btn" data-face="U" data-dir="counterclockwise"
-            >U'</button
-            >
-        </div>
-    </div>
-    <div class="face-controls">
-        <div class="face-label">Down (D)</div>
-        <div>
-            <button class="control-btn" data-face="D" data-dir="clockwise"
-            >D</button
-            >
-            <button class="control-btn" data-face="D" data-dir="counterclockwise"
-            >D'</button
-            >
-        </div>
-    </div>
-    <div class="face-controls">
-        <div class="face-label">Left (L)</div>
-        <div>
-            <button class="control-btn" data-face="L" data-dir="clockwise"
-            >L</button
-            >
-            <button class="control-btn" data-face="L" data-dir="counterclockwise"
-            >L'</button
-            >
-        </div>
-    </div>
-    <div class="face-controls">
-        <div class="face-label">Right (R)</div>
-        <div>
-            <button class="control-btn" data-face="R" data-dir="clockwise"
-            >R</button
-            >
-            <button class="control-btn" data-face="R" data-dir="counterclockwise"
-            >R'</button
-            >
-        </div>
-    </div>
-    <button class="control-btn" id="reset-btn">Reset Cube</button>
-</div>
 
 <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
