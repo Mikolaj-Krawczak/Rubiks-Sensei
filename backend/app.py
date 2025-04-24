@@ -4,37 +4,93 @@ import os
 from sqlalchemy import desc
 import json
 from werkzeug.utils import secure_filename
-from db import init_db, get_session, add_sample_data
+from db import init_db, get_session
 from models import Kostka, Algorytm, Uzytkownik, Ulozenie
+import logging
+
+# Konfiguracja logowania
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Inicjalizacja aplikacji Flask
 app = Flask(__name__)
-CORS(app)  # Umożliwia żądania CORS
+CORS(app)  # Umożliwia żądania CORS (Cross-Origin Resource Sharing)
 
-# Upewnij się, że baza danych istnieje
+# Upewnij się, że baza danych istnieje i zawiera przykładowe dane
 init_db()
-add_sample_data()
 
-# Katalog do przechowywania zdjęć algorytmów
-UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
-if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
+# Katalog docelowy dla zdjęć algorytmów (frontend/assets/images/algorithms)
+UPLOAD_FOLDER = os.path.abspath(
+    os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        '..', 'assets', 'images', 'algorithms'
+    )
+)
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-# ===== Endpointy dla kostek =====
+# =========================================================
+# ===================== API KOSTEK =======================
+# =========================================================
+
+@app.route('/api')
+def index():
+    """
+    Endpoint główny aplikacji, zwraca prostą informację o API.
+    
+    Returns:
+        dict: Informacja o API
+    """
+    return jsonify({
+        'message': 'Witaj w API Rubik Sensei!',
+        'endpoints': [
+            '/api/kostki',
+            '/api/algorytmy',
+            '/api/uzytkownicy',
+            '/api/ulozenia'
+        ]
+    })
 
 @app.route('/api/kostki', methods=['GET'])
 def get_kostki():
-    """Pobiera wszystkie kostki"""
-    session = get_session()
-    kostki = session.query(Kostka).all()
-    result = [{"id": k.id, "nazwa": k.nazwa, "rozmiar": k.rozmiar} for k in kostki]
-    session.close()
-    return jsonify(result)
+    """
+    Pobiera listę wszystkich dostępnych kostek Rubika.
+    
+    Returns:
+        list: Lista kostek w formacie JSON
+    """
+    try:
+        session = get_session()
+        kostki = session.query(Kostka).all()
+        
+        # Konwertujemy obiekty Kostka na słowniki
+        kostki_json = [
+            {
+                'id': k.id,
+                'nazwa': k.nazwa,
+                'rozmiar': k.rozmiar
+            } for k in kostki
+        ]
+        
+        session.close()
+        return jsonify(kostki_json)
+    except Exception as e:
+        logger.error(f"Błąd podczas pobierania kostek: {str(e)}")
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/api/kostki/<int:kostka_id>', methods=['GET'])
 def get_kostka(kostka_id):
-    """Pobiera kostkę o określonym ID"""
+    """
+    Endpoint do pobierania pojedynczej kostki po ID.
+    
+    GET /api/kostki/{kostka_id}
+    
+    Args:
+        kostka_id (int): ID kostki do pobrania
+        
+    Returns:
+        JSON z danymi kostki lub komunikat błędu 404 jeśli nie znaleziono.
+    """
     session = get_session()
     kostka = session.query(Kostka).filter(Kostka.id == kostka_id).first()
     
@@ -48,7 +104,20 @@ def get_kostka(kostka_id):
 
 @app.route('/api/kostki', methods=['POST'])
 def create_kostka():
-    """Tworzy nową kostkę"""
+    """
+    Endpoint do tworzenia nowej kostki.
+    
+    POST /api/kostki
+    Przykładowy JSON w request:
+    {
+        "nazwa": "Megaminx",
+        "rozmiar": "Megaminx"
+    }
+    
+    Returns:
+        JSON z danymi utworzonej kostki i status 201 (Created),
+        lub komunikat błędu 400 jeśli dane są nieprawidłowe.
+    """
     data = request.json
     
     if not data or not all(key in data for key in ['nazwa', 'rozmiar']):
@@ -63,37 +132,64 @@ def create_kostka():
     session.close()
     return jsonify(result), 201
 
-# ===== Endpointy dla algorytmów =====
+# =========================================================
+# ==================== API ALGORYTMÓW ====================
+# =========================================================
 
 @app.route('/api/algorytmy', methods=['GET'])
 def get_algorytmy():
-    """Pobiera wszystkie algorytmy lub algorytmy dla określonej kostki"""
-    kostka_id = request.args.get('kostka_id', type=int)
+    """
+    Pobiera listę algorytmów, opcjonalnie filtrowanych według ID kostki.
     
-    session = get_session()
-    query = session.query(Algorytm)
+    Query Parameters:
+        kostka_id (int, optional): ID kostki, dla której chcemy pobrać algorytmy
     
-    if kostka_id:
-        query = query.filter(Algorytm.kostka_id == kostka_id)
-    
-    algorytmy = query.all()
-    result = [
-        {
-            "id": alg.id, 
-            "kostka_id": alg.kostka_id, 
-            "nazwa": alg.nazwa, 
-            "notacja": alg.notacja,
-            "sciezka_obrazu": alg.sciezka_obrazu
-        } 
-        for alg in algorytmy
-    ]
-    
-    session.close()
-    return jsonify(result)
+    Returns:
+        list: Lista algorytmów w formacie JSON
+    """
+    try:
+        session = get_session()
+        
+        # Sprawdzamy, czy został podany parametr kostka_id
+        kostka_id = request.args.get('kostka_id')
+        
+        if kostka_id:
+            # Jeśli podano ID kostki, filtrujemy algorytmy dla tej kostki
+            algorytmy = session.query(Algorytm).filter(Algorytm.kostka_id == kostka_id).all()
+        else:
+            # W przeciwnym razie pobieramy wszystkie algorytmy
+            algorytmy = session.query(Algorytm).all()
+        
+        # Konwertujemy obiekty Algorytm na słowniki
+        algorytmy_json = [
+            {
+                'id': a.id,
+                'kostka_id': a.kostka_id,
+                'nazwa': a.nazwa,
+                'notacja': a.notacja,
+                'sciezka_obrazu': a.sciezka_obrazu
+            } for a in algorytmy
+        ]
+        
+        session.close()
+        return jsonify(algorytmy_json)
+    except Exception as e:
+        logger.error(f"Błąd podczas pobierania algorytmów: {str(e)}")
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/api/algorytmy/<int:algorytm_id>', methods=['GET'])
 def get_algorytm(algorytm_id):
-    """Pobiera algorytm o określonym ID"""
+    """
+    Endpoint do pobierania pojedynczego algorytmu po ID.
+    
+    GET /api/algorytmy/{algorytm_id}
+    
+    Args:
+        algorytm_id (int): ID algorytmu do pobrania
+        
+    Returns:
+        JSON z danymi algorytmu lub komunikat błędu 404 jeśli nie znaleziono.
+    """
     session = get_session()
     algorytm = session.query(Algorytm).filter(Algorytm.id == algorytm_id).first()
     
@@ -114,18 +210,38 @@ def get_algorytm(algorytm_id):
 
 @app.route('/api/algorytmy', methods=['POST'])
 def create_algorytm():
-    """Tworzy nowy algorytm"""
-    # Inicjalizacja zmiennych
+    """
+    Endpoint do tworzenia nowego algorytmu.
+    Obsługuje zarówno format multipart/form-data (z plikiem obrazu)
+    jak i czysty JSON.
+    
+    POST /api/algorytmy
+    
+    Przykładowy JSON w request:
+    {
+        "kostka_id": 2,
+        "nazwa": "Sexy Move",
+        "notacja": "R U R' U'",
+        "sciezka_obrazu": "assets/images/algorithms/SexyMove.png"
+    }
+    
+    Returns:
+        JSON z danymi utworzonego algorytmu i status 201 (Created),
+        lub komunikat błędu 400/404 jeśli dane są nieprawidłowe.
+    """
     sciezka_obrazu = None
     # Jeśli przesłano multipart/form-data (np. z plikiem)
     if request.content_type and request.content_type.startswith('multipart/form-data'):
         if 'obraz' in request.files:
             file = request.files['obraz']
             if file.filename:
+                # Bezpieczna nazwa pliku (usuwa niebezpieczne znaki)
                 filename = secure_filename(file.filename)
-                file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                file.save(file_path)
-                sciezka_obrazu = file_path
+                save_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+                file.save(save_path)
+                # zapisujemy ścieżkę względną do katalogu assets/images/algorithms
+                sciezka_obrazu = f"assets/images/algorithms/{filename}"
         # Dane z formularza
         kostka_id = request.form.get('kostka_id', type=int)
         nazwa = request.form.get('nazwa')
@@ -171,27 +287,101 @@ def create_algorytm():
     session.close()
     return jsonify(result), 201
 
-# ===== Endpointy dla użytkowników =====
+# =========================================================
+# =================== API UŻYTKOWNIKÓW ==================
+# =========================================================
 
-@app.route('/api/uzytkownicy', methods=['GET'])
-def get_uzytkownicy():
-    """Pobiera wszystkich użytkowników"""
+@app.route('/api/uzytkownicy', methods=['GET', 'POST'])
+def handle_uzytkownicy():
+    """
+    Obsługuje operacje na użytkownikach - pobieranie listy lub tworzenie nowego.
+    
+    GET: Pobiera listę wszystkich użytkowników
+    POST: Tworzy nowego użytkownika na podstawie danych z formularza
+    
+    Returns:
+        dict/list: Informacja o wyniku operacji lub lista użytkowników
+    """
     session = get_session()
-    uzytkownicy = session.query(Uzytkownik).all()
-    result = [
-        {
-            "id": u.id, 
-            "nazwa_uzytkownika": u.nazwa_uzytkownika, 
-            "ranga_kyu": u.ranga_kyu
-        } 
-        for u in uzytkownicy
-    ]
-    session.close()
-    return jsonify(result)
+    
+    if request.method == 'GET':
+        try:
+            uzytkownicy = session.query(Uzytkownik).all()
+            
+            uzytkownicy_json = [
+                {
+                    'id': u.id,
+                    'nazwa_uzytkownika': u.nazwa_uzytkownika,
+                    'ranga_kyu': u.ranga_kyu
+                } for u in uzytkownicy
+            ]
+            
+            session.close()
+            return jsonify(uzytkownicy_json)
+        except Exception as e:
+            logger.error(f"Błąd podczas pobierania użytkowników: {str(e)}")
+            session.close()
+            return jsonify({'error': str(e)}), 500
+    
+    elif request.method == 'POST':
+        try:
+            # Pobieramy dane z żądania JSON
+            data = request.json
+            
+            # Sprawdzamy, czy nazwa użytkownika już istnieje
+            istniejacy_uzytkownik = session.query(Uzytkownik).filter_by(
+                nazwa_uzytkownika=data['nazwa_uzytkownika']
+            ).first()
+            
+            if istniejacy_uzytkownik:
+                session.close()
+                return jsonify({'error': 'Użytkownik o tej nazwie już istnieje'}), 400
+            
+            # Tworzymy nowego użytkownika
+            nowy_uzytkownik = Uzytkownik(
+                nazwa_uzytkownika=data['nazwa_uzytkownika'],
+                haslo=data['haslo'],  # W produkcji należy zahashować hasło!
+                ranga_kyu=data.get('ranga_kyu', 6)  # Domyślnie najniższa ranga (6 Kyu)
+            )
+            
+            session.add(nowy_uzytkownik)
+            session.commit()
+            
+            # Zwracamy informacje o nowym użytkowniku (bez hasła)
+            response = {
+                'id': nowy_uzytkownik.id,
+                'nazwa_uzytkownika': nowy_uzytkownik.nazwa_uzytkownika,
+                'ranga_kyu': nowy_uzytkownik.ranga_kyu,
+                'message': 'Użytkownik został utworzony pomyślnie'
+            }
+            
+            session.close()
+            return jsonify(response), 201
+        
+        except KeyError as e:
+            session.rollback()
+            session.close()
+            return jsonify({'error': f'Brak wymaganego pola: {str(e)}'}), 400
+        
+        except Exception as e:
+            session.rollback()
+            session.close()
+            logger.error(f"Błąd podczas tworzenia użytkownika: {str(e)}")
+            return jsonify({'error': str(e)}), 500
 
 @app.route('/api/uzytkownicy/<int:uzytkownik_id>', methods=['GET'])
 def get_uzytkownik(uzytkownik_id):
-    """Pobiera użytkownika o określonym ID"""
+    """
+    Endpoint do pobierania pojedynczego użytkownika po ID.
+    
+    GET /api/uzytkownicy/{uzytkownik_id}
+    
+    Args:
+        uzytkownik_id (int): ID użytkownika do pobrania
+        
+    Returns:
+        JSON z danymi użytkownika (bez hasła) lub komunikat błędu 404 jeśli nie znaleziono.
+    """
     session = get_session()
     uzytkownik = session.query(Uzytkownik).filter(Uzytkownik.id == uzytkownik_id).first()
     
@@ -208,123 +398,167 @@ def get_uzytkownik(uzytkownik_id):
     session.close()
     return jsonify(result)
 
-@app.route('/api/uzytkownicy', methods=['POST'])
-def create_uzytkownik():
-    """Tworzy nowego użytkownika"""
-    data = request.json
+# =========================================================
+# ===================== API UŁOŻEŃ =======================
+# =========================================================
+
+@app.route('/api/ulozenia', methods=['GET', 'POST'])
+def handle_ulozenia():
+    """
+    Obsługuje operacje na ułożeniach - pobieranie listy lub dodawanie nowego.
     
-    if not data or not all(key in data for key in ['nazwa_uzytkownika', 'haslo']):
-        return jsonify({"error": "Brakujące dane"}), 400
+    GET: Pobiera listę ułożeń, opcjonalnie filtrowanych według ID użytkownika
+    POST: Dodaje nowe ułożenie na podstawie danych z formularza
     
+    Query Parameters (GET):
+        uzytkownik_id (int, optional): ID użytkownika, którego ułożenia chcemy pobrać
+        kostka_id (int, optional): ID kostki, dla której chcemy pobrać ułożenia
+    
+    Returns:
+        dict/list: Informacja o wyniku operacji lub lista ułożeń
+    """
     session = get_session()
     
-    # Sprawdź czy nazwa użytkownika jest już zajęta
-    existing_user = session.query(Uzytkownik).filter(
-        Uzytkownik.nazwa_uzytkownika == data['nazwa_uzytkownika']
-    ).first()
+    if request.method == 'GET':
+        try:
+            # Sprawdzamy, czy został podany parametr uzytkownik_id
+            uzytkownik_id = request.args.get('uzytkownik_id')
+            kostka_id = request.args.get('kostka_id')
+            
+            if uzytkownik_id:
+                # Jeśli podano ID użytkownika, filtrujemy ułożenia dla tego użytkownika
+                ulozenia = session.query(Ulozenie).filter(Ulozenie.uzytkownik_id == uzytkownik_id).all()
+            elif kostka_id:
+                # Jeśli podano ID kostki, filtrujemy ułożenia dla tej kostki
+                ulozenia = session.query(Ulozenie).filter(Ulozenie.kostka_id == kostka_id).all()
+            else:
+                # W przeciwnym razie pobieramy wszystkie ułożenia
+                ulozenia = session.query(Ulozenie).all()
+            
+            # Konwertujemy obiekty Ulozenie na słowniki
+            ulozenia_json = []
+            for u in ulozenia:
+                kostka = session.query(Kostka).get(u.kostka_id)
+                uzytkownik = session.query(Uzytkownik).get(u.uzytkownik_id)
+                
+                ulozenie_dict = {
+                    'id': u.id,
+                    'uzytkownik_id': u.uzytkownik_id,
+                    'uzytkownik_nazwa': uzytkownik.nazwa_uzytkownika if uzytkownik else None,
+                    'kostka_id': u.kostka_id,
+                    'kostka_nazwa': kostka.nazwa if kostka else None,
+                    'czas': u.czas,
+                    'scramble': u.scramble,
+                    'data': u.data.isoformat() if u.data else None
+                }
+                
+                ulozenia_json.append(ulozenie_dict)
+            
+            session.close()
+            return jsonify(ulozenia_json)
+        
+        except Exception as e:
+            logger.error(f"Błąd podczas pobierania ułożeń: {str(e)}")
+            session.close()
+            return jsonify({'error': str(e)}), 500
     
-    if existing_user:
-        session.close()
-        return jsonify({"error": "Nazwa użytkownika jest już zajęta"}), 400
-    
-    # W rzeczywistej aplikacji hasło powinno być hashowane!
-    uzytkownik = Uzytkownik(
-        nazwa_uzytkownika=data['nazwa_uzytkownika'],
-        haslo=data['haslo'],
-        ranga_kyu=data.get('ranga_kyu', 6)  # Domyślnie 6 Kyu
-    )
-    
-    session.add(uzytkownik)
-    session.commit()
-    
-    result = {
-        "id": uzytkownik.id, 
-        "nazwa_uzytkownika": uzytkownik.nazwa_uzytkownika, 
-        "ranga_kyu": uzytkownik.ranga_kyu
-    }
-    
-    session.close()
-    return jsonify(result), 201
+    elif request.method == 'POST':
+        try:
+            # Pobieramy dane z żądania JSON
+            data = request.json
+            
+            # Sprawdzamy, czy użytkownik i kostka istnieją
+            uzytkownik = session.query(Uzytkownik).get(data['uzytkownik_id'])
+            kostka = session.query(Kostka).get(data['kostka_id'])
+            
+            if not uzytkownik:
+                session.close()
+                return jsonify({'error': 'Użytkownik o podanym ID nie istnieje'}), 400
+            
+            if not kostka:
+                session.close()
+                return jsonify({'error': 'Kostka o podanym ID nie istnieje'}), 400
+            
+            # Tworzymy nowe ułożenie
+            nowe_ulozenie = Ulozenie(
+                uzytkownik_id=data['uzytkownik_id'],
+                kostka_id=data['kostka_id'],
+                czas=data['czas'],
+                scramble=data.get('scramble', '')  # Opcjonalne pole
+            )
+            
+            session.add(nowe_ulozenie)
+            session.commit()
+            
+            # Zwracamy informacje o nowym ułożeniu
+            response = {
+                'id': nowe_ulozenie.id,
+                'uzytkownik_id': nowe_ulozenie.uzytkownik_id,
+                'kostka_id': nowe_ulozenie.kostka_id,
+                'czas': nowe_ulozenie.czas,
+                'scramble': nowe_ulozenie.scramble,
+                'data': nowe_ulozenie.data.isoformat() if nowe_ulozenie.data else None,
+                'message': 'Ułożenie zostało dodane pomyślnie'
+            }
+            
+            session.close()
+            return jsonify(response), 201
+        
+        except KeyError as e:
+            session.rollback()
+            session.close()
+            return jsonify({'error': f'Brak wymaganego pola: {str(e)}'}), 400
+        
+        except Exception as e:
+            session.rollback()
+            session.close()
+            logger.error(f"Błąd podczas dodawania ułożenia: {str(e)}")
+            return jsonify({'error': str(e)}), 500
 
-# ===== Endpointy dla ułożeń =====
-
-@app.route('/api/ulozenia', methods=['GET'])
-def get_ulozenia():
-    """Pobiera wszystkie ułożenia lub ułożenia dla określonego użytkownika"""
-    uzytkownik_id = request.args.get('uzytkownik_id', type=int)
-    kostka_id = request.args.get('kostka_id', type=int)
+@app.route('/api/login', methods=['POST'])
+def login():
+    """
+    Endpoint do logowania użytkowników.
     
-    session = get_session()
-    query = session.query(Ulozenie)
+    Weryfikuje nazwę użytkownika i hasło. W produkcji należy używać
+    bezpieczniejszych metod uwierzytelniania oraz zabezpieczeń jak session token.
     
-    if uzytkownik_id:
-        query = query.filter(Ulozenie.uzytkownik_id == uzytkownik_id)
-    
-    if kostka_id:
-        query = query.filter(Ulozenie.kostka_id == kostka_id)
-    
-    # Sortuj po dacie (najnowsze pierwsze)
-    query = query.order_by(desc(Ulozenie.data_ulozenia))
-    
-    ulozenia = query.all()
-    result = [
-        {
-            "id": u.id, 
-            "uzytkownik_id": u.uzytkownik_id, 
-            "kostka_id": u.kostka_id,
-            "czas": u.czas,
-            "scramble": u.scramble,
-            "data_ulozenia": u.data_ulozenia.isoformat()
-        } 
-        for u in ulozenia
-    ]
-    
-    session.close()
-    return jsonify(result)
-
-@app.route('/api/ulozenia', methods=['POST'])
-def create_ulozenie():
-    """Tworzy nowe ułożenie"""
-    data = request.json
-    
-    if not data or not all(key in data for key in ['uzytkownik_id', 'kostka_id', 'czas']):
-        return jsonify({"error": "Brakujące dane"}), 400
-    
-    session = get_session()
-    
-    # Sprawdź czy użytkownik istnieje
-    uzytkownik = session.query(Uzytkownik).filter(Uzytkownik.id == data['uzytkownik_id']).first()
-    if not uzytkownik:
+    Returns:
+        dict: Informacja o wyniku logowania i dane użytkownika w przypadku sukcesu
+    """
+    try:
+        session = get_session()
+        data = request.json
+        
+        if not data or 'nazwa_uzytkownika' not in data or 'haslo' not in data:
+            return jsonify({'error': 'Brak wymaganych pól (nazwa_uzytkownika, haslo)'}), 400
+        
+        # Wyszukujemy użytkownika po nazwie
+        uzytkownik = session.query(Uzytkownik).filter_by(
+            nazwa_uzytkownika=data['nazwa_uzytkownika']
+        ).first()
+        
+        if not uzytkownik:
+            return jsonify({'error': 'Użytkownik o podanej nazwie nie istnieje'}), 404
+        
+        # Sprawdzamy hasło (w produkcji należy używać haszowania!)
+        if uzytkownik.haslo != data['haslo']:
+            return jsonify({'error': 'Niepoprawne hasło'}), 401
+        
+        # Zwracamy informacje o zalogowanym użytkowniku (bez hasła)
+        response = {
+            'id': uzytkownik.id,
+            'nazwa_uzytkownika': uzytkownik.nazwa_uzytkownika,
+            'ranga_kyu': uzytkownik.ranga_kyu,
+            'message': 'Zalogowano pomyślnie'
+        }
+        
         session.close()
-        return jsonify({"error": "Użytkownik nie znaleziony"}), 404
+        return jsonify(response)
     
-    # Sprawdź czy kostka istnieje
-    kostka = session.query(Kostka).filter(Kostka.id == data['kostka_id']).first()
-    if not kostka:
-        session.close()
-        return jsonify({"error": "Kostka nie znaleziona"}), 404
-    
-    ulozenie = Ulozenie(
-        uzytkownik_id=data['uzytkownik_id'],
-        kostka_id=data['kostka_id'],
-        czas=data['czas'],
-        scramble=data.get('scramble')
-    )
-    
-    session.add(ulozenie)
-    session.commit()
-    
-    result = {
-        "id": ulozenie.id, 
-        "uzytkownik_id": ulozenie.uzytkownik_id, 
-        "kostka_id": ulozenie.kostka_id,
-        "czas": ulozenie.czas,
-        "scramble": ulozenie.scramble,
-        "data_ulozenia": ulozenie.data_ulozenia.isoformat()
-    }
-    
-    session.close()
-    return jsonify(result), 201
+    except Exception as e:
+        logger.error(f"Błąd podczas logowania: {str(e)}")
+        return jsonify({'error': str(e)}), 500
 
 # Uruchomienie aplikacji
 if __name__ == '__main__':

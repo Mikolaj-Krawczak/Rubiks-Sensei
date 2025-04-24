@@ -17,11 +17,10 @@ try:
     from flask import Flask
     from flask_cors import CORS
     from models import Base
-    from db import init_db, add_sample_data
+    from db import init_db
     
     # Inicjalizacja bazy danych
     init_db()
-    add_sample_data()
     
     # Import aplikacji musi być po inicjalizacji bazy danych
     from app import app
