@@ -1,14 +1,31 @@
 <!DOCTYPE html>
 <html lang="pl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rubik's Sensei - Home</title>
+    <link rel="stylesheet" href="../css/home.css">
 </head>
+
 <body>
+
 <header-component></header-component>
-<button onclick="openPage('bibliotekaAlgorytmow.html')">Biblioteka Algorytmów</button>
-<button onclick="openPage('wybor-kostek.html')">Wybór Kostki</button>
+
+<div class="content">
+    <div class="background-container"></div>
+    <div class="karate-belt">
+        <h2>6 Kyu</h2>
+    </div>
+    <div class="menu">
+        <div class="menu-row">
+            <div class="menu-tile" onclick="openPage('bibliotekaAlgorytmow.html')">Algorithms</div>
+            <div class="menu-tile" onclick="openPage('wybor-kostek.html')">Training</div>
+            <div class="menu-tile" onclick="openPage('wybor-kostek.html')">Competition</div>
+        </div>
+    </div>
+</div>
+
 
 <script src="../scripts/handleNavigation.js"></script>
 <script src="../components/header/header.js"></script>
