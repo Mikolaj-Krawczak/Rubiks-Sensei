@@ -17,8 +17,16 @@ async function fetchAlgorithms() {
         const algorytmyResponse = await fetch(`http://localhost:5000/api/algorytmy?kostka_id=${kostka3x3.id}`);
         const algorytmy = await algorytmyResponse.json();
         
+        // Filter out any algorithms marked as deleted or cleanup-flag entries
+        const activeAlgorytmy = algorytmy.filter(alg => 
+            !alg.nazwa.includes('(DELETED)') &&
+            alg.nazwa !== '___CLEANUP_FLAG___'
+        );
+        
+        console.log("Loaded algorithms:", activeAlgorytmy);
+        
         // Wyświetlanie algorytmów
-        displayAlgorithms(algorytmy);
+        displayAlgorithms(activeAlgorytmy);
     } catch (error) {
         console.error('Błąd podczas pobierania algorytmów:', error);
     }
@@ -46,18 +54,21 @@ function displayAlgorithms(algorytmy) {
         const algorithmItem = document.createElement('div');
         algorithmItem.className = 'algorithm-item control-btn';
         
-        // Sprawdź, czy mamy mapowanie dla tego algorytmu
-        const mappedImage = algorithmImageMap[alg.notacja];
-        const imageName = mappedImage || alg.notacja;
-        
-        // Budowa ścieżki obrazka na podstawie mapowania
+        // Use the same image handling as in admin-algorithms.js
         let imgPath;
-        imgPath = `assets/images/algorithms/${imageName}.png`;
         
-        // wyświetlany src z prefixem ../, bo strona jest w pages/
-        const displayPath = `../${imgPath}`;
+        if (alg.sciezka_obrazu) {
+            // If the algorithm has a stored path, use it
+            imgPath = `../${alg.sciezka_obrazu}`;
+        } else {
+            // Otherwise use the mapping or notation as filename
+            const mappedImage = algorithmImageMap[alg.notacja];
+            const imageName = mappedImage || alg.notacja;
+            imgPath = `../assets/images/algorithms/${imageName}.png`;
+        }
+        
         algorithmItem.innerHTML = `
-            <img src="${displayPath}" alt="${alg.nazwa}" />
+            <img src="${imgPath}" alt="${alg.nazwa}" onerror="this.onerror=null; this.style.display='none';" />
             <div class="algorithm-item-description">
                 <h3>${alg.nazwa}</h3>
                 <p>${alg.notacja}</p>

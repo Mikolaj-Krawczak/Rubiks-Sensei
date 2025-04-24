@@ -132,6 +132,24 @@ def create_kostka():
     session.close()
     return jsonify(result), 201
 
+# Endpoint do usuwania kostki po ID
+@app.route('/api/kostki/<int:kostka_id>', methods=['DELETE'])
+def delete_kostka(kostka_id):
+    """
+    Usuwa kostkę o podanym ID.
+    DELETE /api/kostki/{kostka_id}
+    """
+    session = get_session()
+    kostka = session.query(Kostka).filter(Kostka.id == kostka_id).first()
+    if not kostka:
+        session.close()
+        return jsonify({"error": "Kostka nie znaleziona"}), 404
+
+    session.delete(kostka)
+    session.commit()
+    session.close()
+    return jsonify({"message": "Kostka została usunięta", "id": kostka_id})
+
 # =========================================================
 # ==================== API ALGORYTMÓW ====================
 # =========================================================
@@ -286,6 +304,108 @@ def create_algorytm():
     
     session.close()
     return jsonify(result), 201
+
+@app.route('/api/algorytmy/<int:algorytm_id>', methods=['PUT'])
+def update_algorytm(algorytm_id):
+    """
+    Endpoint do aktualizacji istniejącego algorytmu.
+    Obsługuje zarówno format multipart/form-data (z plikiem obrazu)
+    jak i czysty JSON.
+    
+    PUT /api/algorytmy/{algorytm_id}
+    
+    Returns:
+        JSON z danymi zaktualizowanego algorytmu lub komunikat błędu.
+    """
+    session = get_session()
+    algorytm = session.query(Algorytm).filter(Algorytm.id == algorytm_id).first()
+    
+    if not algorytm:
+        session.close()
+        return jsonify({"error": "Algorytm nie znaleziony"}), 404
+    
+    sciezka_obrazu = algorytm.sciezka_obrazu  # zachowaj obecną ścieżkę
+    
+    # Jeśli przesłano multipart/form-data (np. z plikiem)
+    if request.content_type and request.content_type.startswith('multipart/form-data'):
+        if 'obraz' in request.files:
+            file = request.files['obraz']
+            if file.filename:
+                # Bezpieczna nazwa pliku (usuwa niebezpieczne znaki)
+                filename = secure_filename(file.filename)
+                save_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+                file.save(save_path)
+                # zapisujemy ścieżkę względną do katalogu assets/images/algorithms
+                sciezka_obrazu = f"assets/images/algorithms/{filename}"
+        # Dane z formularza
+        kostka_id = request.form.get('kostka_id', type=int, default=algorytm.kostka_id)
+        nazwa = request.form.get('nazwa', default=algorytm.nazwa)
+        notacja = request.form.get('notacja', default=algorytm.notacja)
+    else:
+        # Obsługa czystego JSON
+        data = request.get_json() or {}
+        kostka_id = data.get('kostka_id', algorytm.kostka_id)
+        nazwa = data.get('nazwa', algorytm.nazwa)
+        notacja = data.get('notacja', algorytm.notacja)
+        if 'sciezka_obrazu' in data:
+            sciezka_obrazu = data.get('sciezka_obrazu')
+
+    # Sprawdź czy kostka istnieje
+    kostka = session.query(Kostka).filter(Kostka.id == kostka_id).first()
+    if not kostka:
+        session.close()
+        return jsonify({"error": "Kostka nie znaleziona"}), 404
+
+    # Aktualizacja danych
+    algorytm.kostka_id = kostka_id
+    algorytm.nazwa = nazwa
+    algorytm.notacja = notacja
+    algorytm.sciezka_obrazu = sciezka_obrazu
+    
+    session.commit()
+    
+    result = {
+        "id": algorytm.id, 
+        "kostka_id": algorytm.kostka_id, 
+        "nazwa": algorytm.nazwa, 
+        "notacja": algorytm.notacja,
+        "sciezka_obrazu": algorytm.sciezka_obrazu
+    }
+    
+    session.close()
+    return jsonify(result)
+
+@app.route('/api/algorytmy/<int:algorytm_id>', methods=['DELETE'])
+def delete_algorytm(algorytm_id):
+    """
+    Endpoint do usuwania algorytmu.
+    
+    DELETE /api/algorytmy/{algorytm_id}
+    
+    Returns:
+        JSON z potwierdzeniem usunięcia lub komunikat błędu.
+    """
+    session = get_session()
+    algorytm = session.query(Algorytm).filter(Algorytm.id == algorytm_id).first()
+    
+    if not algorytm:
+        session.close()
+        return jsonify({"error": "Algorytm nie znaleziony"}), 404
+    
+    # Zapisz informacje o usuniętym algorytmie
+    deleted_info = {
+        "id": algorytm.id,
+        "nazwa": algorytm.nazwa,
+        "message": "Algorytm został usunięty"
+    }
+    
+    # Usuń algorytm z bazy danych
+    session.delete(algorytm)
+    session.commit()
+    session.close()
+    
+    return jsonify(deleted_info)
 
 # =========================================================
 # =================== API UŻYTKOWNIKÓW ==================

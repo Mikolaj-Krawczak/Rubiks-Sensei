@@ -126,4 +126,17 @@ async function loginUser(username, password) {
   }
   
   return null;
-} 
+}
+
+// inside loadCubes(), after fetching `kostki` JSON:
+const seen = new Set();
+cubeSelect.innerHTML = '';
+kostki.forEach(cube => {
+  if (seen.has(cube.rozmiar)) return;  // skip duplicates
+  seen.add(cube.rozmiar);
+
+  const option = document.createElement('option');
+  option.value = cube.id;
+  option.textContent = `${cube.nazwa} (${cube.rozmiar})`;
+  cubeSelect.appendChild(option);
+}); 

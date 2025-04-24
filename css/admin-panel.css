@@ -1,0 +1,108 @@
+@font-face {
+    font-family: 'DungeonFont';
+    src: url('../assets/DungeonFont.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'DungeonFont', sans-serif;
+    font-size: 1.5rem;
+}
+
+.background-container {
+    background-image: url('../assets/images/background.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 100%;
+    height: 50vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.admin-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 2vh;
+}
+
+.admin-row {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 2vh;
+    margin: 2vh 2vh 0;
+    width: 100%;
+}
+
+.admin-tile {
+    font-size: 2vh;
+    background-color: #000;
+    color: #fff;
+    width: 20vh;
+    height: 26vh;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.admin-tile:hover {
+    animation: wobble 0.6s ease-in-out 1;
+    transform: translateY(-1vh)
+}
+
+.admin-tile:hover .admin-icon img {
+    animation: wobble 0.6s ease-in-out 1;
+    transform: translateY(-1vh)
+}
+
+.admin-icon {
+    width: 100%;
+    height: 18vh;
+    padding: 2vh;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.admin-icon img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.admin-title {
+    font-family: 'DungeonFont', monospace;
+    font-size: 3vh;
+    color: white;
+    padding: 0 2vh;
+}
+
+@keyframes wobble {
+    0%, 100% { transform: translateY(-1vh) rotate(-2deg); }
+    50%     { transform: translateY(-1vh) rotate(2deg); }
+}
+
+.karate-belt {
+    background-color: #fdfd7a;
+    width: 100%;
+    height: 8vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.karate-belt h2 {
+    font-size: 5vh;
+    margin: 0;
+} 

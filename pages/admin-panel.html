@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rubik's Sensei - Admin Panel</title>
+    <link rel="stylesheet" href="../css/admin-panel.css">
+</head>
+
+<body>
+
+<header-component></header-component>
+
+<div class="content">
+    <div class="background-container"></div>
+
+    <div class="karate-belt">
+        <h2>Admin Panel</h2>
+    </div>
+
+    <div class="admin-container">
+        <div class="admin-row">
+            <div class="admin-tile" onclick="openPage('admin-algorithms.html')">
+                <div class="admin-icon">
+                    <img src="../assets/images/algorithm-icon.png" alt="Algorithms">
+                </div>
+                <div class="admin-title">Algorithms Base</div>
+            </div>
+
+            <div class="admin-tile">
+                <div class="admin-icon">
+                    <img src="../assets/images/user-management.png" alt="User Management">
+                </div>
+                <div class="admin-title">User Management</div>
+            </div>
+
+            <div class="admin-tile">
+                <div class="admin-icon">
+                    <img src="../assets/images/statistics.png" alt="Statistics">
+                </div>
+                <div class="admin-title">Statistics</div>
+            </div>
+
+            <div class="admin-tile">
+                <div class="admin-icon">
+                    <img src="../assets/images/settings.png" alt="System Settings">
+                </div>
+                <div class="admin-title">System Settings</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="../components/header/header.js"></script>
+<script src="../scripts/handleNavigation.js"></script>
+</body>
+
+</html> 

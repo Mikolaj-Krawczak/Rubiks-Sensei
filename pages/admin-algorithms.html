@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rubik's Sensei - Algorithm Management</title>
+    <link rel="stylesheet" href="../css/admin-algorithms.css">
+</head>
+<body>
+<header-component></header-component>
+
+<div class="content">
+    <div class="background-container"></div>
+    
+    <div class="karate-belt">
+        <h2>Algorithm Management</h2>
+    </div>
+    
+    <div class="admin-content">
+        <!-- Database management buttons -->
+        <div class="database-actions">
+            <button id="clear-database-btn" class="danger-btn">CLEAR ALL ALGORITHMS</button>
+        </div>
+        
+        <div class="admin-panel">
+            <div class="admin-section">
+                <h3>Add New Algorithm</h3>
+                <form id="add-algorithm-form">
+                    <div class="form-group">
+                        <label for="cube-select">Select Cube:</label>
+                        <select id="cube-select" required>
+                            <!-- Options will be populated dynamically -->
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="algorithm-name">Algorithm Name:</label>
+                        <input type="text" id="algorithm-name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="algorithm-notation">Notation:</label>
+                        <input type="text" id="algorithm-notation" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="algorithm-image">Image (optional):</label>
+                        <input type="file" id="algorithm-image" accept="image/*">
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">Add Algorithm</button>
+                </form>
+            </div>
+            
+            <div class="admin-section">
+                <h3>Existing Algorithms</h3>
+                <div class="filter-section">
+                    <label for="filter-cube">Filter by Cube:</label>
+                    <select id="filter-cube">
+                        <option value="all">All Cubes</option>
+                        <!-- Options will be populated dynamically -->
+                    </select>
+                </div>
+                
+                <div class="algorithms-list">
+                    <!-- Algorithms will be populated here dynamically -->
+                    <!-- Example structure:
+                    <div class="algorithm-item">
+                        <div class="algorithm-info">
+                            <div class="algorithm-image">
+                                <img src="../assets/images/algorithms/example.png" alt="Algorithm Image">
+                            </div>
+                            <div class="algorithm-details">
+                                <h4>Algorithm Name</h4>
+                                <p>R U R' U'</p>
+                                <p>Cube: 3x3</p>
+                            </div>
+                        </div>
+                        <div class="algorithm-actions">
+                            <button class="edit-btn">Edit</button>
+                            <button class="delete-btn">Delete</button>
+                        </div>
+                    </div>
+                    -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Algorithm Modal -->
+<div id="edit-modal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h3>Edit Algorithm</h3>
+        <form id="edit-algorithm-form">
+            <input type="hidden" id="edit-algorithm-id">
+            
+            <div class="form-group">
+                <label for="edit-cube-select">Select Cube:</label>
+                <select id="edit-cube-select" required>
+                    <!-- Options will be populated dynamically -->
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="edit-algorithm-name">Algorithm Name:</label>
+                <input type="text" id="edit-algorithm-name" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="edit-algorithm-notation">Notation:</label>
+                <input type="text" id="edit-algorithm-notation" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="edit-algorithm-image">New Image (optional):</label>
+                <input type="file" id="edit-algorithm-image" accept="image/*">
+            </div>
+            
+            <div class="current-image">
+                <p>Current image:</p>
+                <img id="current-algorithm-image" src="" alt="Current Image">
+            </div>
+            
+            <button type="submit" class="submit-btn">Update Algorithm</button>
+        </form>
+    </div>
+</div>
+
+<!-- Confirmation Modal -->
+<div id="confirmation-modal" class="modal">
+    <div class="modal-content">
+        <h3>Confirm Action</h3>
+        <p id="confirmation-message">Are you sure you want to delete all algorithms?</p>
+        <div class="confirmation-buttons">
+            <button id="confirm-yes" class="danger-btn">Yes, Delete All</button>
+            <button id="confirm-no" class="cancel-btn">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<script src="../components/header/header.js"></script>
+<script src="../scripts/handleNavigation.js"></script>
+<script src="../scripts/admin-algorithms.js"></script>
+</body>
+</html> 

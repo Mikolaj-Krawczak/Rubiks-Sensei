@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rubik's Sensei - Settings</title>
+    <link rel="stylesheet" href="../css/settings.css">
+</head>
+
+<body>
+
+<header-component></header-component>
+
+<div class="content">
+    <div class="background-container"></div>
+
+    <div class="karate-belt">
+        <h2>Settings</h2>
+    </div>
+
+    <div class="settings-container">
+        <div class="settings-section">
+            <h3>Account Settings</h3>
+            <div class="settings-item">
+                <label for="username">Username</label>
+                <input type="text" id="username" value="User123">
+            </div>
+            <div class="settings-item">
+                <label for="email">Email</label>
+                <input type="email" id="email" value="user@example.com">
+            </div>
+            <div class="settings-item">
+                <label for="password">Password</label>
+                <input type="password" id="password" value="********">
+            </div>
+            <button class="save-btn">Save Changes</button>
+        </div>
+
+        <div class="settings-section">
+            <h3>Display Settings</h3>
+            <div class="settings-item">
+                <label for="theme">Theme</label>
+                <select id="theme">
+                    <option value="light">Light</option>
+                    <option value="dark">Dark</option>
+                </select>
+            </div>
+            <div class="settings-item">
+                <label for="font-size">Font Size</label>
+                <select id="font-size">
+                    <option value="small">Small</option>
+                    <option value="medium" selected>Medium</option>
+                    <option value="large">Large</option>
+                </select>
+            </div>
+            <button class="save-btn">Apply</button>
+        </div>
+
+        <div class="settings-section">
+            <h3>Notification Settings</h3>
+            <div class="settings-item checkbox">
+                <input type="checkbox" id="email-notifications" checked>
+                <label for="email-notifications">Receive email notifications</label>
+            </div>
+            <div class="settings-item checkbox">
+                <input type="checkbox" id="push-notifications" checked>
+                <label for="push-notifications">Receive push notifications</label>
+            </div>
+            <div class="settings-item checkbox">
+                <input type="checkbox" id="app-sounds" checked>
+                <label for="app-sounds">App sounds</label>
+            </div>
+            <button class="save-btn">Save Preferences</button>
+        </div>
+    </div>
+</div>
+
+<script src="../components/header/header.js"></script>
+<script src="../scripts/handleNavigation.js"></script>
+</body>
+
+</html> 
