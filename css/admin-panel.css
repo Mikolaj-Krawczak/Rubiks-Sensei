@@ -105,4 +105,12 @@ body {
 .karate-belt h2 {
     font-size: 5vh;
     margin: 0;
-} 
+}
+.admin-icon i {
+    color: white; 
+    font-size: 4vh; 
+}
+
+.admin-title {
+    font-size: 4vh; 
+}

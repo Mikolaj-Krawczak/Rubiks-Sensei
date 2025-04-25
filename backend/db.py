@@ -27,34 +27,29 @@ def get_session():
 def init_db():
     """
     Inicjalizuje bazę danych, tworząc strukturę tabel i dodając przykładowe dane.
-    
-    Funkcja sprawdza, czy plik bazy danych już istnieje. Jeśli nie, tworzy
-    katalog 'instance', tworzy bazę danych, inicjalizuje tabele i wypełnia
-    je przykładowymi danymi.
+    Dodaje dane tylko jeśli baza nie zawiera już żadnych kostek.
     """
-    # Sprawdź, czy plik bazy danych już istnieje
+    # Upewnij się, że katalog i plik bazy danych istnieją
     db_file = "instance/database.db"
-    
     if not os.path.exists(db_file):
-        print("Tworzenie bazy danych...")
-        
-        # Utwórz katalog 'instance', jeśli nie istnieje
+        print("Tworzenie pliku bazy danych...")
         os.makedirs("instance", exist_ok=True)
-        
-        # Utwórz plik bazy danych
         conn = sqlite3.connect(db_file)
         conn.close()
-        
-        # Inicjalizacja silnika bazy danych i tworzenie tabel
-        engine = create_engine(DB_PATH)
-        Base.metadata.create_all(engine)
-        
-        # Dodaj przykładowe dane
+
+    # Stwórz tabele (jeśli brak)
+    engine = create_engine(DB_PATH)
+    Base.metadata.create_all(engine)
+
+    # Dodaj przykładowe dane tylko jeśli tabela Kostka jest pusta
+    session = get_db_session()
+    if session.query(Kostka).count() == 0:
+        print("Dodawanie przykładowych danych...")
         add_sample_data()
-        
-        print("Baza danych została utworzona i wypełniona przykładowymi danymi.")
+        print("Baza danych została wypełniona przykładowymi danymi.")
     else:
-        print("Baza danych już istnieje.")
+        print("Baza danych już zawiera dane, pomijam dodawanie przykładowych danych.")
+    session.close()
 
 def add_sample_data():
     """

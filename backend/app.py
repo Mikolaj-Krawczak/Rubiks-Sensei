@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify, send_file
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 import os
 from sqlalchemy import desc
 import json
@@ -489,18 +489,21 @@ def handle_uzytkownicy():
             logger.error(f"Błąd podczas tworzenia użytkownika: {str(e)}")
             return jsonify({'error': str(e)}), 500
 
-@app.route('/api/uzytkownicy/<int:uzytkownik_id>', methods=['GET'])
-def get_uzytkownik(uzytkownik_id):
+@app.route('/api/uzytkownicy/<int:uzytkownik_id>', methods=['GET', 'PUT', 'DELETE'])
+@cross_origin(methods=['GET', 'PUT', 'DELETE'])
+def handle_uzytkownik(uzytkownik_id):
     """
-    Endpoint do pobierania pojedynczego użytkownika po ID.
+    Endpoint do pobierania, aktualizacji lub usuwania pojedynczego użytkownika po ID.
     
-    GET /api/uzytkownicy/{uzytkownik_id}
+    GET /api/uzytkownicy/{uzytkownik_id}: Pobiera dane użytkownika
+    PUT /api/uzytkownicy/{uzytkownik_id}: Aktualizuje dane użytkownika
+    DELETE /api/uzytkownicy/{uzytkownik_id}: Usuwa użytkownika
     
     Args:
-        uzytkownik_id (int): ID użytkownika do pobrania
+        uzytkownik_id (int): ID użytkownika
         
     Returns:
-        JSON z danymi użytkownika (bez hasła) lub komunikat błędu 404 jeśli nie znaleziono.
+        JSON z danymi użytkownika, komunikatem sukcesu lub błędu.
     """
     session = get_session()
     uzytkownik = session.query(Uzytkownik).filter(Uzytkownik.id == uzytkownik_id).first()
@@ -508,15 +511,63 @@ def get_uzytkownik(uzytkownik_id):
     if not uzytkownik:
         session.close()
         return jsonify({"error": "Użytkownik nie znaleziony"}), 404
-    
-    result = {
-        "id": uzytkownik.id, 
-        "nazwa_uzytkownika": uzytkownik.nazwa_uzytkownika, 
-        "ranga_kyu": uzytkownik.ranga_kyu
-    }
-    
-    session.close()
-    return jsonify(result)
+
+    if request.method == 'GET':
+        result = {
+            "id": uzytkownik.id, 
+            "nazwa_uzytkownika": uzytkownik.nazwa_uzytkownika, 
+            "ranga_kyu": uzytkownik.ranga_kyu
+        }
+        session.close()
+        return jsonify(result)
+
+    elif request.method == 'PUT':
+        try:
+            data = request.json
+            
+            # Sprawdź, czy nowa nazwa użytkownika już istnieje (jeśli jest zmieniana)
+            if 'nazwa_uzytkownika' in data and data['nazwa_uzytkownika'] != uzytkownik.nazwa_uzytkownika:
+                istniejacy = session.query(Uzytkownik).filter_by(nazwa_uzytkownika=data['nazwa_uzytkownika']).first()
+                if istniejacy:
+                    session.close()
+                    return jsonify({'error': 'Użytkownik o tej nazwie już istnieje'}), 400
+
+            # Aktualizuj pola (ignoruj hasło, jeśli jest przesłane)
+            uzytkownik.nazwa_uzytkownika = data.get('nazwa_uzytkownika', uzytkownik.nazwa_uzytkownika)
+            uzytkownik.ranga_kyu = data.get('ranga_kyu', uzytkownik.ranga_kyu)
+            # UWAGA: Nie aktualizujemy hasła przez ten endpoint dla bezpieczeństwa.
+            # Wymagałoby to osobnego mechanizmu resetowania/zmiany hasła.
+            
+            session.commit()
+            
+            # Zwróć zaktualizowane dane (bez hasła)
+            response = {
+                'id': uzytkownik.id,
+                'nazwa_uzytkownika': uzytkownik.nazwa_uzytkownika,
+                'ranga_kyu': uzytkownik.ranga_kyu,
+                'message': 'Użytkownik został zaktualizowany pomyślnie'
+            }
+            session.close()
+            return jsonify(response)
+            
+        except Exception as e:
+            session.rollback()
+            session.close()
+            logger.error(f"Błąd podczas aktualizacji użytkownika {uzytkownik_id}: {str(e)}")
+            return jsonify({'error': str(e)}), 500
+
+    elif request.method == 'DELETE':
+        try:
+            session.delete(uzytkownik)
+            session.commit()
+            session.close()
+            return jsonify({'message': f'Użytkownik o ID {uzytkownik_id} został usunięty'}), 200
+            
+        except Exception as e:
+            session.rollback()
+            session.close()
+            logger.error(f"Błąd podczas usuwania użytkownika {uzytkownik_id}: {str(e)}")
+            return jsonify({'error': str(e)}), 500
 
 # =========================================================
 # ===================== API UŁOŻEŃ =======================
@@ -679,6 +730,32 @@ def login():
     except Exception as e:
         logger.error(f"Błąd podczas logowania: {str(e)}")
         return jsonify({'error': str(e)}), 500
+
+# ==========================================================
+# ===================== OBSŁUGA BŁĘDÓW =====================
+# ==========================================================
+
+@app.errorhandler(400)
+def bad_request(error):
+    return jsonify(error=str(error)), 400
+
+@app.errorhandler(404)
+def not_found(error):
+    # Sprawdź, czy żądanie dotyczy API
+    if request.path.startswith('/api/'):
+        return jsonify(error="Resource not found", message=str(error)), 404
+    # Dla innych ścieżek (np. frontendowych) możesz zwrócić stronę 404 HTML lub przekierowanie
+    # return render_template('404.html'), 404 # Jeśli masz szablon
+    return str(error), 404 # Domyślna strona błędu HTML Flaska
+
+@app.errorhandler(405)
+def method_not_allowed(error):
+    return jsonify(error="Method Not Allowed", message=str(error)), 405
+
+@app.errorhandler(500)
+def internal_server_error(error):
+    logger.error(f"Internal Server Error: {error}") # Logowanie błędu 500
+    return jsonify(error="Internal Server Error", message="Wystąpił nieoczekiwany błąd serwera."), 500
 
 # Uruchomienie aplikacji
 if __name__ == '__main__':

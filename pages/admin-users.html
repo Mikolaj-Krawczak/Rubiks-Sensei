@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rubik's Sensei - Zarządzanie Użytkownikami</title>
+    <link rel="stylesheet" href="../css/admin-users.css">
+</head>
+<body>
+<header-component></header-component>
+
+<div class="content">
+    <div class="background-container"></div>
+
+    <div class="karate-belt">
+        <h2>Zarządzanie Użytkownikami</h2>
+    </div>
+
+    <div class="admin-content">
+        <div class="admin-panel">
+            <div class="admin-section">
+                <h3 id="form-title">Dodaj Nowego Użytkownika</h3>
+                <form id="user-form">
+                    <input type="hidden" id="user-id"> <!-- Ukryte pole na ID podczas edycji -->
+
+                    <div class="form-group">
+                        <label for="username">Nazwa użytkownika:</label>
+                        <input type="text" id="username" required>
+                    </div>
+
+                    <div class="form-group" id="password-field">
+                        <label for="password">Hasło:</label>
+                        <input type="password" id="password" required>
+                        <small>Hasło wymagane tylko przy tworzeniu nowego użytkownika.</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="rank">Ranga Kyu (1-6):</label>
+                        <input type="number" id="rank" min="1" max="6" value="6" required>
+                    </div>
+
+                    <button type="submit" class="submit-btn">Zapisz Użytkownika</button>
+                    <button type="button" id="cancel-edit-btn" class="cancel-btn" style="display: none;">Anuluj Edycję</button>
+                </form>
+                 <div id="form-message-area" class="message-area"></div> <!-- Komunikaty dla formularza -->
+            </div>
+
+            <div class="admin-section">
+                <h3>Istniejący Użytkownicy</h3>
+                <!-- Opcjonalnie: Dodaj filtrowanie/wyszukiwanie jeśli potrzebne -->
+                <!--
+                <div class="filter-section">
+                    <label for="search-user">Wyszukaj:</label>
+                    <input type="text" id="search-user" placeholder="Wpisz nazwę...">
+                </div>
+                 -->
+                 <div id="list-message-area" class="message-area"></div> <!-- Komunikaty dla listy -->
+                <div class="users-list">
+                    <!-- Użytkownicy będą wstawiani tutaj dynamicznie -->
+                    <!-- Przykład:
+                    <div class="user-item" data-id="1">
+                        <div class="user-info">
+                            <div class="user-details">
+                                <h4>sensei (ID: 1)</h4>
+                                <p>Ranga Kyu: 1</p>
+                            </div>
+                        </div>
+                        <div class="user-actions">
+                            <button class="edit-btn" onclick="openEditModal(...)">Edit</button>
+                            <button class="delete-btn" onclick="deleteUser(...)">Delete</button>
+                        </div>
+                    </div>
+                     -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Edycji Użytkownika (uproszczony, bez obrazka) -->
+<div id="edit-modal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal" onclick="closeEditModal()">&times;</span>
+        <h3>Edytuj Użytkownika</h3>
+        <form id="edit-user-form">
+            <input type="hidden" id="edit-user-id">
+
+            <div class="form-group">
+                <label for="edit-username">Nazwa użytkownika:</label>
+                <input type="text" id="edit-username" required>
+            </div>
+
+            <div class="form-group">
+                <label for="edit-rank">Ranga Kyu (1-6):</label>
+                <input type="number" id="edit-rank" min="1" max="6" required>
+            </div>
+
+            <button type="submit" class="submit-btn">Zaktualizuj Użytkownika</button>
+        </form>
+         <div id="edit-message-area" class="message-area"></div> <!-- Komunikaty dla modala edycji -->
+    </div>
+</div>
+
+<!-- Potwierdzenie Usunięcia (można dostosować z admin-algorithms) -->
+<div id="confirmation-modal" class="modal">
+    <div class="modal-content">
+        <h3>Potwierdź Usunięcie</h3>
+        <p id="confirmation-message">Czy na pewno chcesz usunąć tego użytkownika?</p>
+        <div class="confirmation-buttons">
+            <button id="confirm-yes" class="danger-btn">Tak, usuń</button>
+            <button id="confirm-no" class="cancel-btn">Anuluj</button>
+        </div>
+    </div>
+</div>
+
+
+<script src="../components/header/header.js"></script> <!-- Założenie istnienia komponentu nagłówka -->
+<script src="../scripts/handleNavigation.js"></script> <!-- Założenie istnienia skryptu nawigacji -->
+<script src="../scripts/admin-users.js"></script>
+</body>
+</html> 
