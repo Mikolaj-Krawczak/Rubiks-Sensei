@@ -23,11 +23,7 @@ async function fetchApi(endpoint, method = 'GET', data = null) {
   }
 }
 
-// Przykłady użycia API
-
-// === Pobieranie danych ===
-
-// Pobieranie wszystkich kostek
+// Pobieranie listy kostek
 async function getKostki() {
   return fetchApi('kostki');
 }
@@ -37,30 +33,34 @@ async function getAlgorytmy(kostkaId) {
   return fetchApi(`algorytmy?kostka_id=${kostkaId}`);
 }
 
+// Dodawanie nowego algorytmu
+async function addAlgorytm(nazwa, notacja, kostkaId) {
+  return fetchApi('algorytmy', 'POST', {
+    nazwa: nazwa,
+    notacja: notacja,
+    kostka_id: kostkaId
+  });
+}
+
 // Pobieranie czasów ułożeń dla określonego użytkownika
 async function getUlozeniaUzytkownika(uzytkownikId) {
   return fetchApi(`ulozenia?uzytkownik_id=${uzytkownikId}`);
 }
 
-// === Dodawanie danych ===
-
-// Rejestracja nowego użytkownika
-async function registerUser(username, password, rangaKyu = 6) {
-  return fetchApi('uzytkownicy', 'POST', {
-    nazwa_uzytkownika: username,
-    haslo: password,
-    ranga_kyu: rangaKyu
-  });
-}
-
 // Dodawanie nowego czasu ułożenia
-async function addUlozenie(uzytkownikId, kostkaId, czas, scramble = null) {
+async function addUlozenie(uzytkownikId, kostkaId, czas) {
+  const timestamp = new Date().toISOString();
   return fetchApi('ulozenia', 'POST', {
     uzytkownik_id: uzytkownikId,
     kostka_id: kostkaId,
     czas: czas,
-    scramble: scramble
+    data: timestamp
   });
+}
+
+// Pobieranie listy użytkowników
+async function getUzytkownicy() {
+  return fetchApi('uzytkownicy');
 }
 
 // === Przykłady użycia w aplikacji ===

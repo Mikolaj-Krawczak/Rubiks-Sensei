@@ -42,7 +42,7 @@ body {
     padding: 2vh;
 }
 
-/* Database management section (Optional) */
+/* Sekcja zarządzania bazą danych (Opcjonalna) */
 .database-actions {
     margin-bottom: 2vh;
     text-align: center;
@@ -112,7 +112,7 @@ body {
     text-align: center;
 }
 
-/* Form styling */
+/* Stylowanie formularza */
 .form-group {
     margin-bottom: 2vh;
 }
@@ -127,9 +127,9 @@ body {
     width: 100%;
     padding: 1vh;
     font-size: 2vh;
-    font-family: 'Arial', sans-serif; /* Use a standard font for inputs */
+    font-family: 'Arial', sans-serif; /* Użyj standardowej czcionki dla inputów */
     border: 1px solid black;
-    box-sizing: border-box; /* Include padding and border in element's total width and height */
+    box-sizing: border-box; /* Uwzględnij padding i border w całkowitej szerokości i wysokości elementu */
 }
 
 .submit-btn {
@@ -148,18 +148,18 @@ body {
     background-color: #333;
 }
 
-/* User list styling */
+/* Stylowanie listy użytkowników */
 .filter-section {
     margin-bottom: 2vh;
     display: flex;
-    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    flex-wrap: wrap; /* Pozwól na zawijanie na mniejszych ekranach */
     align-items: center;
-    gap: 1vh 2vh; /* Vertical and horizontal gap */
+    gap: 1vh 2vh; /* Odstęp pionowy i poziomy */
 }
 
 .filter-section label {
     font-size: 2vh;
-    margin-right: 0.5vh; /* Add space after label */
+    margin-right: 0.5vh; /* Dodaj odstęp po etykiecie */
 }
 
 .filter-section select, .filter-section input[type="text"] {
@@ -167,32 +167,32 @@ body {
     font-size: 1.8vh;
     font-family: 'Arial', sans-serif;
     border: 1px solid black;
-    flex-grow: 1; /* Allow search input to take more space */
-    min-width: 150px; /* Minimum width for inputs */
+    flex-grow: 1; /* Pozwól inputowi wyszukiwania zajmować więcej miejsca */
+    min-width: 150px; /* Minimalna szerokość dla inputów */
 }
 
 .users-list {
     max-height: 50vh;
     overflow-y: auto;
-    border: 1px solid #ddd; /* Add a border around the list */
-    margin-top: 1vh; /* Add some space above the list */
+    border: 1px solid #ddd; /* Dodaj obramowanie wokół listy */
+    margin-top: 1vh; /* Dodaj trochę miejsca nad listą */
 }
 
 .user-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1.5vh; /* Slightly increase padding */
-    border-bottom: 1px solid #eee; /* Lighter border between items */
-    background-color: #fff; /* Ensure white background */
+    padding: 1.5vh; /* Nieco zwiększ padding */
+    border-bottom: 1px solid #eee; /* Jaśniejsze obramowanie między elementami */
+    background-color: #fff; /* Zapewnij białe tło */
 }
 
 .user-item:last-child {
-    border-bottom: none; /* Remove border for the last item */
+    border-bottom: none; /* Usuń obramowanie dla ostatniego elementu */
 }
 
 .user-item:hover {
-    background-color: #f9f9f9; /* Slightly different hover effect */
+    background-color: #f9f9f9; /* Nieco inny efekt hover */
 }
 
 .user-info {
@@ -201,17 +201,17 @@ body {
     gap: 2vh;
 }
 
-/* No image for users, adjust details layout */
+/* Brak obrazu dla użytkowników, dostosuj układ szczegółów */
 .user-details h4 {
     margin: 0;
     font-size: 2.2vh;
-    font-weight: bold; /* Make username bold */
+    font-weight: bold; /* Pogrub nazwę użytkownika */
 }
 
 .user-details p {
     margin: 0.5vh 0;
     font-size: 1.8vh;
-    color: #555; /* Slightly dimmer color for details */
+    color: #555; /* Nieco ciemniejszy kolor dla szczegółów */
 }
 
 .user-actions {
@@ -227,7 +227,7 @@ body {
     font-size: 1.8vh;
     font-family: 'DungeonFont', sans-serif;
     cursor: pointer;
-    transition: background-color 0.2s; /* Add transition */
+    transition: background-color 0.2s; /* Dodaj przejście */
 }
 
 .edit-btn:hover, .delete-btn:hover {
@@ -235,40 +235,40 @@ body {
 }
 
 .delete-btn {
-    background-color: #d9534f; /* Align with danger button color */
+    background-color: #d9534f; /* Dostosuj do koloru przycisku zagrożenia */
 }
 
 .delete-btn:hover {
-    background-color: #c9302c; /* Align with danger button hover color */
+    background-color: #c9302c; /* Dostosuj do koloru hover przycisku zagrożenia */
 }
 
-/* Modal styling */
+/* Stylowanie modalu */
 .modal {
-    display: none; /* Hidden by default */
+    display: none; /* Domyślnie ukryty */
     position: fixed;
     z-index: 10;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgba(0, 0, 0, 0.6); /* Darker background */
+    overflow: auto; /* Włącz przewijanie, jeśli potrzeba */
+    background-color: rgba(0, 0, 0, 0.6); /* Ciemniejsze tło */
 }
 
 .modal-content {
     background-color: #fefefe;
-    margin: 10vh auto; /* More vertical margin */
-    padding: 3vh 4vh; /* Adjust padding */
+    margin: 10vh auto; /* Więcej marginesu pionowego */
+    padding: 3vh 4vh; /* Dostosuj padding */
     border: 1px solid #888;
-    width: 80%; /* Default width */
-    max-width: 600px; /* Maximum width */
+    width: 80%; /* Domyślna szerokość */
+    max-width: 600px; /* Maksymalna szerokość */
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
     animation-name: animatetop;
     animation-duration: 0.4s;
-    position: relative; /* Needed for close button positioning */
+    position: relative; /* Potrzebne dla pozycjonowania przycisku zamykania */
 }
 
-/* Add Animation */
+/* Dodaj animację */
 @keyframes animatetop {
     from {top: -300px; opacity: 0}
     to {top: 0; opacity: 1}
@@ -276,7 +276,7 @@ body {
 
 .close-modal {
     color: #aaa;
-    position: absolute; /* Position relative to modal-content */
+    position: absolute; /* Pozycja względem modal-content */
     top: 1vh;
     right: 2vh;
     font-size: 3vh;
@@ -296,17 +296,17 @@ body {
     font-size: 3vh;
 }
 
-/* Specific adjustments for edit user modal */
+/* Specyficzne dostosowania dla modalu edycji użytkownika */
 #edit-modal .form-group {
-    margin-bottom: 2.5vh; /* Slightly more space in modal form */
+    margin-bottom: 2.5vh; /* Nieco więcej miejsca w formularzu modalu */
 }
 
-/* Remove current image display (was for algorithms) */
+/* Usuń wyświetlanie bieżącego obrazu (było dla algorytmów) */
 .current-image {
     display: none; 
 }
 
-/* Confirmation Modal specific styles */
+/* Specyficzne style dla modalu potwierdzenia */
 #confirmation-modal .modal-content {
-     max-width: 400px; /* Smaller width for confirmation */
+     max-width: 400px; /* Mniejsza szerokość dla potwierdzenia */
 } 

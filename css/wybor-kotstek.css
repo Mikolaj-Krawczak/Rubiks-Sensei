@@ -9,7 +9,7 @@ body {
     margin: 0;
     padding: 0;
     font-family: 'DungeonFont', sans-serif;
-    /*background-color: #f0f0f0;*/
+    /*kolor-tła: #f0f0f0;*/
     font-size: 1.5rem;
 }
 
@@ -47,7 +47,7 @@ body {
     color: #fff;
     width: 20vh;
     height: 26vh;
-    /*border-radius: 1vh;*/
+    /*zaokrąglenie-narożników: 1vh;*/
     display: flex;
     flex-direction: column;
     flex-grow: 1;
@@ -55,7 +55,7 @@ body {
     align-items: center;
     text-align: center;
     cursor: pointer;
-    /*box-shadow: 0 0.4vh 0.8vh rgba(0,0,0,0.3);*/
+    /*cień: 0 0.4vh 0.8vh rgba(0,0,0,0.3);*/
     transition: transform 0.3s ease, filter 0.3s ease;
 }
 

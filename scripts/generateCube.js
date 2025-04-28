@@ -3,14 +3,14 @@ const GAP = 0.05;
 const ANIMATION_DURATION = 500; // ms
 const cubespace = document.getElementById("cubespace");
 
-// Scene setup
+// Konfiguracja sceny
 const scene = new THREE.Scene();
 const loader = new THREE.TextureLoader();
 loader.load(
     '../assets/images/background2.png',
     (texture) => { scene.background = texture; },
     undefined,
-    (error) => { console.error('Background load failed:', error); scene.background = new THREE.Color(0xc2c2c2); }
+    (error) => { console.error('Błąd ładowania tła:', error); scene.background = new THREE.Color(0xc2c2c2); }
 );
 
 const camera = new THREE.PerspectiveCamera(
@@ -25,7 +25,7 @@ const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(cubespace.clientWidth, cubespace.clientHeight);
 cubespace.appendChild(renderer.domElement);
 
-// Lighting
+// Oświetlenie
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
 scene.add(ambientLight);
 
@@ -33,26 +33,26 @@ const directionalLight = new THREE.DirectionalLight(0xffffff, 0.6);
 directionalLight.position.set(10, 20, 15);
 scene.add(directionalLight);
 
-// Controls for rotating the entire cube
+// Kontrolki do obracania całej kostki
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.1;
 
-// Cube pieces
+// Elementy kostki
 const cubeGroup = new THREE.Group();
 scene.add(cubeGroup);
 
-// Colors for the cube faces
+// Kolory ścianek kostki
 const colors = {
-    front: 0x00ff00, // Green
-    back: 0x0000ff, // Blue
-    up: 0xffffff, // White
-    down: 0xffff00, // Yellow
-    left: 0xffa500, // Orange
-    right: 0xff0000 // Red
+    front: 0x00ff00, // Zielony
+    back: 0x0000ff, // Niebieski
+    up: 0xffffff, // Biały
+    down: 0xffff00, // Żółty
+    left: 0xffa500, // Pomarańczowy
+    right: 0xff0000 // Czerwony
 };
 
-// Create the 27 small cubes (3x3x3)
+// Utworzenie 27 małych kostek (3x3x3)
 const cubes = [];
 const totalSize = CUBE_SIZE * 3 + GAP * 2;
 const offset = totalSize / 2 - CUBE_SIZE / 2;
@@ -112,7 +112,7 @@ for (let x = 0; x < 3; x++) {
     }
 }
 
-// Animation state
+// Stan animacji
 let isAnimating = false;
 let animationStartTime = 0;
 let animationGroup = null;
@@ -122,7 +122,7 @@ let moveQueue = [];
 let moveHistory = [];
 let currentMoveIndex = -1;
 
-// Function to get cubes on a specific face
+// Funkcja do pobierania kostek na określonej ściance
 function getCubesOnFace(face) {
     const faceCubes = [];
     switch (face) {
@@ -160,7 +160,7 @@ function getCubesOnFace(face) {
     return faceCubes;
 }
 
-// Function to start a face rotation
+// Funkcja do rozpoczęcia obrotu ścianki
 function rotateFace(face, direction, isReplay = false) {
     if (isAnimating) return;
     const faceCubes = getCubesOnFace(face);

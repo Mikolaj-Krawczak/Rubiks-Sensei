@@ -266,7 +266,7 @@ cancelEditBtn.addEventListener('click', () => {
     passwordField.style.display = 'block';
     passwordInput.required = true;
     cancelEditBtn.style.display = 'none';
-     showMessage('', 'info', formMessageArea); // Clear messages
+    showMessage('', 'info', formMessageArea); // Clear messages
 });
 
 // Confirmation Modal Buttons

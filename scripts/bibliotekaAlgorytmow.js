@@ -17,13 +17,13 @@ async function fetchAlgorithms() {
         const algorytmyResponse = await fetch(`http://localhost:5000/api/algorytmy?kostka_id=${kostka3x3.id}`);
         const algorytmy = await algorytmyResponse.json();
         
-        // Filter out any algorithms marked as deleted or cleanup-flag entries
+        // Filtruj algorytmy oznaczone jako usunięte lub wpisy oznaczające czyszczenie
         const activeAlgorytmy = algorytmy.filter(alg => 
             !alg.nazwa.includes('(DELETED)') &&
             alg.nazwa !== '___CLEANUP_FLAG___'
         );
         
-        console.log("Loaded algorithms:", activeAlgorytmy);
+        console.log("Załadowane algorytmy:", activeAlgorytmy);
         
         // Wyświetlanie algorytmów
         displayAlgorithms(activeAlgorytmy);
@@ -54,14 +54,14 @@ function displayAlgorithms(algorytmy) {
         const algorithmItem = document.createElement('div');
         algorithmItem.className = 'algorithm-item control-btn';
         
-        // Use the same image handling as in admin-algorithms.js
+        // Użyj tej samej obsługi obrazów jak w admin-algorithms.js
         let imgPath;
         
         if (alg.sciezka_obrazu) {
-            // If the algorithm has a stored path, use it
+            // Jeśli algorytm ma zapisaną ścieżkę, użyj jej
             imgPath = `../${alg.sciezka_obrazu}`;
         } else {
-            // Otherwise use the mapping or notation as filename
+            // W przeciwnym razie użyj mapowania lub notacji jako nazwy pliku
             const mappedImage = algorithmImageMap[alg.notacja];
             const imageName = mappedImage || alg.notacja;
             imgPath = `../assets/images/algorithms/${imageName}.png`;

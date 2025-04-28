@@ -65,7 +65,7 @@ p {
 
 .container {
     width: 100%;
-    /*padding: 0 1rem 1rem;*/
+    /*odstęp: 0 1rem 1rem;*/
     display: flex;
     flex-direction: column;
     border: 2px solid black;

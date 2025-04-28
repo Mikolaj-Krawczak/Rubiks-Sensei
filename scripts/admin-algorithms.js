@@ -1,7 +1,7 @@
-// Base URL for the API
+// Bazowy URL dla API
 const API_BASE_URL = 'http://localhost:5000/api';
 
-// DOM elements
+// Elementy DOM
 const cubeSelect = document.getElementById('cube-select');
 const filterCubeSelect = document.getElementById('filter-cube');
 const algorithmsList = document.querySelector('.algorithms-list');
@@ -14,10 +14,10 @@ const confirmationModal = document.getElementById('confirmation-modal');
 const confirmYesBtn = document.getElementById('confirm-yes');
 const confirmNoBtn = document.getElementById('confirm-no');
 
-// Flag to prevent multiple simultaneous loads
+// Flaga zapobiegająca wielu jednoczesnym ładowaniom
 let isLoading = false;
 
-// Algorithm image mapping - same as in bibliotekaAlgorytmow.js
+// Mapowanie obrazków algorytmów - tak samo jak w bibliotekaAlgorytmow.js
 const algorithmImageMap = {
     "R U R' U' R' F R2 U' R' U' R U R' F'": "R U R' U' R U' R' F' U' F R U R'",  // PLL-T
     "R U R' U R U2 R'": "R U R' U R U2 R' F R U R' U' F'",                       // Sune
@@ -27,23 +27,23 @@ const algorithmImageMap = {
     "L' R L R'": "L F' L' U' L U F U' L'"                                         // Top First
 };
 
-// Track loaded algorithm IDs to prevent duplicates
+// Śledzenie załadowanych ID algorytmów, aby zapobiec duplikatom
 const loadedAlgorithmIds = new Set();
 
-// Initialize the page
+// Inicjalizacja strony
 document.addEventListener('DOMContentLoaded', () => {
     loadCubes();
     loadAlgorithms();
     setupEventListeners();
 });
 
-// Load cubes for dropdowns
+// Ładowanie kostek do list rozwijanych
 async function loadCubes() {
     try {
         const response = await fetch(`${API_BASE_URL}/kostki`);
         const cubes = await response.json();
         
-        // Populate cube select in add form
+        // Wypełnij wybór kostki w formularzu dodawania
         cubeSelect.innerHTML = '';
         cubes.forEach(cube => {
             const option = document.createElement('option');
@@ -52,8 +52,8 @@ async function loadCubes() {
             cubeSelect.appendChild(option);
         });
         
-        // Populate cube select in filter
-        filterCubeSelect.innerHTML = '<option value="all">All Cubes</option>';
+        // Wypełnij wybór kostki w filtrze
+        filterCubeSelect.innerHTML = '<option value="all">Wszystkie Kostki</option>';
         cubes.forEach(cube => {
             const option = document.createElement('option');
             option.value = cube.id;
@@ -61,7 +61,7 @@ async function loadCubes() {
             filterCubeSelect.appendChild(option);
         });
         
-        // Populate cube select in edit form
+        // Wypełnij wybór kostki w formularzu edycji
         const editCubeSelect = document.getElementById('edit-cube-select');
         editCubeSelect.innerHTML = '';
         cubes.forEach(cube => {
@@ -71,14 +71,14 @@ async function loadCubes() {
             editCubeSelect.appendChild(option);
         });
     } catch (error) {
-        console.error('Error loading cubes:', error);
-        showNotification('Failed to load cubes. Please try again later.', 'error');
+        console.error('Błąd ładowania kostek:', error);
+        showNotification('Nie udało się załadować kostek. Spróbuj ponownie później.', 'error');
     }
 }
 
-// Load algorithms
+// Ładowanie algorytmów
 async function loadAlgorithms(cubeId = null) {
-    // Prevent multiple simultaneous loads
+    // Zapobiegaj wielu jednoczesnym ładowaniom
     if (isLoading) {
         return;
     }
@@ -86,10 +86,10 @@ async function loadAlgorithms(cubeId = null) {
     isLoading = true;
     
     try {
-        // Clear the loaded IDs set
+        // Wyczyść zbiór załadowanych ID
         loadedAlgorithmIds.clear();
         
-        // Clear the list
+        // Wyczyść listę
         algorithmsList.innerHTML = '';
         
         let url = `${API_BASE_URL}/algorytmy`;
@@ -100,56 +100,56 @@ async function loadAlgorithms(cubeId = null) {
         const response = await fetch(url);
         const algorithms = await response.json();
         
-        // Only filter out the cleanup flag algorithm
+        // Odfiltruj tylko algorytmy oznaczone jako flaga czyszczenia
         const activeAlgorithms = algorithms.filter(alg => 
             alg.nazwa !== '___CLEANUP_FLAG___'
         );
         
-        console.log("Loaded algorithms:", activeAlgorithms.length, "out of", algorithms.length, "total");
+        console.log("Załadowane algorytmy:", activeAlgorithms.length, "z", algorithms.length, "w sumie");
         displayAlgorithms(activeAlgorithms);
     } catch (error) {
-        console.error('Error loading algorithms:', error);
-        showNotification('Failed to load algorithms. Please try again later.', 'error');
+        console.error('Błąd ładowania algorytmów:', error);
+        showNotification('Nie udało się załadować algorytmów. Spróbuj ponownie później.', 'error');
     } finally {
         isLoading = false;
     }
 }
 
-// Display algorithms in the list
+// Wyświetlanie algorytmów na liście
 function displayAlgorithms(algorithms) {
     algorithmsList.innerHTML = '';
     
     if (algorithms.length === 0) {
-        algorithmsList.innerHTML = '<p class="no-algorithms">No algorithms found.</p>';
+        algorithmsList.innerHTML = '<p class="no-algorithms">Nie znaleziono algorytmów.</p>';
         return;
     }
     
     algorithms.forEach(algorithm => {
-        // Skip if this algorithm ID is already displayed
+        // Pomiń, jeśli to ID algorytmu jest już wyświetlane
         if (loadedAlgorithmIds.has(algorithm.id)) {
             return;
         }
         
-        // Add this ID to our tracking set
+        // Dodaj to ID do naszego zestawu śledzenia
         loadedAlgorithmIds.add(algorithm.id);
         
         const algorithmItem = document.createElement('div');
         algorithmItem.className = 'algorithm-item';
         algorithmItem.dataset.id = algorithm.id;
         
-        // Get cube name for this algorithm
+        // Pobierz nazwę kostki dla tego algorytmu
         getCubeName(algorithm.kostka_id).then(cubeName => {
-            // Use the same image handling as in bibliotekaAlgorytmow.js
+            // Użyj tej samej obsługi obrazków jak w bibliotekaAlgorytmow.js
             let imgPath;
             
-            // First check if we have a mapped image
+            // Najpierw sprawdź, czy mamy zmapowany obraz
             const mappedImage = algorithmImageMap[algorithm.notacja];
             
             if (algorithm.sciezka_obrazu) {
-                // If the algorithm has a stored path, use it
+                // Jeśli algorytm ma zapisaną ścieżkę, użyj jej
                 imgPath = `../${algorithm.sciezka_obrazu}`;
             } else {
-                // Otherwise use the mapping or notation as filename
+                // W przeciwnym razie użyj mapowania lub notacji jako nazwy pliku
                 const imageName = mappedImage || algorithm.notacja;
                 imgPath = `../assets/images/algorithms/${imageName}.png`;
             }
@@ -162,22 +162,22 @@ function displayAlgorithms(algorithms) {
                     <div class="algorithm-details">
                         <h4>${algorithm.nazwa}</h4>
                         <p>${algorithm.notacja}</p>
-                        <p>Cube: ${cubeName}</p>
+                        <p>Kostka: ${cubeName}</p>
                     </div>
                 </div>
                 <div class="algorithm-actions">
-                    <button class="edit-btn" data-id="${algorithm.id}">Edit</button>
-                    <button class="delete-btn" data-id="${algorithm.id}">Delete</button>
+                    <button class="edit-btn" data-id="${algorithm.id}">Edytuj</button>
+                    <button class="delete-btn" data-id="${algorithm.id}">Usuń</button>
                 </div>
             `;
             
-            // Add event listeners to action buttons
+            // Dodaj nasłuchiwacze zdarzeń do przycisków akcji
             algorithmItem.querySelector('.edit-btn').addEventListener('click', () => {
                 openEditModal(algorithm);
             });
             
             algorithmItem.querySelector('.delete-btn').addEventListener('click', () => {
-                if (confirm(`Are you sure you want to delete "${algorithm.nazwa}"?`)) {
+                if (confirm(`Czy na pewno chcesz usunąć "${algorithm.nazwa}"?`)) {
                     deleteAlgorithm(algorithm.id);
                 }
             });
@@ -187,55 +187,55 @@ function displayAlgorithms(algorithms) {
     });
 }
 
-// Get cube name by ID
+// Pobierz nazwę kostki po ID
 async function getCubeName(cubeId) {
     try {
         const response = await fetch(`${API_BASE_URL}/kostki/${cubeId}`);
         const cube = await response.json();
         return `${cube.nazwa} (${cube.rozmiar})`;
     } catch (error) {
-        console.error('Error fetching cube:', error);
-        return 'Unknown Cube';
+        console.error('Błąd pobierania kostki:', error);
+        return 'Nieznana Kostka';
     }
 }
 
-// Set up event listeners
+// Ustaw nasłuchiwacze zdarzeń
 function setupEventListeners() {
-    // Filter change
+    // Zmiana filtra
     filterCubeSelect.addEventListener('change', (e) => {
         loadAlgorithms(e.target.value);
     });
     
-    // Add algorithm form submission
+    // Wysłanie formularza dodawania algorytmu
     addAlgorithmForm.addEventListener('submit', (e) => {
         e.preventDefault();
         addAlgorithm();
     });
     
-    // Edit algorithm form submission
+    // Wysłanie formularza edycji algorytmu
     editAlgorithmForm.addEventListener('submit', (e) => {
         e.preventDefault();
         updateAlgorithm();
     });
     
-    // Close modal
+    // Zamknięcie modalu
     closeModalBtn.addEventListener('click', () => {
         editModal.style.display = 'none';
     });
     
-    // Close modal when clicking outside
+    // Zamknięcie modalu po kliknięciu na zewnątrz
     window.addEventListener('click', (e) => {
         if (e.target === editModal) {
             editModal.style.display = 'none';
         }
     });
     
-    // Clear database button
+    // Przycisk czyszczenia bazy danych
     clearDatabaseBtn.addEventListener('click', () => {
         confirmationModal.style.display = 'block';
     });
     
-    // Confirmation modal buttons
+    // Przyciski modalu potwierdzenia
     confirmYesBtn.addEventListener('click', () => {
         confirmationModal.style.display = 'none';
         clearAllAlgorithms();
@@ -245,7 +245,7 @@ function setupEventListeners() {
         confirmationModal.style.display = 'none';
     });
     
-    // Close confirmation modal when clicking outside
+    // Zamknij modal potwierdzenia po kliknięciu na zewnątrz
     window.addEventListener('click', (e) => {
         if (e.target === confirmationModal) {
             confirmationModal.style.display = 'none';
