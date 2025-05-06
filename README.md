@@ -1,14 +1,34 @@
-# Menedżer Algorytmów Kostki Rubika
+# Rubick Sensei
 
 Witamy w projekcie Menedżera Algorytmów Kostki Rubika! Ta aplikacja umożliwia zarządzanie, przeglądanie i trenowanie algorytmów układania kostki Rubika.
 
 ## Spis Treści
-1.  [Instalacja](#instalacja)
-2.  [Uruchamianie](#uruchamianie)
+1.  [Przedstawienie funkcjonalności](#funkcjonalność)
+2.  [Instalacja](#instalacja)
+3.  [Uruchamianie](#uruchamianie)
     *   [Backend](#uruchamianie-backendu)
     *   [Frontend](#uruchamianie-frontendu)
-3.  [Struktura Projektu](#struktura-projektu)
-4.  [Opis Plików Logiki Backendu (Python)](#opis-plików-logiki-backendu-python)
+4.  [Struktura Projektu](#struktura-projektu)
+5.  [Opis Plików Logiki Backendu (Python)](#opis-plików-logiki-backendu-python)
+
+
+## Funkcjonalność
+
+Po wystartowaniu aplikacji pojawia się strona główna z opcjami przejścia między modułami przeglądu algorytmów, modułu treningowego oraz modułu zawodów
+
+![image](https://github.com/user-attachments/assets/9f3fcf34-0e92-4c1a-a895-4d1d3c682412)
+
+Po wybraniu modułu aplikacja pyta jakim rodzajem kostki chcemy się zająć 
+
+![image](https://github.com/user-attachments/assets/9eeb6168-0209-453c-8ea7-97953d41bb39)
+
+Po wybranii interesującej nas opcji możemy przejść do np. nauki nowych algorytmów czy spróbować zmierzyć się ze swoimi rekordami w trybie pojedyńćzego ułożenia lub serii
+
+![image](https://github.com/user-attachments/assets/d8a30aac-3353-4812-9151-1f032707361d)
+
+
+
+
 
 ## Instalacja
 
@@ -51,7 +71,7 @@ Aby uruchomić aplikację frontendową (po wcześniejszym uruchomieniu backendu)
 npm start
 ```
 
-Spowoduje to uruchomienie serwera deweloperskiego frontendu. Aplikacja będzie dostępna w przeglądarce pod adresem wskazanym w konsoli po uruchomieniu polecenia.
+Spowoduje to uruchomienie serwera deweloperskiego frontendu. Aplikacja będzie dostępna jako desktopowe okienko electrona.
 
 ## Struktura Projektu
 
