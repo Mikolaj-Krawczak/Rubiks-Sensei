@@ -1,53 +1,53 @@
 const API_BASE_URL = 'http://localhost:5000/api';
 const usersApiUrl = `${API_BASE_URL}/uzytkownicy`;
 
-// --- DOM Elements ---
+// --- Elementy DOM ---
 const usersListContainer = document.querySelector('.users-list');
-// Add/Edit Form (Main Form)
+// Formularz dodawania/edycji (Główny formularz)
 const userForm = document.getElementById('user-form');
 const formTitle = document.getElementById('form-title');
-const userIdInput = document.getElementById('user-id'); // Hidden input for ID in main form
+const userIdInput = document.getElementById('user-id'); // Ukryte pole dla ID w głównym formularzu
 const usernameInput = document.getElementById('username');
 const passwordInput = document.getElementById('password');
 const passwordField = document.getElementById('password-field');
 const rankInput = document.getElementById('rank');
 const cancelEditBtn = document.getElementById('cancel-edit-btn');
 const formMessageArea = document.getElementById('form-message-area');
-// User List Area
+// Obszar listy użytkowników
 const listMessageArea = document.getElementById('list-message-area');
-// Edit Modal
+// Modal edycji
 const editModal = document.getElementById('edit-modal');
 const editUserForm = document.getElementById('edit-user-form');
 const editUserIdInput = document.getElementById('edit-user-id');
 const editUsernameInput = document.getElementById('edit-username');
 const editRankInput = document.getElementById('edit-rank');
 const editMessageArea = document.getElementById('edit-message-area');
-// Confirmation Modal
+// Modal potwierdzenia
 const confirmationModal = document.getElementById('confirmation-modal');
 const confirmYesBtn = document.getElementById('confirm-yes');
 const confirmNoBtn = document.getElementById('confirm-no');
 const confirmationMessage = document.getElementById('confirmation-message');
 
-// --- State Variables ---
-let isEditMode = false; // Tracks if the main form is in edit mode (not used with modal)
-let userToDeleteId = null; // Stores the ID of the user to be deleted
+// --- Zmienne stanu ---
+let isEditMode = false; // Śledzi, czy główny formularz jest w trybie edycji (nie używane z modalem)
+let userToDeleteId = null; // Przechowuje ID użytkownika do usunięcia
 
-// --- Utility Functions ---
+// --- Funkcje pomocnicze ---
 
-// Improved showMessage function - can target different areas
+// Ulepszona funkcja showMessage - może celować w różne obszary
 function showMessage(message, type = 'info', area = formMessageArea) {
-    if (!area) return; // Do nothing if the area doesn't exist
+    if (!area) return; // Nie rób nic, jeśli obszar nie istnieje
     area.textContent = message;
-    // Use classes for styling based on type (success, error, info)
+    // Użyj klas do stylizacji w zależności od typu (sukces, błąd, informacja)
     area.className = `message-area ${type}`;
-    // Clear message after 5 seconds
+    // Wyczyść wiadomość po 5 sekundach
     setTimeout(() => {
         area.textContent = '';
         area.className = 'message-area';
     }, 5000);
 }
 
-// --- API Interaction Functions ---
+// --- Funkcje interakcji z API ---
 
 async function fetchUsers() {
     showMessage('Ładowanie użytkowników...', 'info', listMessageArea);
@@ -61,7 +61,7 @@ async function fetchUsers() {
         if (users.length === 0) {
              showMessage('Nie znaleziono żadnych użytkowników.', 'info', listMessageArea);
         } else {
-             showMessage('', 'info', listMessageArea); // Clear loading message
+             showMessage('', 'info', listMessageArea); // Wyczyść wiadomość ładowania
         }
     } catch (error) {
         console.error('Nie udało się pobrać użytkowników:', error);
@@ -82,8 +82,8 @@ async function addUser(userData) {
             throw new Error(result.error || `Błąd HTTP: ${response.status}`);
         }
         showMessage(`Użytkownik "${result.nazwa_uzytkownika}" dodany pomyślnie.`, 'success', formMessageArea);
-        userForm.reset(); // Reset main form
-        fetchUsers(); // Refresh the list
+        userForm.reset(); // Resetuj główny formularz
+        fetchUsers(); // Odśwież listę
     } catch (error) {
         console.error('Nie udało się dodać użytkownika:', error);
         showMessage(`Błąd podczas dodawania: ${error.message}`, 'error', formMessageArea);
@@ -115,7 +115,7 @@ async function updateUser(userId, userData) {
         const result = await response.json();
         showMessage(`Użytkownik "${result.nazwa_uzytkownika}" zaktualizowany.`, 'success', editMessageArea);
         closeEditModal();
-        fetchUsers(); // Refresh the list
+        fetchUsers(); // Odśwież listę
     } catch (error) {
         console.error('Nie udało się zaktualizować użytkownika:', error);
         showMessage(`Błąd podczas aktualizacji: ${error.message}`, 'error', editMessageArea);
@@ -146,7 +146,7 @@ async function deleteUserApi(userId) {
         const result = await response.json();
         showMessage(result.message || `Użytkownik został usunięty.`, 'success', listMessageArea);
         
-        // Remove from UI immediately
+        // Natychmiast usuń z UI
         const item = document.querySelector(`[data-id="${userId}"]`);
         if (item) item.remove();
     } catch (error) {
@@ -155,10 +155,10 @@ async function deleteUserApi(userId) {
     }
 }
 
-// --- Rendering Functions ---
+// --- Funkcje renderujące ---
 
 function renderUsersList(users) {
-    usersListContainer.innerHTML = ''; // Clear current list
+    usersListContainer.innerHTML = ''; // Wyczyść obecną listę
     if (users.length === 0) {
         usersListContainer.innerHTML = '<p class="no-users-message">Brak użytkowników do wyświetlenia.</p>';
         return;
@@ -179,7 +179,7 @@ function renderUsersList(users) {
                 <button class="delete-btn">Usuń</button>
             </div>
         `;
-        // Add event listeners to buttons
+        // Dodaj nasłuchiwacze zdarzeń do przycisków
         userItem.querySelector('.edit-btn').addEventListener('click', () => openEditModal(user));
         userItem.querySelector('.delete-btn').addEventListener('click', () => confirmUserDeletion(user.id, user.nazwa_uzytkownika));
 
@@ -187,13 +187,13 @@ function renderUsersList(users) {
     });
 }
 
-// --- Modal Handling ---
+// --- Obsługa modalów ---
 
 function openEditModal(user) {
     editUserIdInput.value = user.id;
     editUsernameInput.value = user.nazwa_uzytkownika;
     editRankInput.value = user.ranga_kyu;
-    showMessage('', 'info', editMessageArea); // Clear previous messages
+    showMessage('', 'info', editMessageArea); // Wyczyść poprzednie wiadomości
     editModal.style.display = 'block';
 }
 
@@ -212,20 +212,20 @@ function closeConfirmationModal() {
     userToDeleteId = null;
 }
 
-// --- Event Listeners ---
+// --- Nasłuchiwacze zdarzeń ---
 
-// Add User Form Submission
+// Wysłanie formularza dodawania użytkownika
 userForm.addEventListener('submit', (event) => {
     event.preventDefault();
     const username = usernameInput.value.trim();
-    const password = passwordInput.value; // Don't trim password
+    const password = passwordInput.value; // Nie przycinaj hasła
     const rank = rankInput.value;
 
     if (!username) {
         showMessage('Nazwa użytkownika jest wymagana.', 'error', formMessageArea);
         return;
     }
-    // Password is required only when adding
+    // Hasło jest wymagane tylko przy dodawaniu
     if (!password) {
         showMessage('Hasło jest wymagane przy tworzeniu użytkownika.', 'error', formMessageArea);
         return;
@@ -239,7 +239,7 @@ userForm.addEventListener('submit', (event) => {
     addUser(userData);
 });
 
-// Edit User Form Submission (in Modal)
+// Wysłanie formularza edycji użytkownika (w modal)
 editUserForm.addEventListener('submit', (event) => {
     event.preventDefault();
     const userId = editUserIdInput.value;
@@ -259,17 +259,17 @@ editUserForm.addEventListener('submit', (event) => {
     updateUser(userId, userData);
 });
 
-// Cancel Edit Button (Not really needed with modal approach, but can be repurposed if form is used for edit too)
+// Przycisk anulowania edycji (nie jest naprawdę potrzebny przy podejściu modalnym, ale może być wykorzystany, jeśli formularz jest używany do edycji również)
 cancelEditBtn.addEventListener('click', () => {
     userForm.reset();
     formTitle.textContent = 'Dodaj Nowego Użytkownika';
     passwordField.style.display = 'block';
     passwordInput.required = true;
     cancelEditBtn.style.display = 'none';
-    showMessage('', 'info', formMessageArea); // Clear messages
+    showMessage('', 'info', formMessageArea); // Wyczyść wiadomości
 });
 
-// Confirmation Modal Buttons
+// Przycisk modal potwierdzenia
 confirmYesBtn.addEventListener('click', () => {
     if (userToDeleteId) {
         deleteUserApi(userToDeleteId);
@@ -279,7 +279,7 @@ confirmYesBtn.addEventListener('click', () => {
 
 confirmNoBtn.addEventListener('click', closeConfirmationModal);
 
-// Close Modals on outside click
+// Zamknij modal na kliknięcie poza nim
 window.addEventListener('click', (event) => {
     if (event.target === editModal) {
         closeEditModal();
@@ -289,5 +289,5 @@ window.addEventListener('click', (event) => {
     }
 });
 
-// --- Initial Load ---
+// --- Początkowe ładowanie ---
 document.addEventListener('DOMContentLoaded', fetchUsers); 
