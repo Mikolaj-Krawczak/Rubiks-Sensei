@@ -436,18 +436,21 @@ function resetCube() {
     moveHistory = []; // Clear the move history
     currentMoveIndex = -1;
     cubes.forEach((cube) => {
-        const originalX =
-            Math.round(cube.userData.originalPosition.x / (CUBE_SIZE + GAP)) + 0.5;
-        const originalY =
-            Math.round(cube.userData.originalPosition.y / (CUBE_SIZE + GAP)) + 0.5;
-        const originalZ =
-            Math.round(cube.userData.originalPosition.z / (CUBE_SIZE + GAP)) + 0.5;
+        // Calculate the original position indices (0 or 1) for a 2x2 cube
+        const originalX = Math.round((cube.userData.originalPosition.x / (CUBE_SIZE + GAP)) + 0.5);
+        const originalY = Math.round((cube.userData.originalPosition.y / (CUBE_SIZE + GAP)) + 0.5);
+        const originalZ = Math.round((cube.userData.originalPosition.z / (CUBE_SIZE + GAP)) + 0.5);
+        
+        // Update the current position to the original indices (0 or 1)
         cube.userData.currentPosition = {
             x: originalX,
             y: originalY,
-            z: originalZ,
+            z: originalZ
         };
+        
+        // Reset the cube's position to its original position
         cube.position.copy(cube.userData.originalPosition);
+        // Reset the cube's rotation
         cube.quaternion.set(0, 0, 0, 1);
     });
 }
