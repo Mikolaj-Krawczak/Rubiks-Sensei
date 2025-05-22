@@ -1,0 +1,312 @@
+@font-face {
+    font-family: 'DungeonFont';
+    src: url('../assets/DungeonFont.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'DungeonFont', sans-serif;
+    font-size: 1.5rem;
+}
+
+.background-container {
+    background-image: url('../assets/images/background.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 100%;
+    height: 30vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.karate-belt {
+    background-color: #fdfd7a;
+    width: 100%;
+    height: 8vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.karate-belt h2 {
+    font-size: 5vh;
+    margin: 0;
+}
+
+.admin-content {
+    padding: 2vh;
+}
+
+/* Sekcja zarządzania bazą danych (Opcjonalna) */
+.database-actions {
+    margin-bottom: 2vh;
+    text-align: center;
+}
+
+.danger-btn {
+    background-color: #d9534f;
+    color: white;
+    border: none;
+    padding: 1vh 2vh;
+    font-size: 2vh;
+    font-family: 'DungeonFont', sans-serif;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.danger-btn:hover {
+    background-color: #c9302c;
+}
+
+.cancel-btn {
+    background-color: #5bc0de;
+    color: white;
+    border: none;
+    padding: 1vh 2vh;
+    font-size: 2vh;
+    font-family: 'DungeonFont', sans-serif;
+    cursor: pointer;
+    margin-left: 1vh;
+    transition: background-color 0.3s;
+}
+
+.cancel-btn:hover {
+    background-color: #46b8da;
+}
+
+.confirmation-buttons {
+    display: flex;
+    justify-content: center;
+    margin-top: 3vh;
+    gap: 2vh;
+}
+
+#confirmation-message {
+    text-align: center;
+    font-size: 2.5vh;
+    margin: 2vh 0;
+}
+
+.admin-panel {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2vh;
+}
+
+.admin-section {
+    flex: 1;
+    min-width: 40%;
+    border: 2px solid black;
+    padding: 2vh;
+    background-color: white;
+}
+
+.admin-section h3 {
+    font-size: 3vh;
+    margin: 0 0 2vh 0;
+    text-align: center;
+}
+
+/* Stylowanie formularza */
+.form-group {
+    margin-bottom: 2vh;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5vh;
+    font-size: 2vh;
+}
+
+.form-group input, .form-group select {
+    width: 100%;
+    padding: 1vh;
+    font-size: 2vh;
+    font-family: 'Arial', sans-serif; /* Użyj standardowej czcionki dla inputów */
+    border: 1px solid black;
+    box-sizing: border-box; /* Uwzględnij padding i border w całkowitej szerokości i wysokości elementu */
+}
+
+.submit-btn {
+    background-color: black;
+    color: white;
+    border: none;
+    padding: 1vh 2vh;
+    font-size: 2vh;
+    font-family: 'DungeonFont', sans-serif;
+    cursor: pointer;
+    margin-top: 1vh;
+    width: 100%;
+}
+
+.submit-btn:hover {
+    background-color: #333;
+}
+
+/* Stylowanie listy użytkowników */
+.filter-section {
+    margin-bottom: 2vh;
+    display: flex;
+    flex-wrap: wrap; /* Pozwól na zawijanie na mniejszych ekranach */
+    align-items: center;
+    gap: 1vh 2vh; /* Odstęp pionowy i poziomy */
+}
+
+.filter-section label {
+    font-size: 2vh;
+    margin-right: 0.5vh; /* Dodaj odstęp po etykiecie */
+}
+
+.filter-section select, .filter-section input[type="text"] {
+    padding: 0.5vh 1vh;
+    font-size: 1.8vh;
+    font-family: 'Arial', sans-serif;
+    border: 1px solid black;
+    flex-grow: 1; /* Pozwól inputowi wyszukiwania zajmować więcej miejsca */
+    min-width: 150px; /* Minimalna szerokość dla inputów */
+}
+
+.users-list {
+    max-height: 50vh;
+    overflow-y: auto;
+    border: 1px solid #ddd; /* Dodaj obramowanie wokół listy */
+    margin-top: 1vh; /* Dodaj trochę miejsca nad listą */
+}
+
+.user-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5vh; /* Nieco zwiększ padding */
+    border-bottom: 1px solid #eee; /* Jaśniejsze obramowanie między elementami */
+    background-color: #fff; /* Zapewnij białe tło */
+}
+
+.user-item:last-child {
+    border-bottom: none; /* Usuń obramowanie dla ostatniego elementu */
+}
+
+.user-item:hover {
+    background-color: #f9f9f9; /* Nieco inny efekt hover */
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 2vh;
+}
+
+/* Brak obrazu dla użytkowników, dostosuj układ szczegółów */
+.user-details h4 {
+    margin: 0;
+    font-size: 2.2vh;
+    font-weight: bold; /* Pogrub nazwę użytkownika */
+}
+
+.user-details p {
+    margin: 0.5vh 0;
+    font-size: 1.8vh;
+    color: #555; /* Nieco ciemniejszy kolor dla szczegółów */
+}
+
+.user-actions {
+    display: flex;
+    gap: 1vh;
+}
+
+.edit-btn, .delete-btn {
+    background-color: black;
+    color: white;
+    border: none;
+    padding: 0.8vh 1.5vh;
+    font-size: 1.8vh;
+    font-family: 'DungeonFont', sans-serif;
+    cursor: pointer;
+    transition: background-color 0.2s; /* Dodaj przejście */
+}
+
+.edit-btn:hover, .delete-btn:hover {
+    background-color: #333;
+}
+
+.delete-btn {
+    background-color: #d9534f; /* Dostosuj do koloru przycisku zagrożenia */
+}
+
+.delete-btn:hover {
+    background-color: #c9302c; /* Dostosuj do koloru hover przycisku zagrożenia */
+}
+
+/* Stylowanie modalu */
+.modal {
+    display: none; /* Domyślnie ukryty */
+    position: fixed;
+    z-index: 10;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto; /* Włącz przewijanie, jeśli potrzeba */
+    background-color: rgba(0, 0, 0, 0.6); /* Ciemniejsze tło */
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 10vh auto; /* Więcej marginesu pionowego */
+    padding: 3vh 4vh; /* Dostosuj padding */
+    border: 1px solid #888;
+    width: 80%; /* Domyślna szerokość */
+    max-width: 600px; /* Maksymalna szerokość */
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+    animation-name: animatetop;
+    animation-duration: 0.4s;
+    position: relative; /* Potrzebne dla pozycjonowania przycisku zamykania */
+}
+
+/* Dodaj animację */
+@keyframes animatetop {
+    from {top: -300px; opacity: 0}
+    to {top: 0; opacity: 1}
+}
+
+.close-modal {
+    color: #aaa;
+    position: absolute; /* Pozycja względem modal-content */
+    top: 1vh;
+    right: 2vh;
+    font-size: 3vh;
+    font-weight: bold;
+}
+
+.close-modal:hover,
+.close-modal:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.modal h3 {
+    text-align: center;
+    margin-bottom: 3vh;
+    font-size: 3vh;
+}
+
+/* Specyficzne dostosowania dla modalu edycji użytkownika */
+#edit-modal .form-group {
+    margin-bottom: 2.5vh; /* Nieco więcej miejsca w formularzu modalu */
+}
+
+/* Usuń wyświetlanie bieżącego obrazu (było dla algorytmów) */
+.current-image {
+    display: none; 
+}
+
+/* Specyficzne style dla modalu potwierdzenia */
+#confirmation-modal .modal-content {
+     max-width: 400px; /* Mniejsza szerokość dla potwierdzenia */
+} 

@@ -1,6 +1,6 @@
 const {ipcRenderer} = require('electron');
 
-// Function to handle navigation via ipcRenderer
+// Funkcja do obsługi nawigacji za pomocą ipcRenderer
 function openPage(page) {
     ipcRenderer.send('navigate', page);
 }

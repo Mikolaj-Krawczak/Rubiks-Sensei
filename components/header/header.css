@@ -33,4 +33,37 @@
     width: 5vh;
     height: 5vh;
     cursor: pointer;
+}
+
+.settings-container {
+    position: relative;
+    display: inline-block;
+}
+
+.settings-dropdown {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: #000;
+    min-width: 20vh;
+    box-shadow: 0 0.5vh 1vh rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.settings-container:hover .settings-dropdown {
+    display: block;
+}
+
+.dropdown-item {
+    font-family: 'DungeonFont', monospace;
+    color: white;
+    padding: 1.5vh 2vh;
+    text-decoration: none;
+    display: block;
+    font-size: 2.5vh;
+    cursor: pointer;
+}
+
+.dropdown-item:hover {
+    background-color: #333;
 } 
