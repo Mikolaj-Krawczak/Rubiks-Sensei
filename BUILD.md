@@ -1,148 +1,94 @@
-# Budowanie Aplikacji Rubik Sensei dla Windows
+# Instrukcja budowania aplikacji Rubik's Sensei
 
-Ten plik zawiera instrukcje dotyczące budowania aplikacji Rubik Sensei jako standalone executable dla Windows.
+## Struktura plików do budowania
 
-## Wymagania systemowe
+Po oczyszczeniu projektu, kluczowe pliki do budowania aplikacji EXE znajdują się w głównym katalogu:
 
-### Windows
-- Windows 10 lub nowszy (64-bit)
-- Python 3.11+
-- Node.js 18+
-- npm
-- Git
+### Pliki kluczowe:
+- `launcher.py` - Główny punkt wejścia aplikacji (uruchamia Flask w wątku + Electron)
+- `rubik-sensei.spec` - Specyfikacja PyInstaller z konfiguracją pakowania
+- `build.bat` - Skrypt budowania dla Windows
+- `requirements-build.txt` - Zależności potrzebne do budowania
 
-## Automatyczne budowanie
-
-### Windows
-Uruchom skrypt batch w katalogu głównym:
-```cmd
-cd build-scripts
-build.bat
+### Architektura:
+```
+RubikSensei.exe
+├── Backend Flask (wątek w tym samym procesie)
+│   ├── SQLAlchemy + SQLite
+│   ├── API endpoints  
+│   └── Health check (/health)
+└── Frontend Electron (osobny proces)
+    ├── Main window
+    ├── HTML/CSS/JS z katalogów: pages/, components/, assets/, css/
+    └── Komunikacja z backend przez HTTP
 ```
 
-Skrypt automatycznie:
-1. Zainstaluje wszystkie wymagane zależności Python
-2. Zainstaluje zależności Node.js
-3. Zbuduje aplikację używając PyInstaller
-4. Utworzy plik `dist\RubikSensei.exe`
+## Instrukcje budowania
 
-## Ręczne budowanie
+### Wymagania:
+- Python 3.13+ z venv
+- Node.js z npm
+- PyInstaller
+- Wszystkie zależności z `backend/requirements.txt` i `requirements-build.txt`
 
-Jeśli chcesz zbudować aplikację ręcznie, wykonaj następujące kroki:
+### Proces budowania:
 
-### 1. Przygotowanie środowiska
+1. **Automatyczne budowanie:**
+   ```bash
+   .\build.bat
+   ```
 
-```cmd
-# Klonuj repozytorium
-git clone <repo-url>
-cd Rubick-Sensei
+2. **Ręczne budowanie:**
+   ```bash
+   # Aktywuj środowisko wirtualne
+   .\.venv\Scripts\activate.bat
+   
+   # Zainstaluj zależności
+   pip install -r backend\requirements.txt
+   pip install -r requirements-build.txt
+   npm install
+   
+   # Zbuduj aplikację
+   pyinstaller --clean rubik-sensei.spec
+   ```
 
-# Utwórz środowisko wirtualne Python
-python -m venv .venv
-.venv\Scripts\activate.bat
+### Wynik:
+- Plik `dist/RubikSensei.exe` - Gotowa aplikacja do dystrybucji
+- Log budowania w konsoli
+- Log działania aplikacji w `dist/rubik-sensei.log`
 
-# Zainstaluj zależności Python
-pip install --upgrade pip
-pip install -r backend\requirements.txt
-pip install -r requirements-build.txt
+## Rozwiązane problemy:
 
-# Zainstaluj zależności Node.js
-npm install
+1. **Problem rekurencji** - Backend uruchamiany w wątku zamiast osobnego procesu
+2. **Brakujące moduły SQLAlchemy** - Dodane do hidden_imports w .spec
+3. **Niepełne pliki Electron** - Dołączany cały katalog node_modules/electron
+4. **Brak logowania** - Szczegółowe logi do pliku i konsoli
+
+## Struktura spakowanej aplikacji:
+
+PyInstaller tworzy tymczasowy katalog (np. `_MEI123456`) z następującą strukturą:
+```
+_MEI123456/
+├── backend/ (wszystkie pliki Python backendu)
+├── pages/ (strony HTML)
+├── components/ (komponenty JS)
+├── assets/ (zasoby)
+├── css/ (style)
+├── node_modules/electron/ (kompletny Electron)
+├── main.js (główny plik Electron)
+└── package.json (konfiguracja npm)
 ```
 
-### 2. Budowanie aplikacji
+## Testowanie:
 
-```cmd
-# Wyczyść poprzednie buildy
-if exist "dist" rmdir /s /q dist
-if exist "build" rmdir /s /q build
+Po zbudowaniu, aplikacja powinna:
+1. Uruchomić się z podwójnego kliknięcia lub z konsoli
+2. Pokazać logi uruchamiania w konsoli
+3. Uruchomić backend Flask na porcie 5000
+4. Uruchomić okno Electron z interfejsem użytkownika
+5. Zapisać szczegółowe logi do `rubik-sensei.log`
 
-# Zbuduj aplikację
-pyinstaller --clean build-scripts\rubik-sensei.spec
-```
-
-### 3. Uruchomienie
-
-Po zakończeniu budowania, plik wykonywalny znajdzie się w folderze `dist\`:
-```cmd
-dist\RubikSensei.exe
-```
-
-## Struktura plików
-
-```
-Rubick-Sensei/
-├── build-scripts/
-│   ├── build.bat              # Skrypt budowania dla Windows
-│   ├── launcher.py            # Główny launcher aplikacji
-│   ├── rubik-sensei.spec      # Konfiguracja PyInstaller
-│   └── start-backend.bat      # Pomocniczy skrypt startowy backendu
-├── backend/                   # Backend Flask
-├── components/                # Komponenty frontendowe
-├── pages/                     # Strony aplikacji
-├── assets/                    # Zasoby (ikony, obrazy)
-├── css/                       # Style CSS
-├── scripts/                   # Skrypty JavaScript
-├── main.js                    # Główny plik Electron
-└── package.json              # Konfiguracja Node.js
-```
-
-## Rozwiązywanie problemów
-
-### Błędy budowania
-
-1. **Błąd: "Module not found"**
-   - Upewnij się, że wszystkie zależności są zainstalowane
-   - Sprawdź czy jesteś w aktywowanym środowisku wirtualnym
-
-2. **Błąd: "electron.exe not found"**
-   - Uruchom `npm install` aby zainstalować Electron
-   - Sprawdź czy `node_modules/electron/dist/electron.exe` istnieje
-
-3. **Błąd podczas uruchamiania exe**
-   - Sprawdź logi w konsoli (ustaw `console=True` w rubik-sensei.spec)
-   - Upewnij się, że wszystkie potrzebne pliki są w folderze `dist/`
-
-### Testowanie lokalnie
-
-Przed budowaniem exe, możesz przetestować aplikację lokalnie:
-
-```cmd
-# Uruchom backend
-cd backend
-python app.py
-
-# W nowym terminalu uruchom frontend
-npx electron .
-```
-
-## Tworzenie instalatora (opcjonalne)
-
-Aby utworzyć installer dla Windows, możesz użyć narzędzi takich jak:
-- NSIS (Nullsoft Scriptable Install System)
-- Inno Setup
-- WiX Toolset
-
-Przykładowy skrypt NSIS można znajdować w folderze `installers/` (jeśli istnieje).
-
-## GitHub Actions
-
-Aplikacja jest automatycznie budowana dla Windows przy każdym push do głównej gałęzi za pomocą GitHub Actions. Zobacz `.github/workflows/build-releases.yml` dla szczegółów.
-
-### Ręczne uruchomienie build w GitHub
-
-1. Idź do zakładki "Actions" w repozytorium
-2. Wybierz workflow "Build Windows Release"
-3. Kliknij "Run workflow"
-4. Wprowadź numer wersji
-5. Kliknij "Run workflow"
-
-### Pobieranie buildu z GitHub
-
-1. Idź do zakładki "Releases"
-2. Znajdź najnowszą wersję
-3. Pobierz plik `RubikSensei-*-windows-x64.zip`
-4. Rozpakuj i uruchom `RubikSensei.exe`
+Jeśli występują problemy, sprawdź plik `rubik-sensei.log` w tym samym katalogu co EXE.
 
 ## Licencja
 
