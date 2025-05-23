@@ -2,13 +2,13 @@
 
 ## Struktura plików do budowania
 
-Po oczyszczeniu projektu, kluczowe pliki do budowania aplikacji EXE znajdują się w głównym katalogu:
+Po oczyszczeniu projektu, kluczowe pliki do budowania aplikacji EXE znajdują się w katalogu głównym i `build-config/`:
 
 ### Pliki kluczowe:
 - `launcher.py` - Główny punkt wejścia aplikacji (uruchamia Flask w wątku + Electron)
-- `rubik-sensei.spec` - Specyfikacja PyInstaller z konfiguracją pakowania
-- `build.bat` - Skrypt budowania dla Windows
-- `requirements-build.txt` - Zależności potrzebne do budowania
+- `build-config/rubik-sensei.spec` - Specyfikacja PyInstaller z konfiguracją pakowania
+- `build-config/build.bat` - Skrypt budowania dla Windows
+- `build-config/requirements-build.txt` - Zależności potrzebne do budowania
 
 ### Architektura:
 ```
@@ -29,13 +29,13 @@ RubikSensei.exe
 - Python 3.13+ z venv
 - Node.js z npm
 - PyInstaller
-- Wszystkie zależności z `backend/requirements.txt` i `requirements-build.txt`
+- Wszystkie zależności z `backend/requirements.txt` i `build-config/requirements-build.txt`
 
 ### Proces budowania:
 
 1. **Automatyczne budowanie:**
    ```bash
-   .\build.bat
+   .\build-config\build.bat
    ```
 
 2. **Ręczne budowanie:**
@@ -45,15 +45,16 @@ RubikSensei.exe
    
    # Zainstaluj zależności
    pip install -r backend\requirements.txt
-   pip install -r requirements-build.txt
+   pip install -r build-config\requirements-build.txt
    npm install
    
    # Zbuduj aplikację
-   pyinstaller --clean rubik-sensei.spec
+   pyinstaller --clean --workpath=build-config\build build-config\rubik-sensei.spec
    ```
 
 ### Wynik:
 - Plik `dist/RubikSensei.exe` - Gotowa aplikacja do dystrybucji
+- Pliki tymczasowe buildu w `build-config/build/` 
 - Log budowania w konsoli
 - Log działania aplikacji w `dist/rubik-sensei.log`
 
