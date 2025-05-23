@@ -51,6 +51,16 @@ def index():
         ]
     })
 
+@app.route('/health', methods=['GET'])
+def health_check():
+    """
+    Endpoint do sprawdzania czy backend jest gotowy.
+    
+    Returns:
+        dict: Status backendu
+    """
+    return jsonify({'status': 'ok', 'message': 'Backend is ready'}), 200
+
 @app.route('/api/kostki', methods=['GET'])
 def get_kostki():
     """

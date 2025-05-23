@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rubik's Sensei - Algorithms 2x2x2</title>
+    <link rel="stylesheet" href="../css/bibliotekaAlgorytmow.css">
+</head>
+<body>
+<div id="left-panel">
+    <div id="control-panel">
+        <button onclick="openPage('home.html')">Home</button>
+        <button class="control-btn" id="reset-btn">Reset Cube</button>
+        <button class="control-btn" id="step-back-btn">Step Back</button>
+        <button class="control-btn" id="step-forward-btn">Step Forward</button>
+    </div>
+    <div class="container">
+        <div class="algorithm-list-header">
+            <h2>Algorithms 2x2x2</h2>
+            <p>Ortega / CLL / EG / LBL</p>
+        </div>
+         <div class="algorithm-list">
+            <!-- Algorytmy będą ładowane dynamicznie -->
+        </div> 
+    </div>
+</div>
+<div id="cubespace"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
+<script src="../scripts/generate2x2Cube.js"></script>
+<script src="../scripts/handleNavigation.js"></script>
+<script src="../scripts/bibliotekaAlgorytmow2x2.js"></script>
+</body>
+</html> 
