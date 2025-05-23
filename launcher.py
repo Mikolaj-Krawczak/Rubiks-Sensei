@@ -37,17 +37,20 @@ class RubikSenseiLauncher:
         self.logger.info(f"Frozen: {getattr(sys, 'frozen', False)}")
         
     def setup_logging(self):
-        """Konfiguracja logowania do pliku i konsoli"""
+        """Konfiguracja logowania do pliku (bez konsoli dla spakowanej aplikacji)"""
         log_file = self.base_dir / 'rubik-sensei.log'
         
         # Konfiguracja podstawowa
+        handlers = [logging.FileHandler(log_file, encoding='utf-8')]
+        
+        # W trybie deweloperskim dodaj także logowanie do konsoli
+        if not getattr(sys, 'frozen', False):
+            handlers.append(logging.StreamHandler(sys.stdout))
+        
         logging.basicConfig(
             level=logging.INFO,
             format='%(asctime)s - %(levelname)s - %(message)s',
-            handlers=[
-                logging.FileHandler(log_file, encoding='utf-8'),
-                logging.StreamHandler(sys.stdout)
-            ]
+            handlers=handlers
         )
         self.logger = logging.getLogger(__name__)
         
@@ -172,14 +175,16 @@ class RubikSenseiLauncher:
                 
                 self.logger.info(f"Uruchamiam Electron: {electron_path} z katalogu {self.app_dir}")
                 
+                # W spakowanej aplikacji ukrywamy także wyjście Electron
                 self.frontend_process = subprocess.Popen(
                     [str(electron_path), '.'],
                     cwd=str(self.app_dir),
                     stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE
+                    stderr=subprocess.PIPE,
+                    creationflags=subprocess.CREATE_NO_WINDOW if sys.platform == 'win32' else 0
                 )
             else:
-                # Rozwój lokalny - używamy npx
+                # Rozwój lokalny - używamy npx z widoczną konsolą
                 self.logger.info("Uruchamiam Electron przez npx")
                 self.frontend_process = subprocess.Popen(
                     ['npx', 'electron', '.'],

@@ -28,10 +28,9 @@ if not exist "node_modules" (
 
 echo 🧹 Krok 3: Czyszczenie poprzednich buildów...
 if exist "dist" rmdir /s /q dist
-if exist "build" rmdir /s /q build
+if exist "build-config\build" rmdir /s /q build-config\build
 
 echo 🔨 Krok 4: Budowanie aplikacji z PyInstaller...
-pyinstaller --clean rubik-sensei.spec
 
 echo ✅ Budowanie zakończone!
 echo 📁 Plik exe znajduje się w: dist\RubikSensei.exe
