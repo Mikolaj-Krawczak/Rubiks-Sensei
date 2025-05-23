@@ -31,6 +31,7 @@ if exist "dist" rmdir /s /q dist
 if exist "build-config\build" rmdir /s /q build-config\build
 
 echo 🔨 Krok 4: Budowanie aplikacji z PyInstaller...
+pyinstaller --clean sensei.spec
 
 echo ✅ Budowanie zakończone!
 echo 📁 Plik exe znajduje się w: dist\RubikSensei.exe
