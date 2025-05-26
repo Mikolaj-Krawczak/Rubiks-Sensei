@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test 4x4 Cube</title>
+    <style>
+        body { 
+            margin: 0; 
+            padding: 20px; 
+            background: #222; 
+            color: white; 
+            font-family: Arial, sans-serif;
+        }
+        
+        .container {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+        
+        .controls { 
+            flex: 0 0 400px;
+            max-height: 80vh;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        
+        .controls h3 {
+            margin: 20px 0 10px 0;
+            color: #fff;
+            border-bottom: 1px solid #555;
+            padding-bottom: 5px;
+        }
+        
+        .controls h3:first-child {
+            margin-top: 0;
+        }
+        
+        #cubespace { 
+            width: 700px; 
+            height: 600px; 
+            border: 1px solid #555;
+            flex-shrink: 0;
+        }
+        
+        button { 
+            margin: 3px; 
+            padding: 8px 12px; 
+            background: #444;
+            color: white;
+            border: 1px solid #666;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        button:hover {
+            background: #555;
+            border-color: #777;
+        }
+        
+        button:active {
+            background: #333;
+        }
+        
+        /* Scrollbar styling for controls */
+        .controls::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .controls::-webkit-scrollbar-track {
+            background: #333;
+            border-radius: 4px;
+        }
+        
+        .controls::-webkit-scrollbar-thumb {
+            background: #555;
+            border-radius: 4px;
+        }
+        
+        .controls::-webkit-scrollbar-thumb:hover {
+            background: #666;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test Kostki 4x4</h1>
+    <div class="container">
+        <div class="controls">
+        <h3>Ruchy podstawowe:</h3>
+        <button onclick="testMove('R')">R</button>
+        <button onclick="testMove('L')">L</button>
+        <button onclick="testMove('U')">U</button>
+        <button onclick="testMove('D')">D</button>
+        <button onclick="testMove('F')">F</button>
+        <button onclick="testMove('B')">B</button>
+        
+        <h3>Ruchy podwójne:</h3>
+        <button onclick="playSequence('R2')">R2</button>
+        <button onclick="playSequence('L2')">L2</button>
+        <button onclick="playSequence('U2')">U2</button>
+        <button onclick="playSequence('D2')">D2</button>
+        <button onclick="playSequence('F2')">F2</button>
+        <button onclick="playSequence('B2')">B2</button>
+        
+        <h3>Ruchy wewnętrznych warstw:</h3>
+        <button onclick="testMove('r')">r</button>
+        <button onclick="testMove('l')">l</button>
+        <button onclick="testMove('u')">u</button>
+        <button onclick="testMove('d')">d</button>
+        <button onclick="testMove('f')">f</button>
+        <button onclick="testMove('b')">b</button>
+        <br>
+        <button onclick="playSequence('r2')">r2</button>
+        <button onclick="playSequence('l2')">l2</button>
+        <button onclick="playSequence('u2')">u2</button>
+        <button onclick="playSequence('d2')">d2</button>
+        <button onclick="playSequence('f2')">f2</button>
+        <button onclick="playSequence('b2')">b2</button>
+        
+        <h3>Ruchy szerokie:</h3>
+        <button onclick="testMove('Rw')">Rw</button>
+        <button onclick="testMove('Lw')">Lw</button>
+        <button onclick="testMove('Uw')">Uw</button>
+        <button onclick="testMove('Dw')">Dw</button>
+        <button onclick="testMove('Fw')">Fw</button>
+        <button onclick="testMove('Bw')">Bw</button>
+        <br>
+        <button onclick="playSequence('Rw2')">Rw2</button>
+        <button onclick="playSequence('Lw2')">Lw2</button>
+        <button onclick="playSequence('Uw2')">Uw2</button>
+        <button onclick="playSequence('Dw2')">Dw2</button>
+        <button onclick="playSequence('Fw2')">Fw2</button>
+        <button onclick="playSequence('Bw2')">Bw2</button>
+        
+        <h3>Kontrola ruchów:</h3>
+        <button id="step-back-btn">← Krok wstecz</button>
+        <button id="step-forward-btn">Krok do przodu →</button>
+        <button onclick="resetCube()">Reset</button>
+        
+        <h3>Testy:</h3>
+        <button onclick="playSequence('R U R\' U R U2 R\'')">Sune</button>
+        <button onclick="playSequence('R2 U2 R2 U2 R2 U2')">Test R2 U2</button>
+        <button onclick="playSequence('Rw2 U2 r2 U2 R2')">Test Mix 2</button>
+        <button onclick="testScramble()">Test Scramble 4x4</button>
+        </div>
+        <div id="cubespace"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
+    <script src="scripts/generate4x4Cube.js"></script>
+    <script src="scripts/scrambleGenerator4x4.js"></script>
+    
+    <script>
+        function testMove(move) {
+            console.log("Testing move:", move);
+            rotateFace(move, "clockwise");
+        }
+        
+        function testAlgorithm() {
+            playSequence("Rw U2 R' U' R U' R' U2 R' U R U' R' Rw'");
+        }
+        
+        function testScramble() {
+            const scramble = generateScramble4x4(20);
+            console.log("Generated scramble:", scramble);
+            playSequence(scramble);
+        }
+        
+        console.log("Strona testowa 4x4 załadowana");
+    </script>
+</body>
+</html> 

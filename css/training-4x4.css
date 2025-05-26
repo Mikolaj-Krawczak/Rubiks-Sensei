@@ -1,0 +1,453 @@
+/* Podstawowe stylowanie body i zawartości */
+body {
+    font-family: sans-serif;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #f0f0f0; /* Jasne tło */
+}
+
+.content {
+    flex-grow: 1;
+    position: relative; /* Potrzebne dla kontenera tła */
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Wyrównaj elementy do góry */
+    padding-top: 80px; /* Dostosuj na podstawie wysokości nagłówka */
+}
+
+.background-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* background: url('../assets/images/backgroundWebsite.png') no-repeat center center fixed; */
+    background-size: cover;
+    z-index: -1;
+    filter: blur(2px) brightness(0.7);
+}
+
+/* Kontener treningowy */
+.training-container {
+    display: flex;
+    flex-direction: row; /* Układ obok siebie */
+    gap: 30px;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.9); /* Nieznacznie mniej przezroczyste */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 1400px; /* Szerszy dla kostki 4x4 */
+}
+
+/* Lewy panel informacyjny */
+.info-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    flex: 1; /* Zajmuje dostępną przestrzeń */
+    min-width: 350px; /* Nieco szerszy dla dodatkowych opcji 4x4 */
+}
+
+.mode-selection {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.mode-btn {
+    padding: 8px 15px;
+    border: 1px solid #ccc;
+    background-color: #eee;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.mode-btn:hover {
+    background-color: #ddd;
+}
+
+.mode-btn.active {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+.series-mode {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+#series-count {
+    width: 50px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.scramble {
+    font-size: 1.1em;
+    font-weight: bold;
+    word-wrap: break-word; /* Zawijaj długie tasowania */
+    background-color: #e9e9e9;
+    padding: 12px;
+    border-radius: 5px;
+    line-height: 1.4;
+    max-height: 120px; /* Ograniczenie wysokości dla długich scrambles 4x4 */
+    overflow-y: auto;
+}
+
+.timer {
+    font-size: 4em;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+    margin: 10px 0;
+}
+
+.hint {
+    font-size: 0.9em;
+    color: #555;
+    text-align: center;
+}
+
+/* Opcje scramble'a specyficzne dla 4x4 */
+.scramble-options {
+    background-color: #f8f9fa;
+    padding: 12px;
+    border-radius: 5px;
+    border: 1px solid #dee2e6;
+}
+
+.scramble-options h4 {
+    margin: 0 0 10px 0;
+    color: #495057;
+    font-size: 0.9em;
+}
+
+.scramble-options label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 0.85em;
+    cursor: pointer;
+}
+
+.scramble-options input[type="checkbox"] {
+    margin-right: 8px;
+}
+
+/* Prawy panel dla kostki */
+#cubespace-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    flex: 2; /* Zajmuje więcej przestrzeni */
+}
+
+/* Stylowanie dla kontenera wizualizatora kostki 4x4 */
+#scramble-visualizer-space {
+    width: 500px; /* Większy rozmiar dla kostki 4x4 */
+    height: 500px; /* Większy rozmiar dla kostki 4x4 */
+    border: 1px solid #ccc;
+    background-color: #fff; /* Białe tło dla obszaru kostki */
+    position: relative; /* Potrzebne dla renderera three.js */
+    overflow: hidden; /* Zapewnia, że kontrolki nie wychodzą poza obszar */
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Kontener przycisków pod wizualizatorem */
+.visualizer-controls {
+    display: flex;
+    gap: 12px; /* Większa przestrzeń między przyciskami */
+    margin-top: 10px; /* Przestrzeń nad przyciskami */
+}
+
+/* Stylowanie przycisku wizualizacji */
+#visualize-scramble-btn {
+     padding: 12px 24px;
+     font-size: 1em;
+     cursor: pointer;
+     background-color: #17a2b8; /* Informacyjny niebieski */
+     color: white;
+     border: none;
+     border-radius: 5px;
+     transition: background-color 0.3s ease;
+}
+
+#visualize-scramble-btn:hover {
+    background-color: #138496;
+}
+
+/* Stylowanie przycisku resetowania */
+#reset-visualizer-btn {
+     padding: 12px 24px;
+     font-size: 1em;
+     cursor: pointer;
+     background-color: #ffc107; /* Ostrzegawczy żółty */
+     color: #333; /* Ciemniejszy tekst dla żółtego */
+     border: none;
+     border-radius: 5px;
+     transition: background-color 0.3s ease;
+}
+
+#reset-visualizer-btn:hover {
+    background-color: #e0a800;
+}
+
+#regen-scramble-btn {
+    padding: 10px 20px;
+    font-size: 1em;
+    cursor: pointer;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+#regen-scramble-btn:hover {
+    background-color: #218838;
+}
+
+/* Dodatkowe stylowanie dla kontenera kontrolek tasowania */
+.scramble-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px; /* Dodaj trochę przestrzeni poniżej */
+}
+
+.scramble-controls label {
+    font-weight: bold;
+}
+
+.scramble-controls input[type="number"] {
+    width: 60px; /* Nieco szersze */
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* Stylowanie kontrolek prędkości */
+.speed-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 12px;
+    padding: 12px;
+    background-color: rgba(240, 240, 240, 0.6);
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+.speed-controls span {
+    font-weight: bold;
+    margin-bottom: 5px;
+    font-size: 0.9em;
+}
+
+.speed-controls label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85em;
+    cursor: pointer;
+}
+
+.animation-speed-control {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-top: 8px;
+}
+
+.animation-speed-control label {
+    font-size: 0.8em;
+    font-weight: bold;
+}
+
+.animation-speed-control input[type="range"] {
+    width: 100%;
+}
+
+#speed-value {
+    font-size: 0.8em;
+    color: #666;
+    text-align: center;
+}
+
+/* Stylowanie wyświetlacza czasów serii */
+#series-times-display {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    padding: 10px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.solve-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.solve-tile {
+    padding: 8px;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+    font-size: 0.85em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.solve-tile:hover {
+    background-color: #e9ecef;
+    border-color: #adb5bd;
+}
+
+.series-mode-active .solve-tile.single {
+    display: none;
+}
+
+.single-mode-active .solve-tile.series {
+    display: none;
+}
+
+.scramble-tooltip {
+    position: absolute;
+    background-color: #333;
+    color: white;
+    padding: 8px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    z-index: 1000;
+    max-width: 250px;
+    word-wrap: break-word;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    pointer-events: none;
+    transform: translateX(-50%);
+}
+
+.scramble-tooltip::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #333 transparent transparent transparent;
+}
+
+/* Statystyki serii */
+.series-stats {
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #e7f3ff;
+    border-radius: 5px;
+    border: 1px solid #b3d9ff;
+}
+
+.series-stats h3 {
+    margin: 0 0 8px 0;
+    color: #0066cc;
+    font-size: 1em;
+}
+
+.series-stats p {
+    margin: 4px 0;
+    font-size: 0.85em;
+    color: #004d99;
+}
+
+.series-complete {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+}
+
+/* Sekcja pomocy z notacją - specjalna dla 4x4 */
+.notation-help {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 8px;
+    font-size: 0.85em;
+}
+
+.notation-help h3 {
+    margin: 0 0 10px 0;
+    color: #856404;
+    font-size: 1.1em;
+}
+
+.notation-section {
+    margin-bottom: 10px;
+}
+
+.notation-section h4 {
+    margin: 0 0 5px 0;
+    color: #6c5206;
+    font-size: 0.9em;
+}
+
+.notation-section p {
+    margin: 0;
+    color: #725507;
+    line-height: 1.3;
+}
+
+/* Responsywność */
+@media (max-width: 1200px) {
+    .training-container {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .info-panel {
+        min-width: auto;
+        width: 100%;
+        max-width: 500px;
+    }
+    
+    #scramble-visualizer-space {
+        width: 400px;
+        height: 400px;
+    }
+}
+
+@media (max-width: 768px) {
+    .content {
+        padding-top: 60px;
+    }
+    
+    .training-container {
+        padding: 15px;
+        gap: 20px;
+    }
+    
+    #scramble-visualizer-space {
+        width: 350px;
+        height: 350px;
+    }
+    
+    .timer {
+        font-size: 3em;
+    }
+    
+    .visualizer-controls {
+        flex-direction: column;
+        gap: 8px;
+    }
+} 
