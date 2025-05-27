@@ -110,7 +110,6 @@ function initScrambleVisualizer4x4(containerId) {
                 const initialPos = { x, y, z };
                 cube.userData.initialLogicalPosition = initialPos;
                 cube.userData.logicalPosition = { ...initialPos };
-                cube.userData.logicalRotation = new THREE.Quaternion();
 
                 visualizerCubeGroup.add(cube);
                 visualizerCubes.push(cube);
@@ -508,6 +507,45 @@ function parseVisualizerMoves4x4(scrambleString) {
 // --- Funkcja stosowania logicznego ruchu ---
 function applyLogicalMove4x4(face, direction, double) {
     updateLogicalPositionsAfterRotation4x4(face, direction, double);
+    
+    // Dla trybu natychmiastowego, zastosuj również rotację do kostek
+    const faceCubes = getCubesOnLayer4x4(face);
+    const baseFace = face.replace(/[wW]/, '').toLowerCase();
+    
+    // Określ oś rotacji
+    let rotationAxis;
+    switch (baseFace) {
+        case "f":
+            rotationAxis = new THREE.Vector3(0, 0, 1);
+            break;
+        case "b":
+            rotationAxis = new THREE.Vector3(0, 0, -1);
+            break;
+        case "u":
+            rotationAxis = new THREE.Vector3(0, 1, 0);
+            break;
+        case "d":
+            rotationAxis = new THREE.Vector3(0, -1, 0);
+            break;
+        case "l":
+            rotationAxis = new THREE.Vector3(-1, 0, 0);
+            break;
+        case "r":
+            rotationAxis = new THREE.Vector3(1, 0, 0);
+            break;
+    }
+    
+    // Określ kąt rotacji
+    let rotationAngle = direction === "clockwise" ? -Math.PI / 2 : Math.PI / 2;
+    if (double) {
+        rotationAngle *= 2;
+    }
+    
+    // Zastosuj rotację do kostek
+    const rotation = new THREE.Quaternion().setFromAxisAngle(rotationAxis, rotationAngle);
+    faceCubes.forEach(cube => {
+        cube.quaternion.multiplyQuaternions(rotation, cube.quaternion);
+    });
 }
 
 // --- Funkcja aktualizacji stanu wizualnego ---
@@ -543,7 +581,7 @@ function resetVisualization4x4() {
     // Zresetuj pozycje logiczne i rotacje wszystkich kostek
     visualizerCubes.forEach(cube => {
         cube.userData.logicalPosition = { ...cube.userData.initialLogicalPosition };
-        cube.quaternion.copy(cube.userData.logicalRotation);
+        cube.quaternion.set(0, 0, 0, 1); // Zresetuj do identyczności rotacji
         
         const pos = cube.userData.logicalPosition;
         cube.position.x = (pos.x - 1.5) * (VISUALIZER_CUBE_SIZE + VISUALIZER_GAP);
