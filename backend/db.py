@@ -66,9 +66,10 @@ def add_sample_data():
     # Dodaj przykładowe kostki
     kostka_3x3 = Kostka(nazwa="Kostka 3x3", rozmiar="3x3x3")
     kostka_2x2 = Kostka(nazwa="Kostka 2x2", rozmiar="2x2x2")
+    kostka_4x4 = Kostka(nazwa="Kostka 4x4", rozmiar="4x4x4")
     kostka_pyraminx = Kostka(nazwa="Pyraminx", rozmiar="Pyramid")
     
-    session.add_all([kostka_3x3, kostka_2x2, kostka_pyraminx])
+    session.add_all([kostka_3x3, kostka_2x2, kostka_4x4, kostka_pyraminx])
     session.commit()
     
     # Dodaj przykładowe algorytmy
@@ -107,15 +108,47 @@ def add_sample_data():
             sciezka_obrazu="assets/images/algorithms/L F' L' U' L U F U' L'.png"
         ),
         
-        # Algorytmy dla Pyraminx
+        # Algorytmy dla kostki 4x4
         Algorytm(
             kostka_id=3, 
+            nazwa="OLL Parity", 
+            notacja="Rw U2 R' U' R U' R' U2 R' U R U' R' Rw'",
+            sciezka_obrazu="assets/images/algorithms4x4/oll_parity.png"
+        ),
+        Algorytm(
+            kostka_id=3, 
+            nazwa="PLL Parity", 
+            notacja="Rw2 B2 U2 Lw U2 Rw' U2 Rw U2 F2 Rw F2 Lw' B2 Rw2",
+            sciezka_obrazu="assets/images/algorithms4x4/pll_parity.png"
+        ),
+        Algorytm(
+            kostka_id=3, 
+            nazwa="Edge Pairing (Basic)", 
+            notacja="Uw R U' R' F R F' Uw'",
+            sciezka_obrazu="assets/images/algorithms4x4/edge_pairing.png"
+        ),
+        Algorytm(
+            kostka_id=3, 
+            nazwa="Double Edge Flip", 
+            notacja="Rw U Rw' F Rw F' Rw'",
+            sciezka_obrazu="assets/images/algorithms4x4/double_edge_flip.png"
+        ),
+        Algorytm(
+            kostka_id=3, 
+            nazwa="Center Build (Cross)", 
+            notacja="r U r' U r U2 r'",
+            sciezka_obrazu="assets/images/algorithms4x4/center_build.png"
+        ),
+        
+        # Algorytmy dla Pyraminx
+        Algorytm(
+            kostka_id=4, 
             nazwa="L3C - przypadek 1", 
             notacja="R U R' U R U R'",
             sciezka_obrazu="assets/images/algorithms/R U2 R2 U' R2 U' R2 U2 R.png"
         ),
         Algorytm(
-            kostka_id=3, 
+            kostka_id=4, 
             nazwa="Top First - przypadek 1", 
             notacja="L' R L R'",
             sciezka_obrazu="assets/images/algorithms/R' U' F U R U' R' F' R.png"
@@ -152,7 +185,7 @@ def add_sample_data():
         ),
         Ulozenie(
             uzytkownik_id=1, 
-            kostka_id=3, 
+            kostka_id=4, 
             czas=5.23, 
             scramble="R U R' U R U' R' U R U2 R'"
         ),

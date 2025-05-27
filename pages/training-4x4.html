@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rubik's Sensei - Trening 4x4</title>
+    <link rel="stylesheet" href="../css/training-4x4.css">
+</head>
+
+<body>
+
+<header-component></header-component>
+
+<div class="content">
+    <div class="background-container"></div>
+
+    <div class="training-container">
+        <div class="info-panel">
+            <div class="mode-selection">
+                <button id="single-solve-btn" class="mode-btn active">Pojedyncze</button>
+                <div class="series-mode">
+                    <button id="series-solve-btn" class="mode-btn">Seria</button>
+                    <input type="number" id="series-count" value="5" min="2" max="100" disabled>
+                </div>
+            </div>
+            <div class="scramble-controls">
+                <label for="scramble-length">Długość:</label>
+                <input type="number" id="scramble-length" value="40" min="20" max="80">
+                <button id="regen-scramble-btn">Nowy Scramble</button>
+            </div>
+            <div id="scramble-display" class="scramble">Scramble: Generowanie...</div>
+            <div id="series-times-display"></div>
+            <div id="timer-display" class="timer">0.00</div>
+            <div id="hint-display" class="hint">Naciśnij Spację, aby rozpocząć/zatrzymać</div>
+            
+            <div class="scramble-options">
+                <h4>Typy ruchów:</h4>
+                <label>
+                    <input type="checkbox" id="includeBasic" checked> Ruchy podstawowe (R, L, U, D, F, B)
+                </label>
+                <label>
+                    <input type="checkbox" id="includeInner" checked> Ruchy wewnętrzne (r, l, u, d, f, b)
+                </label>
+                <label>
+                    <input type="checkbox" id="includeWide" checked> Ruchy szerokie (Rw, Lw, Uw, Dw, Fw, Bw)
+                </label>
+            </div>
+        </div>
+        <div id="cubespace-container">
+             <div id="scramble-visualizer-space"></div>
+             <div class="visualizer-controls">
+                <button id="visualize-scramble-btn">Wykonaj Scramble</button>
+                <button id="reset-visualizer-btn">Reset Kostki</button>
+             </div>
+             <div class="speed-controls">
+                <span>Tempo mieszania:</span>
+                <label>
+                    <input type="radio" name="scramble-speed" value="instant" checked>
+                    Natychmiast
+                </label>
+                <label>
+                    <input type="radio" name="scramble-speed" value="animated">
+                    Animowane
+                </label>
+                <div class="animation-speed-control">
+                    <label for="animation-speed">Prędkość animacji:</label>
+                    <input type="range" id="animation-speed" min="50" max="1000" value="300" step="50">
+                    <span id="speed-value">300ms</span>
+                </div>
+             </div>
+             
+             <div class="notation-help">
+                <h3>Notacja 4x4:</h3>
+                <div class="notation-section">
+                    <h4>Ruchy podstawowe:</h4>
+                    <p>R, L, U, D, F, B (z ' dla przeciwnych kierunków i 2 dla podwójnych obrotów)</p>
+                </div>
+                <div class="notation-section">
+                    <h4>Ruchy wewnętrznych warstw:</h4>
+                    <p>r, l, u, d, f, b (druga warstwa od odpowiedniej strony)</p>
+                </div>
+                <div class="notation-section">
+                    <h4>Ruchy szerokie (2 warstwy):</h4>
+                    <p>Rw, Lw, Uw, Dw, Fw, Bw (zewnętrzna + druga warstwa)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="../components/header/header.js"></script>
+<script src="../scripts/handleNavigation.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
+<script src="../scripts/scrambleVisualizer4x4.js"></script>
+<script src="../scripts/scrambleGenerator4x4.js"></script>
+<script src="../scripts/training-4x4.js"></script>
+
+</body>
+
+</html> 
