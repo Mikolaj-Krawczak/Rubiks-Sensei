@@ -439,7 +439,7 @@ function processNextMove() {
     if (moveQueue.length > 0 && !isAnimating) {
         const move = moveQueue.shift();
         console.log('Processing move:', move);
-        rotateFace(move.face, move.direction, true);
+        rotateFace(move.face, move.direction, false); // Zmienione na false, aby ruchy były dodawane do historii
     }
 }
 
@@ -534,15 +534,24 @@ function resetCube() {
     cubesInAnimation = [];
 }
 
-// Event listenery
-document.addEventListener('DOMContentLoaded', () => {
-    const resetBtn = document.getElementById('reset-btn');
-    const stepBackBtn = document.getElementById('step-back-btn');
-    const stepForwardBtn = document.getElementById('step-forward-btn');
-    
-    if (resetBtn) resetBtn.addEventListener('click', resetCube);
-    if (stepBackBtn) stepBackBtn.addEventListener('click', stepBackward);
-    if (stepForwardBtn) stepForwardBtn.addEventListener('click', stepForward);
+// Event listenery dla przycisków kontrolnych i algorytmów
+document.querySelectorAll(".control-btn").forEach((element) => {
+    if (element.id === "reset-btn") {
+        element.addEventListener("click", resetCube);
+    } else if (element.id === "step-back-btn") {
+        element.addEventListener("click", stepBackward);
+    } else if (element.id === "step-forward-btn") {
+        element.addEventListener("click", stepForward);
+    } else {
+        // Dla algorytmów w bibliotece
+        element.addEventListener("click", () => {
+            const pElement = element.querySelector("p");
+            const sequence = pElement ? pElement.textContent : "";
+            if (sequence) {
+                playSequence(sequence);
+            }
+        });
+    }
 });
 
 // Uruchomienie animacji

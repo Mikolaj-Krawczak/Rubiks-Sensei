@@ -63,14 +63,45 @@ function displayAlgorithms(algorytmy) {
             </div>
         `;
         
-        // Dodanie obsługi kliknięcia
+        // Dodanie obsługi kliknięcia - użyj tej samej logiki co w generate4x4Cube.js
         algorithmItem.addEventListener('click', () => {
-            playSequence(alg.notacja);
+            if (typeof playSequence === 'function') {
+                playSequence(alg.notacja);
+            } else {
+                console.error('Funkcja playSequence nie jest dostępna');
+            }
         });
         
         algorithmListContainer.appendChild(algorithmItem);
     });
 }
 
+// Funkcje kontrolne dla przycisków step back/forward
+function setupControlButtons() {
+    const resetBtn = document.getElementById('reset-btn');
+    const stepBackBtn = document.getElementById('step-back-btn');
+    const stepForwardBtn = document.getElementById('step-forward-btn');
+    
+    // Sprawdź czy funkcje są dostępne z generate4x4Cube.js
+    if (typeof resetCube === 'function' && resetBtn && !resetBtn.hasAttribute('data-listener-added')) {
+        resetBtn.addEventListener('click', resetCube);
+        resetBtn.setAttribute('data-listener-added', 'true');
+    }
+    
+    if (typeof stepBackward === 'function' && stepBackBtn && !stepBackBtn.hasAttribute('data-listener-added')) {
+        stepBackBtn.addEventListener('click', stepBackward);
+        stepBackBtn.setAttribute('data-listener-added', 'true');
+    }
+    
+    if (typeof stepForward === 'function' && stepForwardBtn && !stepForwardBtn.hasAttribute('data-listener-added')) {
+        stepForwardBtn.addEventListener('click', stepForward);
+        stepForwardBtn.setAttribute('data-listener-added', 'true');
+    }
+}
+
 // Załaduj algorytmy po załadowaniu strony
-document.addEventListener('DOMContentLoaded', fetchAlgorithms); 
+document.addEventListener('DOMContentLoaded', () => {
+    fetchAlgorithms();
+    // Dodaj event listenery dla przycisków kontrolnych
+    setupControlButtons();
+}); 
