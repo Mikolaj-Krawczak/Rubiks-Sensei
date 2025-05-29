@@ -25,12 +25,12 @@ try:
     # Import aplikacji musi być po inicjalizacji bazy danych
     from app import app
     
-    print("Uruchamianie API Rubik's Sensei na http://localhost:5000")
+    print("Uruchamianie API Rubik's Sensei na http://localhost:2115")
     print("Naciśnij CTRL+C aby zatrzymać")
     
     if __name__ == '__main__':
         # Wyłączamy auto-reloader, aby uniknąć błędów z podwójną ścieżką
-        app.run(debug=True, host='0.0.0.0', port=5000, use_reloader=False)
+        app.run(debug=True, host='0.0.0.0', port=2115, use_reloader=False)
 except ImportError as e:
     print(f"Błąd importu: {e}")
     print("Upewnij się, że zainstalowałeś wszystkie zależności:")

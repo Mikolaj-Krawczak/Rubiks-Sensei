@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = 'http://localhost:2115/api';
 const usersApiUrl = `${API_BASE_URL}/uzytkownicy`;
 
 // --- Elementy DOM ---

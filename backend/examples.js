@@ -2,7 +2,7 @@
 
 // Funkcja pomocnicza do wykonywania zapytań
 async function fetchApi(endpoint, method = 'GET', data = null) {
-  const url = `http://localhost:5000/api/${endpoint}`;
+  const url = `http://localhost:2115/api/${endpoint}`;
   const options = {
     method: method,
     headers: {

@@ -2,7 +2,7 @@
 async function fetchAlgorithms() {
     try {
         // Pobieranie wszystkich kostek
-        const kostkiResponse = await fetch('http://localhost:5000/api/kostki');
+        const kostkiResponse = await fetch('http://localhost:2115/api/kostki');
         const kostki = await kostkiResponse.json();
         
         // Znajdź kostkę 3x3
@@ -14,7 +14,7 @@ async function fetchAlgorithms() {
         }
         
         // Pobieranie algorytmów dla kostki 3x3
-        const algorytmyResponse = await fetch(`http://localhost:5000/api/algorytmy?kostka_id=${kostka3x3.id}`);
+        const algorytmyResponse = await fetch(`http://localhost:2115/api/algorytmy?kostka_id=${kostka3x3.id}`);
         const algorytmy = await algorytmyResponse.json();
         
         // Filtruj algorytmy oznaczone jako usunięte lub wpisy oznaczające czyszczenie

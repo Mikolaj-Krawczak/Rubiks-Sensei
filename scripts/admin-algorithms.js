@@ -1,5 +1,5 @@
 // Bazowy URL dla API
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = 'http://localhost:2115/api';
 
 // Elementy DOM
 const cubeSelect = document.getElementById('cube-select');

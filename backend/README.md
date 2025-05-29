@@ -28,7 +28,7 @@ cd backend
 python run.py
 ```
 
-Backend będzie dostępny pod adresem: http://localhost:5000
+Backend będzie dostępny pod adresem: http://localhost:2115
 
 ## Endpointy API
 

@@ -22,7 +22,7 @@ class RubikSenseiLauncher:
         """Sprawdza czy backend jest gotowy"""
         for i in range(max_retries):
             try:
-                response = requests.get('http://localhost:5000/health', timeout=2)
+                response = requests.get('http://localhost:2115/health', timeout=2)
                 if response.status_code == 200:
                     return True
             except:
