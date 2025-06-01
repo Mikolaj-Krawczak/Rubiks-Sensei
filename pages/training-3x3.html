@@ -19,8 +19,8 @@
                         <button id="single-solve-btn" class="btn mode-btn active">Single</button>
                         <button id="series-solve-btn" class="btn mode-btn">Series</button>
                     </div>
-<!--                    Custom select-->
-                    <div id="series-count" class="btn count-btn">
+                    <!--                    Custom select-->
+                    <div id="series-count" class="count-btn">
                         <div class="selected-series-count">
                             <span id="selected-series-count-span">5</span>
                             <span id="selected-series-count-arrow">v</span>
@@ -41,7 +41,19 @@
                 </div>
                 <div class="scramble-section">
                     <p>Scramble length:</p>
-                    <button id="scramble-length" class="btn count-btn">20 v</button>
+                    <div id="scramble-length" class="count-btn">
+                        <div class="scramble-length-button">
+                            <span id="scramble-length-span">20</span>
+                            <span>v</span>
+                        </div>
+                        <div class="scramble-length-menu">
+                            <div onclick="this.parentNode.querySelector('input[type=number]').stepDown()"
+                                    class="minus"></div>
+                            <input type="number" min=10 max=40 id="scrabble-length-input" value="20">
+                            <div onclick="this.parentNode.querySelector('input[type=number]').stepUp()"
+                                    class="plus"></div>
+                        </div>
+                    </div>
                 </div>
                 <button id="regen-scramble-btn" class="btn">Scramble</button>
                 <div>
@@ -49,18 +61,18 @@
                     <p id="scramble-display"></p>
 
                     <!--                    Do usuniecia-->
-<!--                    <button id="visualize-scramble-btn">Wykonaj Scramble</button>-->
-<!--                    <button id="reset-visualizer-btn">Reset Kostki</button>-->
-<!--                    <label>-->
-<!--                        <input type="radio" name="scramble-speed" value="instant" checked>-->
-<!--                        Natychmiast-->
-<!--                    </label>-->
-<!--                    <label>-->
-<!--                        <input type="radio" name="scramble-speed" value="animated">-->
-<!--                        Animowane-->
-<!--                    </label>-->
-<!--                    <label for="animation-speed">Prędkość animacji:</label>-->
-<!--                    <input type="range" id="animation-speed" min="50" max="1000" value="300" step="50">-->
+                    <!--                    <button id="visualize-scramble-btn">Wykonaj Scramble</button>-->
+                    <!--                    <button id="reset-visualizer-btn">Reset Kostki</button>-->
+                    <!--                    <label>-->
+                    <!--                        <input type="radio" name="scramble-speed" value="instant" checked>-->
+                    <!--                        Natychmiast-->
+                    <!--                    </label>-->
+                    <!--                    <label>-->
+                    <!--                        <input type="radio" name="scramble-speed" value="animated">-->
+                    <!--                        Animowane-->
+                    <!--                    </label>-->
+                    <!--                    <label for="animation-speed">Prędkość animacji:</label>-->
+                    <!--                    <input type="range" id="animation-speed" min="50" max="1000" value="300" step="50">-->
                     <!--                    Koniec usuniecia-->
                 </div>
                 <div class="timer-section">

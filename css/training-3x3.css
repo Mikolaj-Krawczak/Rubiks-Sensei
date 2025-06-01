@@ -40,6 +40,8 @@ body {
     height: 100%;
     padding: 2rem;
     display: flex;
+    background: white;
+    color: black;
 }
 
 .training-panel {
@@ -71,7 +73,7 @@ body {
 /*.btn:hover {*/
 /*}*/
 
-.btn.active {
+.active {
     background: black;
     color: white;
 }
@@ -93,10 +95,12 @@ body {
 }
 
 .count-btn {
+    cursor: pointer;
     font-size: 2rem;
-    background: white;
-    color: black;
-    padding: 0.25rem 1rem;
+    transition: all ease-in-out 0.3s;
+    /*background: white;*/
+    /*color: black;*/
+    /*padding: 0.25rem 1rem;*/
 }
 
 .scramble-section {
@@ -123,11 +127,15 @@ body {
     border: 3px solid black;
 }
 
+.selected-series-count {
+    padding: 0.25rem 1rem;
+}
+
 .series-count-options {
     background: white;
     color: black;
     position: absolute;
-    top: calc(100% + 4px);
+    top: calc(100% + 3px);
     left: 0;
     right: 0;
     list-style: none;
@@ -137,6 +145,7 @@ body {
 }
 
 .series-count-options-visible {
+    z-index: 10;
     max-height: none;
     outline: 3px solid black;
 }
@@ -152,4 +161,72 @@ body {
 .series-count-options-selected {
     background: black;
     color: white;
+}
+
+#scramble-length {
+    position: relative;
+}
+
+.scramble-length-menu {
+    background: white;
+    color: black;
+    position: absolute;
+    top: calc(100% - 3px);
+    right: 0;
+    width: 150%;
+    height: 100%;
+    display: none;
+    border: 3px solid black;
+    text-align: center;
+}
+
+.scramble-length-menu-visible {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+}
+
+#scrabble-length-input, .scramble-length-menu div {
+    font-size: inherit;
+    color: black;
+}
+
+.scramble-length-menu div {
+    display: inline;
+    flex: 1;
+    position: relative;
+}
+
+input[type="number"] {
+    -webkit-appearance: textfield;
+    -moz-appearance: textfield;
+    appearance: textfield;
+    text-align: center;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+}
+
+.scramble-length-menu div:after {
+    display: inline-block;
+    position: absolute;
+    font-weight: 900;
+    content: 'v';
+    transform: translate(-50%, -50%) rotate(90deg);
+}
+
+.scramble-length-menu div.plus:after {
+    transform: translate(-50%, -50%) rotate(-90deg);
+}
+
+.scramble-length-button {
+    background: black;
+    color: white;
+    padding: 0.25rem 1rem;
+    border: black 3px solid;
+    transition: all ease-in-out 0.3s;
+    cursor: pointer;
 }

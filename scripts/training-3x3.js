@@ -21,6 +21,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const seriesCountOptions = document.querySelectorAll(".series-count-options > li")
     const scrambleDisplay = document.querySelector("#scramble-display")
 
+    const scrambleLengthButton = document.querySelector(".scramble-length-button")
+    const scrambleLength = document.querySelector("#scramble-length")
+    const scrambleLengthMenu = document.querySelector(".scramble-length-menu")
+    const scrambleLengthSpan = document.querySelector("#scramble-length-span")
+    const scrabbleLengthInput = document.querySelector("#scrabble-length-input")
+
     // Zmienne stanu
     let timerInterval = null;
     let startTime = 0;
@@ -478,6 +484,13 @@ document.addEventListener('DOMContentLoaded', () => {
             // seriesCount.classList.remove('active');
             seriesCountOptionsList.classList.remove('series-count-options-visible');
         }
+        if (!scrambleLength.contains(e.target)) {
+            scrambleLengthMenu.classList.remove("scramble-length-menu-visible")
+        }
     });
+
+    scrambleLengthButton.addEventListener("click", () => {
+        scrambleLengthMenu.classList.toggle("scramble-length-menu-visible");
+    })
 
 });
