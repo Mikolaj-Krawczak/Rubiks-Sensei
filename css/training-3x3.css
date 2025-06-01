@@ -60,8 +60,8 @@ body {
 
 .btn {
     font-size: 2rem;
-    background: black;
-    color: white;
+    background: white;
+    color: black;
     padding: 0.25rem 1rem;
     border: black 3px solid;
     transition: all ease-in-out 0.3s;
@@ -72,8 +72,8 @@ body {
 /*}*/
 
 .btn.active {
-    background: white;
-    color: black;
+    background: black;
+    color: white;
 }
 
 .mode-selection-buttons {
@@ -94,8 +94,8 @@ body {
 
 .count-btn {
     font-size: 2rem;
-    background: black;
-    color: white;
+    background: white;
+    color: black;
     padding: 0.25rem 1rem;
 }
 
@@ -125,6 +125,7 @@ body {
 
 .series-count-options {
     background: white;
+    color: black;
     position: absolute;
     top: 100%;
     left: 0;
@@ -144,7 +145,7 @@ body {
     padding: 0.25rem 1rem;
 }
 
-.series-count-options li:hover {
+.series-count-options li:not(.series-count-options-selected):hover {
     background: #dfdfdf;
 }
 

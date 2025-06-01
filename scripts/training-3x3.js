@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Dodaj postęp serii do tekstu tasowania, jeśli jesteś w trybie serii
             // const seriesPrefix = isSeriesMode ? `(${currentSolveIndex + 1}/${totalSolvesInSeries}) ` : '';
-            // scrambleDisplay.textContent = `${currentScramble}`;
+            scrambleDisplay.textContent = `${currentScramble}`;
         } else {
             currentScramble = '';
             scrambleDisplay.textContent = 'Tasowanie: Błąd generowania tasowania.';
