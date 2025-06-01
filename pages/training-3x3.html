@@ -19,7 +19,25 @@
                         <button id="single-solve-btn" class="btn mode-btn active">Single</button>
                         <button id="series-solve-btn" class="btn mode-btn">Series</button>
                     </div>
-                    <button id="series-count" class="btn count-btn">5 v</button>
+<!--                    Custom select-->
+                    <div id="series-count" class="btn count-btn">
+                        <div class="selected-series-count">
+                            <span id="selected-series-count-span">5</span>
+                            <span id="selected-series-count-arrow">v</span>
+                        </div>
+                        <ul class="series-count-options">
+                            <li>1</li>
+                            <li>2</li>
+                            <li>3</li>
+                            <li>4</li>
+                            <li class="series-count-options-selected">5</li>
+                            <li>6</li>
+                            <li>7</li>
+                            <li>8</li>
+                            <li>9</li>
+                            <li>10</li>
+                        </ul>
+                    </div>
                 </div>
                 <div class="scramble-section">
                     <p>Scramble length:</p>
@@ -31,24 +49,24 @@
                     <p id="scramble-display"></p>
 
                     <!--                    Do usuniecia-->
-                    <button id="visualize-scramble-btn">Wykonaj Scramble</button>
-                    <button id="reset-visualizer-btn">Reset Kostki</button>
-                    <label>
-                        <input type="radio" name="scramble-speed" value="instant" checked>
-                        Natychmiast
-                    </label>
-                    <label>
-                        <input type="radio" name="scramble-speed" value="animated">
-                        Animowane
-                    </label>
-                    <label for="animation-speed">Prędkość animacji:</label>
-                    <input type="range" id="animation-speed" min="50" max="1000" value="300" step="50">
+<!--                    <button id="visualize-scramble-btn">Wykonaj Scramble</button>-->
+<!--                    <button id="reset-visualizer-btn">Reset Kostki</button>-->
+<!--                    <label>-->
+<!--                        <input type="radio" name="scramble-speed" value="instant" checked>-->
+<!--                        Natychmiast-->
+<!--                    </label>-->
+<!--                    <label>-->
+<!--                        <input type="radio" name="scramble-speed" value="animated">-->
+<!--                        Animowane-->
+<!--                    </label>-->
+<!--                    <label for="animation-speed">Prędkość animacji:</label>-->
+<!--                    <input type="range" id="animation-speed" min="50" max="1000" value="300" step="50">-->
                     <!--                    Koniec usuniecia-->
                 </div>
                 <div class="timer-section">
                     <h1 id="series-times-display">series-timer</h1>
-                    <h1 id="timer-display" class="timer">0.00</h1>-->
-                    <p id="hint-display" class="hint">Press space to start</p>
+                    <h1 id="timer-display" class="timer">0.00</h1>
+                    <p id="hint-display" class="hint">Press SPACE to start</p>
                 </div>
             </div>
         </div>

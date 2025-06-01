@@ -102,6 +102,7 @@ body {
 .scramble-section {
     display: flex;
     justify-content: space-between;
+    align-items: center;
 }
 
 .timer-section {
@@ -115,4 +116,39 @@ body {
 #scramble-visualizer-space {
     width: 50%;
     height: 100%;
+}
+
+#series-count {
+    position: relative;
+    border: 3px solid black;
+}
+
+.series-count-options {
+    background: white;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    list-style: none;
+    border: none;
+    max-height: 0;
+    overflow: hidden;
+}
+
+.series-count-options-visible {
+    max-height: none;
+    outline: 3px solid black;
+}
+
+.series-count-options li {
+    padding: 0.25rem 1rem;
+}
+
+.series-count-options li:hover {
+    background: #dfdfdf;
+}
+
+.series-count-options-selected {
+    background: black;
+    color: white;
 }
