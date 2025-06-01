@@ -334,6 +334,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Wyczyść czasy
         singleSolveBtn.classList.add('active');
         seriesSolveBtn.classList.remove('active');
+        seriesCount.classList.remove("active")
         seriesCountInput.disabled = true;
         currentSolveIndex = 0;
 
@@ -357,6 +358,7 @@ document.addEventListener('DOMContentLoaded', () => {
         seriesTimesDisplay.innerHTML = ''; // Clear times
         // Wyczyść czasy
         seriesSolveBtn.classList.add('active');
+        seriesCount.classList.add('active');
         singleSolveBtn.classList.remove('active');
         seriesCountInput.disabled = false;
         currentSolveIndex = 0;
@@ -449,8 +451,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Series count custom select
     selectedSeriesCount.addEventListener('click', () => {
+        isSeriesMode = true;
         seriesCount.classList.add('active');
-        seriesCountOptionsList.classList.toggle("series-count-options-visible")
+        singleSolveBtn.classList.remove("active");
+        seriesSolveBtn.classList.add("active");
+        seriesCountOptionsList.classList.toggle("series-count-options-visible");
+        seriesTimesDisplay.innerHTML = '';
+        currentSolveIndex = 0;
+        totalSolvesInSeries = Math.min(parseInt(selectedSeriesCountSpan.value, 10) || 5, MAX_SERIES_LENGTH);
+        selectedSeriesCountSpan.value = totalSolvesInSeries;
     });
 
     // Handle series count option selection
@@ -464,11 +473,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Close series count dropdown when clicking outside
-    // document.addEventListener('click', (e) => {
-    //     if (!seriesCount.contains(e.target)) {
-    //         // seriesCount.classList.remove('active');
-    //         selectedSeriesCount.classList.remove('series-count-options-visible');
-    //     }
-    // });
+    document.addEventListener('click', (e) => {
+        if (!seriesCount.contains(e.target)) {
+            // seriesCount.classList.remove('active');
+            seriesCountOptionsList.classList.remove('series-count-options-visible');
+        }
+    });
 
 });

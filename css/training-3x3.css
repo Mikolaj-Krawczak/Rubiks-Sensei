@@ -127,7 +127,7 @@ body {
     background: white;
     color: black;
     position: absolute;
-    top: 100%;
+    top: calc(100% + 4px);
     left: 0;
     right: 0;
     list-style: none;
