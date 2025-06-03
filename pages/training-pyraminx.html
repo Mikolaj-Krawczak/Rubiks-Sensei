@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rubik's Sensei - Trening Pyraminx</title>
+    <link rel="stylesheet" href="../css/training-pyraminx.css">
+</head>
+<body>
+    <header-component></header-component>
+
+    <div class="content">
+        <div class="background-container"></div>
+
+        <div class="training-container">
+            <div class="info-panel">
+                <div class="mode-selection">
+                    <button id="single-solve-btn" class="mode-btn active">Pojedyncze</button>
+                    <div class="series-mode">
+                        <button id="series-solve-btn" class="mode-btn">Seria</button>
+                        <input type="number" id="series-count" value="5" min="2" max="100" disabled>
+                    </div>
+                </div>
+                <div class="scramble-controls">
+                    <label for="scramble-length">Długość:</label>
+                    <input type="number" id="scramble-length" value="15" min="5" max="25">
+                    <button id="regen-scramble-btn">Nowy Scramble</button>
+                </div>
+                <div class="scramble-types">
+                    <label>
+                        <input type="checkbox" id="include-face-moves" checked>
+                        Ścianki (U, L, R, B)
+                    </label>
+                    <label>
+                        <input type="checkbox" id="include-tip-moves" checked>
+                        Wierzchołki (u, l, r, b)
+                    </label>
+                </div>
+                <div id="scramble-display" class="scramble">Scramble: Generowanie...</div>
+                <div id="series-times-display"></div>
+                <div id="timer-display" class="timer">0.00</div>
+                <div id="hint-display" class="hint">Naciśnij Spację, aby rozpocząć/zatrzymać</div>
+            </div>
+            <div id="pyraminxspace-container">
+                 <div id="scramble-visualizer-space"></div>
+                 <div class="visualizer-controls">
+                    <button id="visualize-scramble-btn">Wykonaj Scramble</button>
+                    <button id="reset-visualizer-btn">Reset Pyraminxa</button>
+                 </div>
+                 <!-- Speed Controls -->
+                 <div class="speed-controls">
+                    <span>Tempo mieszania:</span>
+                    <label>
+                        <input type="radio" name="scramble-speed" value="instant" checked>
+                        Natychmiast
+                    </label>
+                    <label>
+                        <input type="radio" name="scramble-speed" value="animated">
+                        Animowane
+                    </label>
+                    <!-- Animation speed slider -->
+                    <div class="animation-speed-control">
+                        <label for="animation-speed">Prędkość animacji:</label>
+                        <input type="range" id="animation-speed" min="100" max="1000" value="400" step="50">
+                        <span id="speed-value">400ms</span>
+                    </div>
+                 </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="../components/header/header.js"></script>
+    <script src="../scripts/handleNavigation.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
+    
+    <!-- Pyraminx model files -->
+    <script src="../scripts/vendor/three.js/three.js"></script>
+    <script src="../scripts/vendor/three.js/OrbitControls.js"></script>
+    <script src="../scripts/pyraminx/TetraedroMath.js"></script>
+    <script src="../scripts/pyraminx/Tetraedro.js"></script>
+    <script src="../scripts/pyraminx/Octaedro.js"></script>
+    <script src="../scripts/pyraminx/Pyraminx.js"></script>
+    <script src="../scripts/pyraminx/Grupo.js"></script>
+    
+    <script src="../scripts/scrambleGeneratorPyraminx.js"></script>
+    <script src="../scripts/training-pyraminx.js"></script>
+</body>
+</html> 
