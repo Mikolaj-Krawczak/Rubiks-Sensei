@@ -499,7 +499,7 @@ function Grupo(pyraminx) {
         }
 
         let frames = 60; // Considerando que a tela possui 60 frames por segundo
-        let anguloTotal = 2 * Math.PI / 3; // Angulo total igual 120 graus
+        let anguloTotal = -2 * Math.PI / 3; // Angulo NEGATIVO = rotação para ESQUERDA (R)
         let anguloParcial = anguloTotal / frames; // Calcula o angulo parcial por frame
 
         let quaternion = new THREE.Quaternion(); // Cria um quaternion para o angulo total
@@ -517,12 +517,43 @@ function Grupo(pyraminx) {
             }
             else if (frames == 0) { // Caso frames seja 0
                 grupo.desmontar(true); // Desmonta o grupo e salva o estado dos componentes
-                grupo.organizar(nome); // Reorganiza o grupo reposicionando suas referencias
+                grupo.organizarReverse(nome); // Używa organizarReverse bo kąt jest ujemny
             }
             frames--; // Decrementa frames
         }
 
         return aplicarRotacao; // Retorna a funcao de rotacao
+    }
+
+    // Rotaciona um determinado grupo pelo nome no sentido CONTRÁRIO (para ruchy prim)
+    grupo.rotacionarReverse = function(nome) { 
+        if (grupo.montar(nome) == null) { 
+            return null; 
+        }
+
+        let frames = 60; 
+        let anguloTotal = 2 * Math.PI / 3; // Ângulo POSITIVO = rotação para DIREITA (R')
+        let anguloParcial = anguloTotal / frames; 
+
+        let quaternion = new THREE.Quaternion(); 
+        let quaternionParcial = new THREE.Quaternion(); 
+
+        quaternion.setFromAxisAngle(grupo.verticeRotacao, anguloTotal);
+        quaternionParcial.setFromAxisAngle(grupo.verticeRotacao, anguloParcial);
+
+        function aplicarRotacao() {
+            if (frames > 0) { 
+                grupo.applyQuaternion(quaternionParcial); 
+            }
+            else if (frames == 0) { 
+                grupo.desmontar(true); 
+                // Używamy normalnej organizacji bo kąt jest dodatni
+                grupo.organizar(nome); 
+            }
+            frames--; 
+        }
+
+        return aplicarRotacao; 
     }
 
     // Reorganiza as referencias dos tetraedros e octaedros pelo grupo
@@ -589,6 +620,72 @@ function Grupo(pyraminx) {
         }
 
         return grupo; // Retorna o grupo atual
+    }
+
+    // Reorganiza as referencias dos tetraedros e octaedros pelo grupo - VERSÃO REVERSA
+    grupo.organizarReverse = function(nome) { 
+        switch (nome) { 
+            case 'OctaedroA': case 'LinhaA':
+            grupo.trocar('tetraedros', 1, 2, 3); // Odwrotna kolejność: 1→2, 2→3, 3→1
+            break;
+            case 'OctaedroB': case 'LinhaB':
+            grupo.trocar('tetraedros', 7, 5, 1); // Odwrotna kolejność: 7→5, 5→1, 1→7
+            break;
+            case 'OctaedroC': case 'LinhaC':
+            grupo.trocar('tetraedros', 8, 2, 5); // Odwrotna kolejność: 8→2, 2→5, 5→8
+            break;
+            case 'OctaedroD': case 'LinhaD':
+            grupo.trocar('tetraedros', 8, 7, 3); // Odwrotna kolejność: 8→7, 7→3, 3→8
+            break;
+            case 'PyraminxA':
+            grupo.trocar('octaedros', 1, 2, 3); // Odwrotna kolejność
+            grupo.trocar('tetraedros', 6, 9, 4); // Odwrotna kolejność  
+            grupo.trocar('tetraedros', 7, 5, 8); // Odwrotna kolejność
+            grupo.trocar('tetraedros', 1, 2, 3); // Odwrotna kolejność
+            break;
+            case 'PyraminxB':
+            grupo.trocar('octaedros', 3, 2, 0); // Odwrotna kolejność
+            grupo.trocar('tetraedros', 9, 6, 0); // Odwrotna kolejność
+            grupo.trocar('tetraedros', 3, 8, 2); // Odwrotna kolejność
+            grupo.trocar('tetraedros', 7, 5, 1); // Odwrotna kolejność
+            break;
+            case 'PyraminxC':
+            grupo.trocar('octaedros', 1, 3, 0); // Odwrotna kolejność
+            grupo.trocar('tetraedros', 4, 9, 0); // Odwrotna kolejność
+            grupo.trocar('tetraedros', 7, 3, 1); // Odwrotna kolejność
+            grupo.trocar('tetraedros', 8, 2, 5); // Odwrotna kolejność
+            break;
+            case 'PyraminxD':
+            grupo.trocar('octaedros', 2, 1, 0); // Odwrotna kolejność
+            grupo.trocar('tetraedros', 6, 4, 0); // Odwrotna kolejność
+            grupo.trocar('tetraedros', 2, 5, 1); // Odwrotna kolejność
+            grupo.trocar('tetraedros', 8, 7, 3); // Odwrotna kolejność
+            break;
+            case 'FaceA':
+            grupo.trocar('octaedros', 2, 1, 0); // Odwrotna kolejność
+            grupo.trocar('tetraedros', 6, 4, 0); // Odwrotna kolejność
+            grupo.trocar('tetraedros', 2, 5, 1); // Odwrotna kolejność
+            break;
+            case 'FaceB':
+            grupo.trocar('octaedros', 1, 3, 0); // Odwrotna kolejność
+            grupo.trocar('tetraedros', 4, 9, 0); // Odwrotna kolejność
+            grupo.trocar('tetraedros', 7, 3, 1); // Odwrotna kolejność
+            break;
+            case 'FaceC':
+            grupo.trocar('octaedros', 3, 2, 0); // Odwrotna kolejność
+            grupo.trocar('tetraedros', 9, 6, 0); // Odwrotna kolejność
+            grupo.trocar('tetraedros', 3, 8, 2); // Odwrotna kolejność
+            break;
+            case 'FaceD':
+            grupo.trocar('octaedros', 1, 2, 3); // Odwrotna kolejność
+            grupo.trocar('tetraedros', 6, 9, 4); // Odwrotna kolejność
+            grupo.trocar('tetraedros', 7, 5, 8); // Odwrotna kolejność
+            break;
+            default: 
+            return null; 
+        }
+
+        return grupo; 
     }
 
     // Funcao que troca a posicao de tres componentes em uma propriedade

@@ -8,9 +8,9 @@ let currentAlgorithm = null;
 let rotacao; // Funkcja aktualnej rotacji
 
 // Kolory pyraminxa - standardowa orientacja speedcubingowa
-let vermelho = 0xff0000; // Czerwony - góra
-let verde    = 0x00ff00; // Zielony - przód  
-let azul     = 0x0000ff; // Niebieski - prawo
+let vermelho =  0x00ff00; // Czerwony - góra
+let verde    =  0x0000ff;  // Zielony - przód  
+let azul     =  0xff0000;  // Niebieski - prawo
 let amarelo  = 0xffff00; // Żółty - dół/tył
 let preto    = 0x777777; // Szary (kolory wewnętrzne)
 
@@ -120,11 +120,18 @@ function animate() {
     render();
 }
 
-// Funkcja obsługi zdarzeń - bazowana na oryginalnej z app.js
+// Funkcja obsługi zdarzeń - obsługuje zarówno normalne jak i odwrotne rotacje
 function tratarEventos() {
     if (eventos.length != 0) {
         let eventData = eventos.shift();
-        rotacao = grupo.rotacionar(eventData.moveType);
+        
+        if (eventData.reverse) {
+            // Dla ruchów z apostrofem - użyj rotacionarReverse
+            rotacao = grupo.rotacionarReverse(eventData.moveType);
+        } else {
+            // Dla normalnych ruchów - użyj zwykłego rotacionar
+            rotacao = grupo.rotacionar(eventData.moveType);
+        }
     }
 }
 
@@ -157,15 +164,15 @@ function parseAlgorithm(notation) {
             const moveType = moveMapping[move];
             
             if (modifier === "'") {
-                // Ruch przeciwny - tylko 1 obrót w przeciwnym kierunku
-                // (oryginalnie było 2 obroty, ale to dawało odwrócony kierunek)
-                moves.push(moveType, moveType, moveType); // 3 obroty = 1 obrót przeciwny
+                // Ruch z apostrofem (prim) - używa rotacionarReverse dla pojedynczego obrotu w przeciwnym kierunku
+                moves.push({ moveType: moveType, reverse: true });
             } else if (modifier === "2") {
-                // Podwójny ruch - 2 obroty w tym samym kierunku  
-                moves.push(moveType, moveType);
+                // Podwójny ruch - 2 obroty w tym samym kierunku normalnym  
+                moves.push({ moveType: moveType, reverse: false });
+                moves.push({ moveType: moveType, reverse: false });
             } else {
-                // Normalny ruch - 1 obrót
-                moves.push(moveType);
+                // Normalny ruch bez apostrofu - 1 obrót w kierunku normalnym
+                moves.push({ moveType: moveType, reverse: false });
             }
         }
     });
@@ -177,23 +184,34 @@ function parseAlgorithm(notation) {
 function playSequence(notation) {
     if (isAnimating || !grupo.estaVazio()) return;
     
-    currentAlgorithm = notation;
-    const moves = parseAlgorithm(notation);
+    // AUTOMATYCZNY RESET przed każdym algorytmem
+    resetPyraminx();
     
-    // Dodaj ruchy do kolejki zdarzeń
-    moves.forEach(moveType => {
-        eventos.push({ moveType: moveType });
-    });
-    
-    isAnimating = true;
-    
-    console.log(`Wykonywanie algorytmu: ${notation}`);
-    console.log(`Ruchy: ${moves}`);
-    
-    // Ustaw timeout aby oznaczyć koniec animacji
+    // Czekaj krótko aż reset się zakończy
     setTimeout(() => {
-        isAnimating = false;
-    }, moves.length * 1000); // Około 1 sekunda na ruch
+        currentAlgorithm = notation;
+        const moves = parseAlgorithm(notation);
+        
+        if (moves.length === 0) {
+            console.warn('Nie znaleziono prawidłowych ruchów w notacji:', notation);
+            return;
+        }
+        
+        // Dodaj ruchy do kolejki zdarzeń
+        moves.forEach(move => {
+            eventos.push(move);
+        });
+        
+        isAnimating = true;
+        
+        console.log(`Wykonywanie algorytmu: ${notation}`);
+        console.log(`Ruchy:`, moves);
+        
+        // Ustaw timeout aby oznaczyć koniec animacji
+        setTimeout(() => {
+            isAnimating = false;
+        }, moves.length * 1000); // Około 1 sekunda na ruch
+    }, 100); // Krótkie opóźnienie po resecie
 }
 
 // Reset pyraminxa
