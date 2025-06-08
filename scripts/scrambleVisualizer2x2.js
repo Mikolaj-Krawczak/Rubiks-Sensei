@@ -32,7 +32,7 @@ function initScrambleVisualizer(containerId) {
     container.innerHTML = '';
 
     visualizerScene = new THREE.Scene();
-    visualizerScene.background = new THREE.Color(0xeeeeee);
+    visualizerScene.background = new THREE.Color(0xc2c2c2); // Jednolity szary kolor dla wszystkich wizualizatorów
 
     visualizerCamera = new THREE.PerspectiveCamera(
         55,

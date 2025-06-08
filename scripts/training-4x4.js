@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Elementy UI
-    const scrambleDisplay = document.getElementById('scramble-display');
     const timerDisplay = document.getElementById('timer-display');
     const hintDisplay = document.getElementById('hint-display');
     const regenScrambleBtn = document.getElementById('regen-scramble-btn');
@@ -8,18 +7,32 @@ document.addEventListener('DOMContentLoaded', () => {
     const seriesSolveBtn = document.getElementById('series-solve-btn');
     const seriesCountInput = document.getElementById('series-count');
     const scrambleLengthInput = document.getElementById('scramble-length');
-    const visualizeScrambleBtn = document.getElementById('visualize-scramble-btn');
-    const resetVisualizerBtn = document.getElementById('reset-visualizer-btn');
+    // Przyciski wizualizacji zostały usunięte z interfejsu 4x4
     const visualizerContainerId = 'scramble-visualizer-space';
     const seriesTimesDisplay = document.getElementById('series-times-display');
     const speedControlRadios = document.querySelectorAll('input[name="scramble-speed"]');
     const animationSpeedSlider = document.getElementById('animation-speed');
     const speedValueDisplay = document.getElementById('speed-value');
+    const seriesCount = document.querySelector('#series-count');
+    const selectedSeriesCount = document.querySelector('.selected-series-count');
+    const selectedSeriesCountSpan = document.querySelector("#selected-series-count-span")
+    const seriesCountOptionsList = document.querySelector(".series-count-options")
+    const seriesCountOptions = document.querySelectorAll(".series-count-options > li")
+    const scrambleDisplay = document.querySelector("#scramble-display")
+
+    const scrambleLengthButton = document.querySelector(".scramble-length-button")
+    const scrambleLength = document.querySelector("#scramble-length")
+    const scrambleLengthMenu = document.querySelector(".scramble-length-menu")
+    const scrambleLengthSpan = document.querySelector("#scramble-length-span")
+    const scrabbleLengthInput = document.querySelector("#scrabble-length-input")
     
-    // Elementy specyficzne dla 4x4
-    const includeBasicCheckbox = document.getElementById('includeBasic');
-    const includeInnerCheckbox = document.getElementById('includeInner');
-    const includeWideCheckbox = document.getElementById('includeWide');
+    // Elementy specyficzne dla 4x4 zostały usunięte - używamy wszystkich typów ruchów
+
+    // POPRAWKA: Sprawdzenie czy krytyczne elementy istnieją
+    if (!timerDisplay || !hintDisplay || !regenScrambleBtn || !singleSolveBtn || !seriesSolveBtn || !scrambleDisplay) {
+        console.error("Krytyczne elementy DOM nie zostały znalezione. Sprawdź HTML strony.");
+        return; // Przerwij wykonanie jeśli brakuje kluczowych elementów
+    }
 
     // Zmienne stanu
     let timerInterval = null;
@@ -74,12 +87,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         // --- Koniec czyszczenia ---
 
-        const length = parseInt(scrambleLengthInput.value, 10) || 40;
+        // POPRAWKA: Używam właściwej wartości z custom input dla długości scramble'a
+        const length = parseInt(scrabbleLengthInput?.value, 10) || 40;
         
-        // Pobierz opcje dla scramble'a 4x4
-        const includeBasic = includeBasicCheckbox.checked;
-        const includeInner = includeInnerCheckbox.checked;
-        const includeWide = includeWideCheckbox.checked;
+        // Zawsze używaj wszystkich typów ruchów dla 4x4
+        const includeBasic = true;
+        const includeInner = true;
+        const includeWide = true;
 
         if (typeof generateScramble4x4 === 'function') {
             currentScramble = generateScramble4x4(length, {
@@ -89,35 +103,42 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             // Zapisz tasowanie do późniejszego użycia
             scrambles[currentSolveIndex] = currentScramble;
-            
-            // Dodaj postęp serii do tekstu tasowania, jeśli jesteś w trybie serii
-            const seriesPrefix = isSeriesMode ? `(${currentSolveIndex + 1}/${totalSolvesInSeries}) ` : '';
-            scrambleDisplay.textContent = `Tasowanie ${seriesPrefix}: ${currentScramble}`;
+
+            if (scrambleDisplay) {
+                scrambleDisplay.textContent = `${currentScramble}`;
+            }
         } else {
             currentScramble = '';
-            scrambleDisplay.textContent = 'Tasowanie: Błąd generowania tasowania 4x4.';
+            if (scrambleDisplay) {
+                scrambleDisplay.textContent = 'Tasowanie: Błąd generowania tasowania 4x4.';
+            }
             console.error("Funkcja generateScramble4x4 nie została znaleziona.");
         }
 
         // Zresetuj timer i podpowiedź
         resetTimer();
-        const startHint = isSeriesMode ? `Rozpocznij ułożenie ${currentSolveIndex + 1}` : 'Naciśnij Spację, aby rozpocząć';
-        hintDisplay.textContent = startHint;
+        const startHint = isSeriesMode ? `Start attempt ${currentSolveIndex + 1}` : 'Press SPACE to begin';
+        if (hintDisplay) {
+            hintDisplay.textContent = startHint;
+        }
     }
 
      // --- Wizualizacja tasowania ---
     function visualizeCurrentScramble() {
         if (scrambleVisualizerInstance && typeof scrambleVisualizerInstance.displayScrambledState === 'function') {
             if (currentScramble) {
-                // --- Sprawdź wybraną prędkość ---
-                let animateScramble = false;
-                let selectedSpeed = 'instant';
+                // --- POPRAWKA: Domyślnie wykonuj animację ruchów (jak w 3x3) ---
+                let animateScramble = true;
+                let selectedSpeed = 'animated';
                 try {
-                    selectedSpeed = document.querySelector('input[name="scramble-speed"]:checked').value;
+                    const speedControl = document.querySelector('input[name="scramble-speed"]:checked');
+                    if (speedControl) {
+                        selectedSpeed = speedControl.value;
+                        animateScramble = (selectedSpeed === 'animated');
+                    }
                 } catch (e) {
-                    console.warn("Nie można odczytać wartości kontroli prędkości, domyślnie ustawiono natychmiastową.");
+                    console.warn("Nie można odczytać wartości kontroli prędkości, używam animacji.");
                 }
-                animateScramble = (selectedSpeed === 'animated');
                 
                 // Pokaż/ukryj kontrolki prędkości animacji w zależności od wybranego trybu
                 const speedControlContainer = document.querySelector('.animation-speed-control');
@@ -182,10 +203,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 currentSolveIndex++;
 
                 if (currentSolveIndex < totalSolvesInSeries) {
-                    nextHint = `Naciśnij Spację, aby rozpocząć ułożenie ${currentSolveIndex + 1}`;
+                    nextHint = `Start attempt ${currentSolveIndex + 1}`;
+                    // POPRAWKA: Automatycznie wygeneruj i wizualizuj następny scramble w serii
+                    setTimeout(() => {
+                        generateAndDisplayScramble();
+                        setTimeout(() => {
+                            visualizeCurrentScramble();
+                        }, 100);
+                    }, 500);
                 } else {
                     // Seria zakończona
-                    nextHint = 'Seria zakończona! Wygeneruj nowy scramble lub zmień ustawienia.';
+                    nextHint = 'Series complete! Generate new scramble or change settings.';
                     
                     // Wyświetl statystyki
                     displaySeriesStatistics();
@@ -241,11 +269,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div>${time.toFixed(2)}s</div>
             `;
             
-            // Dodaj tooltip z scramble'em
+            // Dodaj event listenery dla pokazywania scramble w głównym okienku
             if (scrambles[index]) {
                 tile.title = scrambles[index];
-                tile.addEventListener('mouseenter', (e) => showScrambleTooltip(e, scrambles[index]));
-                tile.addEventListener('mouseleave', hideScrambleTooltip);
+                tile.addEventListener('mouseenter', () => {
+                    if (scrambleDisplay) {
+                        scrambleDisplay.textContent = scrambles[index];
+                    }
+                });
+                tile.addEventListener('mouseleave', () => {
+                    if (scrambleDisplay && currentScramble) {
+                        scrambleDisplay.textContent = currentScramble;
+                    }
+                });
             }
             
             grid.appendChild(tile);
@@ -255,22 +291,7 @@ document.addEventListener('DOMContentLoaded', () => {
         seriesTimesDisplay.appendChild(grid);
     }
 
-    // --- Funkcje tooltip ---
-    function showScrambleTooltip(e, scramble) {
-        const tooltip = document.createElement('div');
-        tooltip.className = 'scramble-tooltip';
-        tooltip.textContent = scramble;
-        tooltip.style.left = e.pageX + 'px';
-        tooltip.style.top = (e.pageY - 10) + 'px';
-        document.body.appendChild(tooltip);
-    }
-
-    function hideScrambleTooltip() {
-        const tooltip = document.querySelector('.scramble-tooltip');
-        if (tooltip) {
-            tooltip.remove();
-        }
-    }
+    // USUNIĘTE: Funkcje tooltip - teraz pokazujemy scramble w głównym okienku
 
     function resetTimer() {
         clearInterval(timerInterval);
@@ -308,38 +329,57 @@ document.addEventListener('DOMContentLoaded', () => {
         generateAndDisplayScramble();
     }
 
-    // --- Event listenery ---
-    singleSolveBtn.addEventListener('click', () => setMode(false));
-    seriesSolveBtn.addEventListener('click', () => setMode(true));
-    
-    seriesCountInput.addEventListener('change', () => {
-        if (isSeriesMode) {
-            totalSolvesInSeries = parseInt(seriesCountInput.value, 10) || 5;
-            currentSolveIndex = 0;
-            seriesTimes = [];
-            scrambles = [];
-            seriesTimesDisplay.classList.remove('series-complete');
-            generateAndDisplayScramble();
+    // Mode selection listeners (Clear times display when changing mode)
+    singleSolveBtn.addEventListener('click', () => {
+        isSeriesMode = false;
+        if (seriesTimesDisplay) {
+            seriesTimesDisplay.innerHTML = '';
         }
+        singleSolveBtn.classList.add('active');
+        seriesSolveBtn.classList.remove('active');
+        if (seriesCount) {
+            seriesCount.classList.remove("active");
+        }
+        currentSolveIndex = 0;
+
+        const seriesTiles = document.querySelectorAll('.solve-tile.series');
+        seriesTiles.forEach(tile => {
+            tile.classList.add('disabled');
+        });
+    });
+
+    seriesSolveBtn.addEventListener('click', () => {
+        isSeriesMode = true;
+        if (seriesTimesDisplay) {
+            seriesTimesDisplay.innerHTML = '';
+        }
+        seriesSolveBtn.classList.add('active');
+        if (seriesCount) {
+            seriesCount.classList.add('active');
+        }
+        singleSolveBtn.classList.remove('active');
+        currentSolveIndex = 0;
+        totalSolvesInSeries = Math.min(parseInt(selectedSeriesCountSpan?.textContent, 10) || 5, MAX_SERIES_LENGTH);
+
+        const singleTiles = document.querySelectorAll('.solve-tile.single');
+        singleTiles.forEach(tile => {
+            tile.classList.add('disabled');
+        });
     });
 
     regenScrambleBtn.addEventListener('click', () => {
-        if (isSeriesMode && currentSolveIndex >= totalSolvesInSeries) {
-            // Seria zakończona, rozpocznij nową
-            currentSolveIndex = 0;
-            seriesTimes = [];
-            scrambles = [];
-            seriesTimesDisplay.classList.remove('series-complete');
+        // Reset everything when generating a new scramble
+        currentSolveIndex = 0;
+        seriesTimes = [];
+        scrambles = [];
+        if (seriesTimesDisplay) {
+            seriesTimesDisplay.innerHTML = '';
         }
         generateAndDisplayScramble();
-    });
-
-    visualizeScrambleBtn.addEventListener('click', visualizeCurrentScramble);
-    
-    resetVisualizerBtn.addEventListener('click', () => {
-        if (scrambleVisualizerInstance && typeof scrambleVisualizerInstance.resetVisualization === 'function') {
-            scrambleVisualizerInstance.resetVisualization();
-        }
+        // POPRAWKA: Automatycznie wykonuj animację ruchów po wygenerowaniu
+        setTimeout(() => {
+            visualizeCurrentScramble();
+        }, 100);
     });
 
     // --- Obsługa klawiatury ---
@@ -371,14 +411,103 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // NOWA OBSŁUGA CUSTOM DROPDOWNÓW
+    // Series count dropdown
+    if (seriesCount && selectedSeriesCount && seriesCountOptionsList && seriesCountOptions.length > 0) {
+        selectedSeriesCount.addEventListener('click', () => {
+            seriesCountOptionsList.classList.toggle('series-count-options-visible');
+        });
+
+        seriesCountOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                if (selectedSeriesCountSpan) {
+                    selectedSeriesCountSpan.textContent = option.textContent;
+                }
+                // Update selected state
+                seriesCountOptions.forEach(opt => opt.classList.remove('series-count-options-selected'));
+                option.classList.add('series-count-options-selected');
+                seriesCountOptionsList.classList.remove('series-count-options-visible');
+                
+                // Update series if in series mode
+                if (isSeriesMode) {
+                    totalSolvesInSeries = Math.min(parseInt(option.textContent, 10) || 5, MAX_SERIES_LENGTH);
+                    currentSolveIndex = 0;
+                    seriesTimes = [];
+                    scrambles = [];
+                    if (seriesTimesDisplay) {
+                        seriesTimesDisplay.innerHTML = '';
+                    }
+                }
+            });
+        });
+    }
+
+    // Scramble length dropdown  
+    if (scrambleLengthButton && scrambleLengthMenu && scrabbleLengthInput) {
+        scrambleLengthButton.addEventListener('click', () => {
+            scrambleLengthMenu.classList.toggle('scramble-length-menu-visible');
+        });
+
+        const minusBtn = scrambleLengthMenu.querySelector('.minus');
+        const plusBtn = scrambleLengthMenu.querySelector('.plus');
+
+        if (minusBtn) {
+            minusBtn.addEventListener('click', () => {
+                let currentValue = parseInt(scrabbleLengthInput.value, 10) || 40;
+                if (currentValue > 20) {
+                    scrabbleLengthInput.value = currentValue - 1;
+                    if (scrambleLengthSpan) {
+                        scrambleLengthSpan.textContent = scrabbleLengthInput.value;
+                    }
+                }
+            });
+        }
+
+        if (plusBtn) {
+            plusBtn.addEventListener('click', () => {
+                let currentValue = parseInt(scrabbleLengthInput.value, 10) || 40;
+                if (currentValue < 80) {
+                    scrabbleLengthInput.value = currentValue + 1;
+                    if (scrambleLengthSpan) {
+                        scrambleLengthSpan.textContent = scrabbleLengthInput.value;
+                    }
+                }
+            });
+        }
+
+        if (scrabbleLengthInput) {
+            scrabbleLengthInput.addEventListener('blur', () => {
+                let value = parseInt(scrabbleLengthInput.value, 10);
+                if (isNaN(value) || value < 20) value = 20;
+                if (value > 80) value = 80;
+                scrabbleLengthInput.value = value;
+                if (scrambleLengthSpan) {
+                    scrambleLengthSpan.textContent = value;
+                }
+            });
+        }
+    }
+
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', (e) => {
+        if (seriesCountOptionsList && !seriesCount?.contains(e.target)) {
+            seriesCountOptionsList.classList.remove('series-count-options-visible');
+        }
+        if (scrambleLengthMenu && !scrambleLength?.contains(e.target)) {
+            scrambleLengthMenu.classList.remove('scramble-length-menu-visible');
+        }
+    });
+
     // --- Obsługa kontrolek prędkości ---
     speedControlRadios.forEach(radio => {
-        radio.addEventListener('change', () => {
-            const speedControlContainer = document.querySelector('.animation-speed-control');
-            if (speedControlContainer) {
-                speedControlContainer.style.display = radio.value === 'animated' ? 'flex' : 'none';
-            }
-        });
+        if (radio) {
+            radio.addEventListener('change', () => {
+                const speedControlContainer = document.querySelector('.animation-speed-control');
+                if (speedControlContainer) {
+                    speedControlContainer.style.display = radio.value === 'animated' ? 'flex' : 'none';
+                }
+            });
+        }
     });
 
     if (animationSpeedSlider && speedValueDisplay) {
@@ -387,19 +516,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- Obsługa zmian opcji scramble'a ---
-    [includeBasicCheckbox, includeInnerCheckbox, includeWideCheckbox].forEach(checkbox => {
-        if (checkbox) {
-            checkbox.addEventListener('change', () => {
-                // Sprawdź czy przynajmniej jedna opcja jest zaznaczona
-                const anyChecked = includeBasicCheckbox.checked || includeInnerCheckbox.checked || includeWideCheckbox.checked;
-                if (!anyChecked) {
-                    // Jeśli żadna nie jest zaznaczona, zaznacz podstawowe ruchy
-                    includeBasicCheckbox.checked = true;
-                }
-            });
-        }
-    });
+    // Obsługa opcji scramble'a została usunięta - zawsze używamy wszystkich typów ruchów
 
     // --- Inicjalizacja ---
     // Ustaw początkową widoczność kontrolek animacji

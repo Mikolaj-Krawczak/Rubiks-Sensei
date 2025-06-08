@@ -6,6 +6,8 @@ let algorithmQueue = [];
 let currentStepIndex = 0;
 let currentAlgorithm = null;
 let rotacao; // Funkcja aktualnej rotacji
+let moveHistory = []; // Historia wykonanych ruchów
+let currentMoveIndex = -1; // Aktualny indeks w historii
 
 // Kolory pyraminxa - standardowa orientacja speedcubingowa
 let vermelho =  0x00ff00; // Czerwony - góra
@@ -23,6 +25,19 @@ function initPyraminxScene() {
     frustum = 10;
     
     cena = new THREE.Scene();
+    
+    // Ładowanie tła z obrazkiem (jak w innych bibliotekach)
+    const loader = new THREE.TextureLoader();
+    loader.load(
+        '../assets/images/background2.png',
+        (texture) => { cena.background = texture; },
+        undefined,
+        (error) => { 
+            console.error('Błąd ładowania tła dla pyraminxa:', error); 
+            cena.background = new THREE.Color(0xc2c2c2); 
+        }
+    );
+    
     camera = new THREE.OrthographicCamera(
         -frustum * aspecto / 2, 
         frustum * aspecto / 2, 
@@ -34,7 +49,6 @@ function initPyraminxScene() {
     
     renderer = new THREE.WebGLRenderer({antialias: true});
     renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setClearColor(0xffffff, 1);
     renderer.setSize(container.clientWidth, container.clientHeight);
     
     // Dodanie kontrolek orbity
@@ -125,6 +139,20 @@ function tratarEventos() {
     if (eventos.length != 0) {
         let eventData = eventos.shift();
         
+        // Dodaj do historii jeśli nie jest to replay
+        if (!eventData.isReplay) {
+            // Jeśli nie jesteśmy na końcu historii, obetnij ją
+            if (currentMoveIndex < moveHistory.length - 1) {
+                moveHistory = moveHistory.slice(0, currentMoveIndex + 1);
+            }
+            // Dodaj nowy ruch do historii
+            moveHistory.push({
+                moveType: eventData.moveType,
+                reverse: eventData.reverse
+            });
+            currentMoveIndex = moveHistory.length - 1;
+        }
+        
         if (eventData.reverse) {
             // Dla ruchów z apostrofem - użyj rotacionarReverse
             rotacao = grupo.rotacionarReverse(eventData.moveType);
@@ -197,6 +225,10 @@ function playSequence(notation) {
             return;
         }
         
+        // Wyczyść historię dla nowej sekwencji
+        moveHistory = [];
+        currentMoveIndex = -1;
+        
         // Dodaj ruchy do kolejki zdarzeń
         moves.forEach(move => {
             eventos.push(move);
@@ -222,6 +254,8 @@ function resetPyraminx() {
     rotacao = null;
     currentStepIndex = 0;
     currentAlgorithm = null;
+    moveHistory = [];
+    currentMoveIndex = -1;
     
     // Usuń obecny pyraminx z sceny
     cena.remove(pyraminx);
@@ -240,16 +274,46 @@ function resetPyraminx() {
     console.log('Pyraminx zresetowany');
 }
 
-// Krok wstecz (TODO: implementacja)
+// Krok wstecz - cofnij ostatni ruch
 function stepBack() {
-    console.log('Krok wstecz - do implementacji');
-    // Tutaj można dodać logikę cofania ruchów
+    if (isAnimating || !grupo.estaVazio() || currentMoveIndex < 0) {
+        console.log('Nie można cofnąć ruchu - animacja w toku lub brak historii');
+        return;
+    }
+    
+    const currentMove = moveHistory[currentMoveIndex];
+    currentMoveIndex--;
+    
+    // Wykonaj odwrotny ruch
+    const reverseMove = {
+        moveType: currentMove.moveType,
+        reverse: !currentMove.reverse, // Odwróć kierunek
+        isReplay: true // Oznacz jako replay żeby nie dodawać do historii
+    };
+    
+    eventos.push(reverseMove);
+    console.log('Cofam ruch:', currentMove, 'Wykonuję odwrotny:', reverseMove);
 }
 
-// Krok do przodu (TODO: implementacja) 
+// Krok do przodu - powtórz następny ruch z historii
 function stepForward() {
-    console.log('Krok do przodu - do implementacji');
-    // Tutaj można dodać logikę powtarzania ruchów
+    if (isAnimating || !grupo.estaVazio() || currentMoveIndex >= moveHistory.length - 1) {
+        console.log('Nie można powtórzyć ruchu - animacja w toku lub brak dalszej historii');
+        return;
+    }
+    
+    const nextMove = moveHistory[currentMoveIndex + 1];
+    currentMoveIndex++;
+    
+    // Wykonaj ruch z historii
+    const replayMove = {
+        moveType: nextMove.moveType,
+        reverse: nextMove.reverse,
+        isReplay: true // Oznacz jako replay żeby nie dodawać do historii ponownie
+    };
+    
+    eventos.push(replayMove);
+    console.log('Powtarzam ruch:', nextMove);
 }
 
 // Funkcja do pobierania algorytmów pyraminxa z API

@@ -3,6 +3,9 @@ function Grupo(pyraminx) {
     let grupo = new THREE.Object3D(); // Cria um objeto 3D para o grupo
 
     grupo.pyraminx = pyraminx; // Adiciona o pyraminx manipulado ao grupo
+    
+    // Variável global para controlar prędkość animacji
+    grupo.animationFrames = 20; // Domyślnie 20 klatek (szybka ale czytelna prędkość)
 
     // Monta um determinado grupo dentro do pyraminx, os nomes podem ser:
     // Tetraedro, Octaedro, Pyraminx, Linha e Face, seguido das letras A, B, C e D
@@ -498,7 +501,7 @@ function Grupo(pyraminx) {
             return null; // Retorna null caso o nome de grupo nao exista
         }
 
-        let frames = 60; // Considerando que a tela possui 60 frames por segundo
+        let frames = grupo.animationFrames; // Użyj zmiennej globalnej dla liczby klatek
         let anguloTotal = -2 * Math.PI / 3; // Angulo NEGATIVO = rotação para ESQUERDA (R)
         let anguloParcial = anguloTotal / frames; // Calcula o angulo parcial por frame
 
@@ -531,7 +534,7 @@ function Grupo(pyraminx) {
             return null; 
         }
 
-        let frames = 60; 
+        let frames = grupo.animationFrames; // Użyj zmiennej globalnej dla liczby klatek
         let anguloTotal = 2 * Math.PI / 3; // Ângulo POSITIVO = rotação para DIREITA (R')
         let anguloParcial = anguloTotal / frames; 
 
@@ -700,6 +703,14 @@ function Grupo(pyraminx) {
     // Verifica se o grupo esta vazio
     grupo.estaVazio = function() {
         return grupo.children.length == 0; // Retorna true caso o grupo nao tenha nenhum componente
+    }
+    
+    // Función para establecer la velocidad de animación
+    grupo.setAnimationSpeed = function(speedMs) {
+        // Konwersja z milisekund na liczbę klatek
+        // Im mniejsza wartość speedMs, tym szybsza animacja
+        // 200ms = 12 klatek, 100ms = 6 klatek, 500ms = 30 klatek
+        grupo.animationFrames = Math.max(5, Math.min(60, Math.round(speedMs / 16.67))); // 16.67ms na klatkę przy 60fps
     }
 
     return grupo; // Retorna o grupo criado e configurado

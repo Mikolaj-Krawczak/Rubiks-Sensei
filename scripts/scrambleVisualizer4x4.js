@@ -38,17 +38,8 @@ function initScrambleVisualizer4x4(containerId) {
     // Konfiguracja sceny
     visualizerScene = new THREE.Scene();
     
-    // Próba załadowania tła
-    const loader = new THREE.TextureLoader();
-    loader.load(
-        '../assets/images/background2.png',
-        (texture) => { visualizerScene.background = texture; },
-        undefined,
-        (error) => { 
-            console.warn('Nie można załadować tła dla wizualizatora 4x4, używam prostego tła');
-            visualizerScene.background = new THREE.Color(0xc2c2c2);
-        }
-    );
+    // Ustawienie szarego tła
+    visualizerScene.background = new THREE.Color(0xc2c2c2);
 
     // Kamera
     visualizerCamera = new THREE.PerspectiveCamera(

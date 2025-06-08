@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Elementy UI
-    const scrambleDisplay = document.getElementById('scramble-display');
     const timerDisplay = document.getElementById('timer-display');
     const hintDisplay = document.getElementById('hint-display');
     const regenScrambleBtn = document.getElementById('regen-scramble-btn');
@@ -8,13 +7,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const seriesSolveBtn = document.getElementById('series-solve-btn');
     const seriesCountInput = document.getElementById('series-count');
     const scrambleLengthInput = document.getElementById('scramble-length');
-    const visualizeScrambleBtn = document.getElementById('visualize-scramble-btn');
-    const resetVisualizerBtn = document.getElementById('reset-visualizer-btn');
+    // Przyciski wizualizacji zostały usunięte z interfejsu
     const visualizerContainerId = 'scramble-visualizer-space';
     const seriesTimesDisplay = document.getElementById('series-times-display');
     const speedControlRadios = document.querySelectorAll('input[name="scramble-speed"]');
     const animationSpeedSlider = document.getElementById('animation-speed');
     const speedValueDisplay = document.getElementById('speed-value');
+    const seriesCount = document.querySelector('#series-count');
+    const selectedSeriesCount = document.querySelector('.selected-series-count');
+    const selectedSeriesCountSpan = document.querySelector("#selected-series-count-span")
+    const seriesCountOptionsList = document.querySelector(".series-count-options")
+    const seriesCountOptions = document.querySelectorAll(".series-count-options > li")
+    const scrambleDisplay = document.querySelector("#scramble-display")
+
+    const scrambleLengthButton = document.querySelector(".scramble-length-button")
+    const scrambleLength = document.querySelector("#scramble-length")
+    const scrambleLengthMenu = document.querySelector(".scramble-length-menu")
+    const scrambleLengthSpan = document.querySelector("#scramble-length-span")
+    const scrabbleLengthInput = document.querySelector("#scrabble-length-input")
 
     // Zmienne stanu
     let timerInterval = null;
@@ -64,17 +74,20 @@ document.addEventListener('DOMContentLoaded', () => {
              seriesTimesDisplay.innerHTML = '';
         }
 
-        const length = parseInt(scrambleLengthInput.value, 10) || 12; // Domyślnie 12 dla 2x2
+        const length = parseInt(scrabbleLengthInput?.value, 10) || 12; // Domyślnie 12 dla 2x2
 
         if (typeof generateScramble === 'function') {
             currentScramble = generateScramble(length);
             scrambles[currentSolveIndex] = currentScramble;
-            
-            const seriesPrefix = isSeriesMode ? `(${currentSolveIndex + 1}/${totalSolvesInSeries}) ` : '';
-            scrambleDisplay.textContent = `Tasowanie ${seriesPrefix}: ${currentScramble}`;
+
+            if (scrambleDisplay) {
+                scrambleDisplay.textContent = `${currentScramble}`;
+            }
         } else {
             currentScramble = '';
-            scrambleDisplay.textContent = 'Tasowanie: Błąd generowania tasowania.';
+            if (scrambleDisplay) {
+                scrambleDisplay.textContent = 'Tasowanie: Błąd generowania tasowania.';
+            }
             console.error("Funkcja generateScramble nie została znaleziona.");
         }
 
@@ -86,23 +99,13 @@ document.addEventListener('DOMContentLoaded', () => {
     function visualizeCurrentScramble() {
         if (scrambleVisualizerInstance && typeof scrambleVisualizerInstance.displayScrambledState === 'function') {
             if (currentScramble) {
-                let animateScramble = false;
-                let selectedSpeed = 'instant';
-                try {
-                    selectedSpeed = document.querySelector('input[name="scramble-speed"]:checked').value;
-                } catch (e) {
-                    console.warn("Nie można odczytać wartości kontroli prędkości, domyślnie ustawiono natychmiastową.");
-                }
-                animateScramble = (selectedSpeed === 'animated');
+                // Zawsze używaj animacji z ustaloną prędkością
+                const animateScramble = true;
+                const fixedSpeed = 150; // Stała, szybka ale czytelna prędkość (150ms)
                 
-                const speedControlContainer = document.querySelector('.animation-speed-control');
-                if (speedControlContainer) {
-                    speedControlContainer.style.display = animateScramble ? 'flex' : 'none';
-                }
-                
-                if (animateScramble && animationSpeedSlider && scrambleVisualizerInstance.setAnimationSpeed) {
-                    const speedValue = parseInt(animationSpeedSlider.value, 10);
-                    scrambleVisualizerInstance.setAnimationSpeed(speedValue);
+                // Ustaw stałą prędkość animacji
+                if (scrambleVisualizerInstance.setAnimationSpeed) {
+                    scrambleVisualizerInstance.setAnimationSpeed(fixedSpeed);
                 }
 
                 try {
@@ -148,9 +151,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 currentSolveIndex++;
 
                 if (currentSolveIndex < totalSolvesInSeries) {
-                    nextHint = `Naciśnij Spację, aby rozpocząć ułożenie ${currentSolveIndex + 1}`;
+                    nextHint = `Start attempt ${currentSolveIndex + 1}`;
+                    // POPRAWKA: Automatycznie wygeneruj i wizualizuj następny scramble w serii
+                    setTimeout(() => {
+                        generateAndDisplayScramble();
+                        setTimeout(() => {
+                            visualizeCurrentScramble();
+                        }, 100);
+                    }, 500);
                 } else {
-                    nextHint = 'Seria zakończona! Wygeneruj nowy scramble lub zmień ustawienia.';
+                    nextHint = 'Series complete! Generate new scramble or change settings.';
                     displaySeriesStatistics();
                 }
             }
@@ -179,39 +189,49 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderSeriesTimes() {
-        seriesTimesDisplay.innerHTML = '';
-        
-        const gridContainer = document.createElement('div');
-        gridContainer.classList.add('solve-grid');
-        
+        if (!isSeriesMode || seriesTimes.length === 0) {
+            if (seriesTimesDisplay) {
+                seriesTimesDisplay.innerHTML = '';
+            }
+            return;
+        }
+
+        const grid = document.createElement('div');
+        grid.className = 'solve-grid';
+
         seriesTimes.forEach((time, index) => {
             const tile = document.createElement('div');
-            tile.classList.add('solve-tile');
-            tile.classList.add(isSeriesMode ? 'series' : 'single');
-            tile.dataset.index = index;
-            tile.textContent = time.toFixed(2);
+            tile.className = 'solve-tile';
+            tile.innerHTML = `
+                <div><strong>${index + 1}</strong></div>
+                <div>${time.toFixed(2)}s</div>
+            `;
             
-            tile.title = scrambles[index] || '';
+            // Dodaj event listenery dla pokazywania scramble w głównym okienku
+            if (scrambles[index]) {
+                tile.title = scrambles[index];
+                tile.addEventListener('mouseenter', () => {
+                    if (scrambleDisplay) {
+                        scrambleDisplay.textContent = scrambles[index];
+                    }
+                });
+                tile.addEventListener('mouseleave', () => {
+                    if (scrambleDisplay && currentScramble) {
+                        scrambleDisplay.textContent = currentScramble;
+                    }
+                });
+            }
             
-            tile.addEventListener('mouseenter', () => {
-                const tooltipDiv = document.createElement('div');
-                tooltipDiv.classList.add('scramble-tooltip');
-                tooltipDiv.textContent = scrambles[index] || '';
-                tile.appendChild(tooltipDiv);
-            });
-            
-            tile.addEventListener('mouseleave', () => {
-                const tooltip = tile.querySelector('.scramble-tooltip');
-                if (tooltip) {
-                    tile.removeChild(tooltip);
-                }
-            });
-            
-            gridContainer.appendChild(tile);
+            grid.appendChild(tile);
         });
-        
-        seriesTimesDisplay.appendChild(gridContainer);
+
+        if (seriesTimesDisplay) {
+            seriesTimesDisplay.innerHTML = '';
+            seriesTimesDisplay.appendChild(grid);
+        }
     }
+
+    // USUNIĘTE: Funkcje tooltip - teraz pokazujemy scramble w głównym okienku
 
     function resetTimer() {
         clearInterval(timerInterval);
@@ -251,101 +271,157 @@ document.addEventListener('DOMContentLoaded', () => {
         currentSolveIndex = 0;
         seriesTimes = [];
         scrambles = [];
-        seriesTimesDisplay.innerHTML = '';
+        if (seriesTimesDisplay) {
+            seriesTimesDisplay.innerHTML = '';
+        }
         generateAndDisplayScramble();
+        // POPRAWKA: Automatycznie wykonaj ruchy scramble'a po wygenerowaniu
+        setTimeout(() => {
+            visualizeCurrentScramble();
+        }, 100);
     });
     
-    scrambleLengthInput.addEventListener('change', generateAndDisplayScramble);
-    visualizeScrambleBtn.addEventListener('click', visualizeCurrentScramble);
-
-    resetVisualizerBtn.addEventListener('click', () => {
-        if (scrambleVisualizerInstance && typeof scrambleVisualizerInstance.resetVisualization === 'function') {
-             try {
-                scrambleVisualizerInstance.resetVisualization();
-             } catch (error) {
-                console.error("Error calling resetVisualization():", error);
-             }
-        } else {
-            console.error("Scramble visualizer instance or resetVisualization function not available.");
-        }
-    });
+    // Naprawiony event listener dla długości scramble'a
+    if (scrabbleLengthInput) {
+        scrabbleLengthInput.addEventListener('change', generateAndDisplayScramble);
+    }
+    
+    // Przyciski "Visualize" i "Reset" zostały usunięte z interfejsu
 
     singleSolveBtn.addEventListener('click', () => {
         isSeriesMode = false;
-        seriesTimesDisplay.innerHTML = '';
+        if (seriesTimesDisplay) {
+            seriesTimesDisplay.innerHTML = '';
+        }
         singleSolveBtn.classList.add('active');
         seriesSolveBtn.classList.remove('active');
-        seriesCountInput.disabled = true;
+        if (seriesCount) {
+            seriesCount.classList.remove("active");
+        }
         currentSolveIndex = 0;
-        
-        document.body.classList.remove('series-mode-active');
-        document.body.classList.add('single-mode-active');
         
         const seriesTiles = document.querySelectorAll('.solve-tile.series');
         seriesTiles.forEach(tile => {
             tile.classList.add('disabled');
         });
-        
-        generateAndDisplayScramble();
     });
 
     seriesSolveBtn.addEventListener('click', () => {
         isSeriesMode = true;
-        seriesTimesDisplay.innerHTML = '';
+        if (seriesTimesDisplay) {
+            seriesTimesDisplay.innerHTML = '';
+        }
         seriesSolveBtn.classList.add('active');
+        if (seriesCount) {
+            seriesCount.classList.add('active');
+        }
         singleSolveBtn.classList.remove('active');
-        seriesCountInput.disabled = false;
         currentSolveIndex = 0;
-        totalSolvesInSeries = Math.min(parseInt(seriesCountInput.value, 10) || 5, MAX_SERIES_LENGTH);
-        seriesCountInput.value = totalSolvesInSeries;
-        
-        document.body.classList.remove('single-mode-active');
-        document.body.classList.add('series-mode-active');
+        totalSolvesInSeries = Math.min(parseInt(selectedSeriesCountSpan?.textContent, 10) || 5, MAX_SERIES_LENGTH);
         
         const singleTiles = document.querySelectorAll('.solve-tile.single');
         singleTiles.forEach(tile => {
             tile.classList.add('disabled');
         });
-        
-        generateAndDisplayScramble();
     });
 
-    seriesCountInput.addEventListener('change', () => {
-        if (isSeriesMode) {
-             totalSolvesInSeries = Math.min(parseInt(seriesCountInput.value, 10) || 5, MAX_SERIES_LENGTH);
-             seriesCountInput.value = totalSolvesInSeries;
-             currentSolveIndex = 0;
-             seriesTimes = [];
-             scrambles = [];
-             seriesTimesDisplay.innerHTML = '';
-             generateAndDisplayScramble();
+    // USUNIĘTE: seriesCountInput nie istnieje w nowym HTML - używamy custom dropdown
+
+    // Kontrolki prędkości zostały usunięte - używamy stałej prędkości animacji
+
+    // Obsługa custom dropdownów - dodane z training-3x3.js
+
+    // Obsługa custom select dla liczby ułożeń w serii
+    if (seriesCountOptions) {
+        seriesCountOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                if (selectedSeriesCountSpan) {
+                    selectedSeriesCountSpan.textContent = option.textContent;
+                }
+                seriesCountOptions.forEach(opt => opt.classList.remove('series-count-options-selected'));
+                option.classList.add('series-count-options-selected');
+                if (seriesCountOptionsList) {
+                    seriesCountOptionsList.classList.toggle("series-count-options-visible");
+                }
+                
+                // Aktualizuj totalSolvesInSeries gdy zmienia się wybór
+                if (isSeriesMode) {
+                    totalSolvesInSeries = Math.min(parseInt(selectedSeriesCountSpan?.textContent, 10) || 5, MAX_SERIES_LENGTH);
+                    currentSolveIndex = 0;
+                    seriesTimes = [];
+                    scrambles = [];
+                    if (seriesTimesDisplay) {
+                        seriesTimesDisplay.innerHTML = '';
+                    }
+                }
+            });
+        });
+    }
+
+    // Obsługa zmian wartości w custom input dla długości scramble'a
+    if (scrabbleLengthInput && scrambleLengthSpan) {
+        scrabbleLengthInput.addEventListener('input', () => {
+            scrambleLengthSpan.textContent = scrabbleLengthInput.value;
+        });
+    }
+
+    // Obsługa przycisków plus/minus dla długości scramble'a
+    const plusButton = document.querySelector('.scramble-length-menu .plus');
+    const minusButton = document.querySelector('.scramble-length-menu .minus');
+    
+    if (plusButton && scrabbleLengthInput && scrambleLengthSpan) {
+        plusButton.addEventListener('click', () => {
+            scrabbleLengthInput.stepUp();
+            scrambleLengthSpan.textContent = scrabbleLengthInput.value;
+        });
+    }
+    
+    if (minusButton && scrabbleLengthInput && scrambleLengthSpan) {
+        minusButton.addEventListener('click', () => {
+            scrabbleLengthInput.stepDown();
+            scrambleLengthSpan.textContent = scrabbleLengthInput.value;
+        });
+    }
+
+    // Series count custom select
+    if (selectedSeriesCount && seriesCountOptionsList && seriesTimesDisplay) {
+        selectedSeriesCount.addEventListener('click', () => {
+            isSeriesMode = true;
+            if (seriesCount) {
+                seriesCount.classList.add('active');
+            }
+            singleSolveBtn.classList.remove("active");
+            seriesSolveBtn.classList.add("active");
+            seriesCountOptionsList.classList.toggle("series-count-options-visible");
+            seriesTimesDisplay.innerHTML = '';
+            currentSolveIndex = 0;
+            totalSolvesInSeries = Math.min(parseInt(selectedSeriesCountSpan?.textContent, 10) || 5, MAX_SERIES_LENGTH);
+        });
+    }
+
+    // Close series count dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+        if (seriesCount && !seriesCount.contains(e.target) && seriesCountOptionsList) {
+            seriesCountOptionsList.classList.remove('series-count-options-visible');
+        }
+        if (scrambleLength && !scrambleLength.contains(e.target) && scrambleLengthMenu) {
+            scrambleLengthMenu.classList.remove("scramble-length-menu-visible");
         }
     });
 
-    // Obsługa kontrolek prędkości animacji
-    speedControlRadios.forEach(radio => {
-        radio.addEventListener('change', () => {
-            const speedControlContainer = document.querySelector('.animation-speed-control');
-            if (speedControlContainer) {
-                speedControlContainer.style.display = (radio.value === 'animated') ? 'flex' : 'none';
-            }
-        });
-    });
-
-    if (animationSpeedSlider && speedValueDisplay) {
-        animationSpeedSlider.addEventListener('input', () => {
-            speedValueDisplay.textContent = `${animationSpeedSlider.value}ms`;
+    if (scrambleLengthButton && scrambleLengthMenu) {
+        scrambleLengthButton.addEventListener("click", () => {
+            scrambleLengthMenu.classList.toggle("scramble-length-menu-visible");
         });
     }
 
-    // Ukryj kontrolki prędkości animacji domyślnie
-    const speedControlContainer = document.querySelector('.animation-speed-control');
-    if (speedControlContainer) {
-        speedControlContainer.style.display = 'none';
+    // Ustaw początkowy stan interfejsu
+    if (scrambleDisplay) {
+        scrambleDisplay.textContent = 'Naciśnij "Scramble" aby wygenerować tasowanie';
+    }
+    if (hintDisplay) {
+        hintDisplay.textContent = 'Generate a scramble first';
     }
 
     document.body.classList.add('single-mode-active');
-
-    // Wygeneruj pierwsze tasowanie
-    generateAndDisplayScramble();
 }); 

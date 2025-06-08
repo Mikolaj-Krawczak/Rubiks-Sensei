@@ -1,354 +1,596 @@
-/* Training Pyraminx - Styles */
+@font-face {
+    font-family: 'DungeonFont';
+    src: url('../assets/DungeonFont.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
 
 * {
-    margin: 0;
     padding: 0;
+    margin: 0;
     box-sizing: border-box;
+    font-family: 'DungeonFont', serif;
+    font-weight: 400;
+}
+
+h1 {
+    font-size: 4rem;
+}
+
+p {
+    font-size: 2rem;
 }
 
 body {
-    font-family: sans-serif;
-    margin: 0;
+    height: 100vh;
+    width: 100vw;
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
-    background-color: #f0f0f0; /* Jasne tło */
+    /*overflow: hidden;*/
 }
 
 .content {
-    flex-grow: 1;
-    position: relative; /* Potrzebne dla kontenera tła */
     display: flex;
-    justify-content: center;
-    align-items: flex-start; /* Wyrównaj elementy do góry */
-    padding-top: 80px; /* Dostosuj na podstawie wysokości nagłówka */
+    flex: 1;
+    flex-direction: row;
 }
 
-.background-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
+.left-panel {
+    width: 50%;
     height: 100%;
-    /* background: url('../assets/images/backgroundWebsite.png') no-repeat center center fixed; */
-    background-size: cover;
-    z-index: -1;
-    filter: blur(2px) brightness(0.7);
-}
-
-.training-container {
+    padding: 2rem;
     display: flex;
-    flex-direction: row; /* Układ obok siebie */
-    gap: 30px;
-    padding: 20px;
-    background-color: rgba(255, 255, 255, 0.8); /* Półprzezroczyste białe tło */
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 90%;
-    max-width: 1200px; /* Maksymalna szerokość */
+    background: white;
+    color: black;
 }
 
-.info-panel {
+.training-panel {
+    border: 3px solid black;
+    flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 15px;
-    flex: 1; /* Zajmuje dostępną przestrzeń */
-    min-width: 300px;
+    gap: 2rem;
+    padding: 1rem;
+}
+
+.training-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.btn {
+    font-size: 2rem;
+    background: white;
+    color: black;
+    padding: 0.25rem 1rem;
+    border: black 3px solid;
+    transition: all ease-in-out 0.3s;
+    cursor: pointer;
+    outline: none;
+}
+
+.btn:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+.btn:active {
+    outline: none;
+}
+
+button:focus,
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+}
+
+.active {
+    background: black;
+    color: white;
+}
+
+.mode-selection-buttons {
+    display: flex;
+    flex: 1;
+    gap: 0.25rem;
+}
+
+.mode-btn {
+    flex: 1;
 }
 
 .mode-selection {
     display: flex;
-    gap: 10px;
-    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
 }
 
-.mode-btn {
-    padding: 8px 15px;
-    border: 1px solid #ccc;
-    background-color: #eee;
+.count-btn {
     cursor: pointer;
-    border-radius: 4px;
+    font-size: 2rem;
+    transition: all ease-in-out 0.3s;
+    /*background: white;*/
+    /*color: black;*/
+    /*padding: 0.25rem 1rem;*/
 }
 
-.mode-btn.active {
-    background-color: #007bff;
-    color: white;
-    border-color: #007bff;
-}
-
-.series-mode {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
-#series-count {
-    width: 50px;
-    padding: 5px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
-.scramble-controls {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 10px; /* Dodaj trochę przestrzeni poniżej */
-}
-
-.scramble-controls label {
-    font-weight: bold;
-}
-
-.scramble-controls input[type="number"] {
-    width: 60px; /* Nieco szersze */
-    padding: 5px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
-.scramble-types {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-bottom: 10px;
-    padding: 10px;
-    background-color: rgba(240, 240, 240, 0.6);
-    border-radius: 5px;
-}
-
-.scramble-types label {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-    font-size: 0.9em;
-}
-
-.scramble-types input[type="checkbox"] {
-    transform: scale(1.1);
-}
-
-.scramble {
-    font-size: 1.1em;
-    font-weight: bold;
-    word-wrap: break-word; /* Zawijaj długie tasowania */
-    background-color: #e9e9e9;
-    padding: 10px;
-    border-radius: 5px;
-}
-
-.timer {
-    font-size: 4em;
-    font-weight: bold;
-    color: #333;
-    text-align: center;
-    margin: 10px 0;
-}
-
-.hint {
-    font-size: 0.9em;
-    color: #555;
-    text-align: center;
-}
-
-#pyraminxspace-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
-    flex: 2; /* Zajmuje więcej przestrzeni */
-}
-
-#scramble-visualizer-space {
-    width: 400px; /* Dostosuj według potrzeb */
-    height: 400px; /* Dostosuj według potrzeb */
-    border: 1px solid #ccc;
-    background-color: #fff; /* Białe tło dla obszaru kostki */
-    position: relative; /* Potrzebne dla renderera three.js */
-    overflow: hidden; /* Zapewnia, że kontrolki nie wychodzą poza obszar */
-}
-
-.visualizer-controls {
-    display: flex;
-    gap: 10px; /* Przestrzeń między przyciskami */
-    margin-top: 10px; /* Przestrzeń nad przyciskami */
-}
-
-#visualize-scramble-btn {
-    padding: 10px 20px;
-    font-size: 1em;
-    cursor: pointer;
-    background-color: #17a2b8; /* Informacyjny niebieski */
-    color: white;
-    border: none;
-    border-radius: 5px;
-}
-
-#reset-visualizer-btn {
-    padding: 10px 20px;
-    font-size: 1em;
-    cursor: pointer;
-    background-color: #ffc107; /* Ostrzegawczy żółty */
-    color: #333; /* Ciemniejszy tekst dla żółtego */
-    border: none;
-    border-radius: 5px;
-}
-
-#regen-scramble-btn {
-    padding: 10px 20px;
-    font-size: 1em;
-    cursor: pointer;
-    background-color: #28a745;
-    color: white;
-    border: none;
-    border-radius: 5px;
-}
-
-.speed-controls {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-top: 12px;
-    padding: 10px;
-    background-color: rgba(240, 240, 240, 0.6);
-    border-radius: 5px;
-}
-
-.speed-controls span {
-    font-weight: bold;
-    margin-bottom: 5px;
-}
-
-.speed-controls label {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    cursor: pointer;
-    font-size: 0.9em;
-}
-
-.animation-speed-control {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-top: 5px;
-}
-
-.animation-speed-control label {
-    min-width: 120px;
-    font-size: 0.9em;
-}
-
-.animation-speed-control input[type="range"] {
-    flex-grow: 1;
-}
-
-#speed-value {
-    font-weight: normal;
-    min-width: 60px;
-    text-align: right;
-    font-size: 0.9em;
-}
-
-#series-times-display {
-    margin-top: 15px;
-    padding: 10px;
-    background-color: rgba(240, 240, 240, 0.7);
-    border-radius: 5px;
-    min-height: 40px;
-}
-
-.series-times {
-    background-color: rgba(240, 240, 240, 0.7);
-    border-radius: 5px;
-    padding: 10px;
-    margin-bottom: 10px;
-}
-
-.series-times h3 {
-    margin-top: 0;
-    margin-bottom: 10px;
-    font-size: 1.1em;
-    color: #333;
-}
-
-.time-entry {
+.scramble-section {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 3px 0;
-    border-bottom: 1px solid #ddd;
 }
 
-.time-entry:last-child {
-    border-bottom: none;
+.timer-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
-.time-number {
-    font-weight: bold;
-    color: #007bff;
+#scramble-visualizer-space {
+    width: 50%;
+    height: 100%;
 }
 
-.time-value {
-    font-family: monospace;
-    font-weight: bold;
+#series-count {
+    position: relative;
+    border: 3px solid black;
+}
+
+.selected-series-count {
+    padding: 0.25rem 1rem;
+}
+
+.series-count-options {
+    background: white;
+    color: black;
+    position: absolute;
+    top: calc(100% + 3px);
+    left: 0;
+    right: 0;
+    list-style: none;
+    border: none;
+    max-height: 0;
+    overflow: hidden;
+}
+
+.series-count-options-visible {
+    z-index: 10;
+    max-height: none;
+    outline: 3px solid black;
+}
+
+.series-count-options li {
+    padding: 0.25rem 1rem;
+}
+
+.series-count-options li:not(.series-count-options-selected):hover {
+    background: #dfdfdf;
+}
+
+.series-count-options-selected {
+    background: black;
+    color: white;
+}
+
+#scramble-length {
+    position: relative;
+}
+
+.scramble-length-menu {
+    background: white;
+    color: black;
+    position: absolute;
+    top: calc(100% - 3px);
+    right: 0;
+    width: 150%;
+    height: 100%;
+    display: none;
+    border: 3px solid black;
+    text-align: center;
+}
+
+.scramble-length-menu-visible {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+}
+
+#scrabble-length-input, .scramble-length-menu div {
+    font-size: inherit;
+    color: black;
+}
+
+.scramble-length-menu div {
+    display: inline;
+    flex: 1;
+    position: relative;
+}
+
+input[type="number"] {
+    -webkit-appearance: textfield;
+    -moz-appearance: textfield;
+    appearance: textfield;
+    text-align: center;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+}
+
+.scramble-length-menu div:after {
+    display: inline-block;
+    position: absolute;
+    font-weight: 900;
+    content: 'v';
+    transform: translate(-50%, -50%) rotate(90deg);
+}
+
+.scramble-length-menu div.plus:after {
+    transform: translate(-50%, -50%) rotate(-90deg);
+}
+
+.scramble-length-button {
+    background: black;
+    color: white;
+    padding: 0.25rem 1rem;
+    border: black 3px solid;
+    transition: all ease-in-out 0.3s;
+    cursor: pointer;
+}
+
+/* Dodatkowe style specyficzne dla Pyraminx - typy scramble'a */
+.scramble-types {
+    border: 3px solid black;
+    padding: 1rem;
+    margin: 1rem 0;
+}
+
+.scramble-types label {
+    font-family: 'DungeonFont', serif;
+    font-size: 1.5rem;
+    display: block;
+    margin: 0.5rem 0;
+    cursor: pointer;
+}
+
+.scramble-types input[type="checkbox"] {
+    margin-right: 0.5rem;
+    transform: scale(1.2);
+}
+
+/* Style dla statystyk i wyników serii */
+#series-times-display {
+    width: 100%;
+    margin: 1rem 0;
 }
 
 .series-stats {
-    background-color: rgba(200, 240, 200, 0.7);
-    padding: 15px;
-    border-radius: 5px;
-    margin-top: 15px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    font-family: 'DungeonFont', serif;
+    border: 3px solid black;
+    padding: 1rem;
+    margin: 1rem 0;
+    background: white;
+    color: black;
 }
 
 .series-stats h3 {
-    margin-top: 0;
+    font-family: 'DungeonFont', serif;
+    font-size: 2.5rem;
+    margin: 0 0 1rem 0;
     text-align: center;
-    color: #2a5934;
 }
 
 .series-stats p {
-    margin: 5px 0;
-    font-weight: bold;
+    font-family: 'DungeonFont', serif;
+    font-size: 2rem;
+    margin: 0.5rem 0;
+    text-align: center;
 }
 
+.solve-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    max-width: 100%;
+    gap: 0.5rem;
+    margin: 1rem 0;
+    width: 100%;
+}
+
+/* Ograniczenie do maksymalnie 5 kolumn */
+@media (min-width: 600px) {
+    .solve-grid {
+        grid-template-columns: repeat(auto-fit, minmax(120px, calc(20% - 0.4rem)));
+        max-width: 100%;
+    }
+}
+
+@media (min-width: 800px) {
+    .solve-grid {
+        grid-template-columns: repeat(5, 1fr);
+        max-width: 100%;
+    }
+}
+
+.solve-tile {
+    font-family: 'DungeonFont', serif;
+    font-size: 1.8rem;
+    background: white;
+    color: black;
+    border: 3px solid black;
+    padding: 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all ease-in-out 0.3s;
+    position: relative;
+    min-height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.solve-tile:hover {
+    background: #f0f0f0;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.solve-tile.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.scramble-tooltip {
+    position: absolute;
+    top: -3rem; /* Mniej z góry żeby nie wystawał */
+    left: 50%;
+    transform: translateX(-50%);
+    background: black;
+    color: white;
+    padding: 0.5rem 2rem; /* Jeszcze mniejszy padding pionowy */
+    border-radius: 8px;
+    font-family: 'DungeonFont', serif;
+    font-size: 1.3rem; /* Trochę mniejsza czcionka */
+    z-index: 9999; /* Bardzo wysoki z-index żeby był ponad wszystkim */
+    pointer-events: none;
+    border: 2px solid white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    
+    /* Dynamiczna szerokość w zależności od długości tekstu - poszerzenie o 50% */
+    white-space: nowrap; /* Nie zawijaj tekstu - jedna linia */
+    width: auto; /* Automatyczna szerokość */
+    min-width: 375px; /* Poszerzenie o 50%: 250px * 1.5 = 375px */
+    max-width: 100vw; /* Maksymalnie cała szerokość ekranu */
+    
+    /* Kontrola wysokości */
+    height: auto;
+    max-height: 2.5rem; /* Ograniczenie wysokości */
+    overflow: hidden; /* Ukryj nadmiar tekstu */
+    
+    /* Dla bardzo długich scramble'i pozwól na zawijanie */
+    word-break: break-word;
+    text-align: center;
+    
+    /* Dodatkowe styles dla pierwszego planu */
+    backdrop-filter: blur(2px); /* Lekkie rozmycie tła */
+    border-width: 3px; /* Grubsze obramowanie */
+    
+    /* Lepsze wyśrodkowanie */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Strzałka tooltip - podstawowe style - większa i bardziej widoczna */
+.scramble-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 12px solid transparent; /* Większa strzałka */
+    border-top-color: black;
+    z-index: 10000; /* Jeszcze wyższy z-index dla strzałki */
+}
+
+/* Dodatkowe obramowanie strzałki dla lepszej widoczności */
+.scramble-tooltip::before {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 14px solid transparent; /* Trochę większa dla obramowania */
+    border-top-color: white;
+    z-index: 9998; /* Pod główną strzałką */
+}
+
+/* Tooltip po lewej stronie ekranu */
+.solve-tile:first-child .scramble-tooltip,
+.solve-tile:nth-child(2) .scramble-tooltip {
+    left: 0;
+    transform: translateX(0);
+}
+
+/* Tooltip po prawej stronie ekranu */
+.solve-tile:nth-last-child(1) .scramble-tooltip,
+.solve-tile:nth-last-child(2) .scramble-tooltip {
+    left: auto;
+    right: 0;
+    transform: translateX(0);
+}
+
+/* Strzałka tooltip - dostosowanie do pozycji */
+.solve-tile:first-child .scramble-tooltip::after,
+.solve-tile:nth-child(2) .scramble-tooltip::after {
+    left: 20%;
+    transform: translateX(-50%);
+}
+
+.solve-tile:nth-last-child(1) .scramble-tooltip::after,
+.solve-tile:nth-last-child(2) .scramble-tooltip::after {
+    left: 80%;
+    transform: translateX(-50%);
+}
+
+/* Responsywność dla mniejszych ekranów */
 @media (max-width: 768px) {
-    .training-container {
-        flex-direction: column;
-        gap: 20px;
-        width: 95%;
-        padding: 15px;
+    .solve-grid {
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+        gap: 0.3rem;
     }
     
-    .info-panel {
-        min-width: unset;
+    .solve-tile {
+        font-size: 1.6rem;
+        padding: 0.8rem;
+        min-height: 70px;
     }
     
-    #scramble-visualizer-space {
-        width: 300px;
-        height: 300px;
+    .series-stats h3 {
+        font-size: 2rem;
     }
     
-    .timer {
-        font-size: 3em;
+    .series-stats p {
+        font-size: 1.6rem;
     }
     
-    .mode-selection {
-        flex-direction: column;
-        gap: 8px;
+    .scramble-tooltip {
+        font-size: 1.1rem; /* Mniejsza czcionka */
+        padding: 0.4rem 2.7rem; /* Poszerzenie padding poziomego o 50%: 1.8rem * 1.5 = 2.7rem */
+        max-width: 100vw; /* Cała szerokość ekranu */
+        top: -2.5rem; /* Bliżej kafelka */
+        min-width: 300px; /* Poszerzenie o 50%: 200px * 1.5 = 300px */
+        z-index: 9999; /* Upewnij się że jest na pierwszym planie */
+        max-height: 2rem; /* Bardzo ograniczona wysokość */
+        overflow: hidden;
     }
     
-    .series-mode {
-        justify-content: center;
+    .scramble-tooltip.long-scramble {
+        max-width: 100vw;
+        min-width: 375px; /* Poszerzenie o 50%: 250px * 1.5 = 375px */
+        white-space: normal;
+        line-height: 1.0; /* Bardzo kompaktowo */
+        padding: 0.3rem 3rem; /* Poszerzenie o 50%: 2rem * 1.5 = 3rem */
+        max-height: 1.8rem; /* Jeszcze mniejsza wysokość na tabletach */
+        font-size: 1rem; /* Mniejsza czcionka */
+        top: -2.3rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .solve-grid {
+        grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+        gap: 0.2rem;
     }
     
-    .scramble-controls {
-        flex-wrap: wrap;
+    .solve-tile {
+        font-size: 1.4rem;
+        padding: 0.6rem;
+        min-height: 60px;
     }
     
-    .speed-controls {
-        gap: 6px;
+    .scramble-tooltip {
+        font-size: 0.9rem; /* Bardzo mała czcionka */
+        padding: 0.3rem 2.25rem; /* Poszerzenie o 50%: 1.5rem * 1.5 = 2.25rem */
+        max-width: 100vw; /* Cała szerokość ekranu */
+        top: -2rem; /* Bardzo blisko kafelka */
+        min-width: 225px; /* Poszerzenie o 50%: 150px * 1.5 = 225px */
+        left: 50% !important; /* Wymuś centrowanie na małych ekranach */
+        right: auto !important;
+        transform: translateX(-50%) !important;
+        white-space: normal; /* Na małych ekranach zawsze zawijaj */
+        text-align: center;
+        line-height: 1.0; /* Bardzo kompaktowo */
+        z-index: 9999; /* Upewnij się że jest na pierwszym planie */
+        max-height: 1.5rem; /* Bardzo mała wysokość */
+        overflow: hidden;
     }
+    
+    .scramble-tooltip.long-scramble {
+        max-width: 100vw;
+        min-width: 300px; /* Poszerzenie o 50%: 200px * 1.5 = 300px */
+        padding: 0.2rem 2.25rem; /* Poszerzenie o 50%: 1.5rem * 1.5 = 2.25rem */
+        max-height: 1.3rem; /* Bardzo mała wysokość na telefonach */
+        line-height: 0.9; /* Bardzo kompaktowo */
+        font-size: 0.8rem; /* Bardzo mała czcionka */
+        top: -1.8rem;
+    }
+    
+    /* Na małych ekranach zawsze centruj strzałkę */
+    .scramble-tooltip::after {
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        border: 10px solid transparent; /* Mniejsza strzałka na mobile */
+        border-top-color: black;
+    }
+    
+    .scramble-tooltip::before {
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        border: 12px solid transparent; /* Mniejsza strzałka na mobile */
+        border-top-color: white;
+    }
+}
+
+/* Style dla wyświetlania scramble'a */
+#scramble-display {
+    font-family: 'DungeonFont', serif;
+    font-size: 1.8rem;
+    background: white;
+    color: black;
+    border: 3px solid black;
+    padding: 1rem;
+    margin: 0.5rem 0;
+    word-wrap: break-word; /* Zawijaj długie słowa */
+    word-break: break-word; /* Łam długie słowa jeśli potrzeba */
+    white-space: normal; /* Pozwól na zawijanie tekstu */
+    line-height: 1.4; /* Lepszy odstęp między liniami */
+    min-height: 3rem; /* Minimalna wysokość */
+    display: flex;
+    align-items: center; /* Wyśrodkuj tekst pionowo */
+    text-align: left; /* Wyrównaj tekst do lewej */
+    overflow-wrap: break-word; /* Dodatkowe zabezpieczenie dla długich słów */
+    hyphens: auto; /* Automatyczne dzielenie słów */
+}
+
+/* Responsywność dla scramble display */
+@media (max-width: 768px) {
+    #scramble-display {
+        font-size: 1.6rem;
+        padding: 0.8rem;
+        line-height: 1.3;
+    }
+}
+
+@media (max-width: 480px) {
+    #scramble-display {
+        font-size: 1.4rem;
+        padding: 0.6rem;
+        line-height: 1.2;
+        min-height: 2.5rem;
+    }
+}
+
+/* Specjalne styles dla bardzo długich scramble'i */
+.scramble-tooltip.long-scramble {
+    white-space: normal; /* Pozwól na zawijanie dla długich scramble'i */
+    max-width: 100vw; /* Poszerzenie o 50%: 80vw -> cała szerokość ekranu */
+    min-width: 525px; /* Poszerzenie o 50%: 350px * 1.5 = 525px */
+    line-height: 1.1; /* Bardzo mały odstęp między liniami */
+    text-align: center;
+    padding: 0.4rem 3.75rem; /* Poszerzenie padding poziomego o 50%: 2.5rem * 1.5 = 3.75rem */
+    z-index: 9999; /* Upewnij się że jest na pierwszym planie */
+    max-height: 2.2rem; /* Bardzo ograniczona wysokość */
+    overflow: hidden; /* Ukryj nadmiar tekstu jeśli za długi */
+    display: flex;
+    align-items: center; /* Wyśrodkuj tekst pionowo */
+    justify-content: center; /* Wyśrodkuj tekst poziomo */
+    font-size: 1.2rem; /* Mniejsza czcionka dla długich scramble'i */
+    top: -2.8rem; /* Jeszcze bliżej kafelka */
 } 
