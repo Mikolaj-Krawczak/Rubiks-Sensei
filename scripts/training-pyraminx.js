@@ -476,10 +476,8 @@ document.addEventListener('DOMContentLoaded', () => {
         seriesTimes.forEach((time, index) => {
             const tile = document.createElement('div');
             tile.className = 'solve-tile';
-            tile.innerHTML = `
-                <div><strong>${index + 1}</strong></div>
-                <div>${time.toFixed(2)}s</div>
-            `;
+            // Prosta struktura jak w kostce 3x3 - tylko czas bez numeru próby
+            tile.textContent = time.toFixed(2);
             
             // Dodaj event listenery dla pokazywania scramble w głównym okienku
             if (scrambles[index]) {
