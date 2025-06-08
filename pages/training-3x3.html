@@ -4,68 +4,138 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rubik's Sensei - Trening 3x3</title>
-    <link rel="stylesheet" href="../css/training-3x3.css"> <!-- We'll need to create this CSS file -->
+    <link rel="stylesheet" href="../css/training-3x3.css">
 </head>
 <body>
-    <header-component></header-component>
+<header-component></header-component>
 
-    <div class="content">
-        <div class="background-container"></div>
-
-        <div class="training-container">
-            <div class="info-panel">
+<div class="content">
+    <div class="left-panel">
+        <div class="training-panel">
+            <h1>Training</h1>
+            <div class="training-details">
                 <div class="mode-selection">
-                    <button id="single-solve-btn" class="mode-btn active">Pojedyncze</button>
-                    <div class="series-mode">
-                        <button id="series-solve-btn" class="mode-btn">Seria</button>
-                        <input type="number" id="series-count" value="5" min="2" max="100" disabled>
+                    <div class="mode-selection-buttons">
+                        <button id="single-solve-btn" class="btn mode-btn active">Single</button>
+                        <button id="series-solve-btn" class="btn mode-btn">Series</button>
+                    </div>
+                    <!--                    Custom select-->
+                    <div id="series-count" class="count-btn">
+                        <div class="selected-series-count">
+                            <span id="selected-series-count-span">5</span>
+                            <span id="selected-series-count-arrow">v</span>
+                        </div>
+                        <ul class="series-count-options">
+                            <li>1</li>
+                            <li>2</li>
+                            <li>3</li>
+                            <li>4</li>
+                            <li class="series-count-options-selected">5</li>
+                            <li>6</li>
+                            <li>7</li>
+                            <li>8</li>
+                            <li>9</li>
+                            <li>10</li>
+                        </ul>
                     </div>
                 </div>
-                <div class="scramble-controls">
-                    <label for="scramble-length">Długość:</label>
-                    <input type="number" id="scramble-length" value="20" min="5" max="30">
-                    <button id="regen-scramble-btn">Nowy Scramble</button>
-                </div>
-                <div id="scramble-display" class="scramble">Scramble: Generowanie...</div>
-                <div id="series-times-display"></div>
-                <div id="timer-display" class="timer">0.00</div>
-                <div id="hint-display" class="hint">Naciśnij Spację, aby rozpocząć/zatrzymać</div>
-            </div>
-            <div id="cubespace-container">
-                 <div id="scramble-visualizer-space"></div>
-                 <div class="visualizer-controls">
-                    <button id="visualize-scramble-btn">Wykonaj Scramble</button>
-                    <button id="reset-visualizer-btn">Reset Kostki</button>
-                 </div>
-                 <!-- New Speed Controls -->
-                 <div class="speed-controls">
-                    <span>Tempo mieszania:</span>
-                    <label>
-                        <input type="radio" name="scramble-speed" value="instant" checked>
-                        Natychmiast
-                    </label>
-                    <label>
-                        <input type="radio" name="scramble-speed" value="animated">
-                        Animowane
-                    </label>
-                    <!-- Animation speed slider -->
-                    <div class="animation-speed-control">
-                        <label for="animation-speed">Prędkość animacji:</label>
-                        <input type="range" id="animation-speed" min="50" max="1000" value="300" step="50">
-                        <span id="speed-value">300ms</span>
+                <div class="scramble-section">
+                    <p>Scramble length:</p>
+                    <div id="scramble-length" class="count-btn">
+                        <div class="scramble-length-button">
+                            <span id="scramble-length-span">20</span>
+                            <span>v</span>
+                        </div>
+                        <div class="scramble-length-menu">
+                            <div onclick="this.parentNode.querySelector('input[type=number]').stepDown()"
+                                    class="minus"></div>
+                            <input type="number" min=10 max=40 id="scrabble-length-input" value="20">
+                            <div onclick="this.parentNode.querySelector('input[type=number]').stepUp()"
+                                    class="plus"></div>
+                        </div>
                     </div>
-                 </div>
+                </div>
+                <button id="regen-scramble-btn" class="btn">Scramble</button>
+                <div>
+                    <p>Scramble algorithm:</p>
+                    <p id="scramble-display"></p>
+
+                    <!--                    Do usuniecia-->
+                    <!--                    <button id="visualize-scramble-btn">Wykonaj Scramble</button>-->
+                    <!--                    <button id="reset-visualizer-btn">Reset Kostki</button>-->
+                    <!--                    <label>-->
+                    <!--                        <input type="radio" name="scramble-speed" value="instant" checked>-->
+                    <!--                        Natychmiast-->
+                    <!--                    </label>-->
+                    <!--                    <label>-->
+                    <!--                        <input type="radio" name="scramble-speed" value="animated">-->
+                    <!--                        Animowane-->
+                    <!--                    </label>-->
+                    <!--                    <label for="animation-speed">Prędkość animacji:</label>-->
+                    <!--                    <input type="range" id="animation-speed" min="50" max="1000" value="300" step="50">-->
+                    <!--                    Koniec usuniecia-->
+                </div>
+                <div class="timer-section">
+                    <div id="series-times-display"></div>
+                    <h1 id="timer-display" class="timer">0.00</h1>
+                    <p id="hint-display" class="hint">Press SPACE to start</p>
+                </div>
             </div>
         </div>
-
     </div>
+    <div id="scramble-visualizer-space"></div>
+</div>
+<!--        <div class="training-panel">-->
+<!--            <div class="mode-selection">-->
+<!--                <button id="single-solve-btn" class="mode-btn active">Pojedyncze</button>-->
+<!--                <div class="series-mode">-->
+<!--                    <button id="series-solve-btn" class="mode-btn">Seria</button>-->
+<!--                    <input type="number" id="series-count" value="5" min="2" max="100" disabled>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="scramble-controls">-->
+<!--                <label for="scramble-length">Długość:</label>-->
+<!--                <input type="number" id="scramble-length" value="20" min="5" max="30">-->
+<!--                <button id="regen-scramble-btn">Nowy Scramble</button>-->
+<!--            </div>-->
+<!--            <div id="scramble-display" class="scramble">Scramble: Generowanie...</div>-->
+<!--            <div id="series-times-display"></div>-->
+<!--            <div id="timer-display" class="timer">0.00</div>-->
+<!--            <div id="hint-display" class="hint">Naciśnij Spację, aby rozpocząć/zatrzymać</div>-->
+<!--        </div>-->
+<!--        <div id="cubespace-container">-->
 
-    <script src="../components/header/header.js"></script>
-    <script src="../scripts/handleNavigation.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
-    <script src="../scripts/scrambleVisualizer.js"></script>
-    <script src="../scripts/scrambleGenerator.js"></script>
-    <script src="../scripts/training-3x3.js"></script>
+<!--            <div class="visualizer-controls">-->
+<!--                <button id="visualize-scramble-btn">Wykonaj Scramble</button>-->
+<!--                <button id="reset-visualizer-btn">Reset Kostki</button>-->
+<!--            </div>-->
+<!--            &lt;!&ndash; New Speed Controls &ndash;&gt;-->
+<!--            <div class="speed-controls">-->
+<!--                <span>Tempo mieszania:</span>-->
+<!--                <label>-->
+<!--                    <input type="radio" name="scramble-speed" value="instant" checked>-->
+<!--                    Natychmiast-->
+<!--                </label>-->
+<!--                <label>-->
+<!--                    <input type="radio" name="scramble-speed" value="animated">-->
+<!--                    Animowane-->
+<!--                </label>-->
+<!--                &lt;!&ndash; Animation speed slider &ndash;&gt;-->
+<!--                <div class="animation-speed-control">-->
+<!--                    <label for="animation-speed">Prędkość animacji:</label>-->
+<!--                    <input type="range" id="animation-speed" min="50" max="1000" value="300" step="50">-->
+<!--                    <span id="speed-value">300ms</span>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+
+
+<script src="../components/header/header.js"></script>
+<script src="../scripts/handleNavigation.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
+<script src="../scripts/scrambleVisualizer.js"></script>
+<script src="../scripts/scrambleGenerator.js"></script>
+<script src="../scripts/training-3x3.js"></script>
 </body>
 </html> 
