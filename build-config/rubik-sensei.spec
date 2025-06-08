@@ -4,8 +4,8 @@ import os
 import platform
 from pathlib import Path
 
-# Ścieżka do głównego katalogu aplikacji
-app_path = Path(SPECPATH)
+# Ścieżka do głównego katalogu aplikacji (jeden poziom wyżej od build-config)
+app_path = Path(SPECPATH).parent
 
 print(f"Building from: {app_path}")
 
@@ -96,7 +96,7 @@ hidden_imports = [
 ]
 
 a = Analysis(
-    ['launcher.py'],
+    [str(app_path / 'launcher.py')],
     pathex=[str(app_path)],
     binaries=[],
     datas=all_datas,
@@ -111,3 +111,23 @@ a = Analysis(
 pyz = PYZ(a.pure, a.zipped_data, cipher=None)
 
 exe = EXE(
+    pyz,
+    a.scripts,
+    a.binaries,
+    a.datas,
+    [],
+    name=exe_name,
+    debug=False,  # Zmieniamy na True dla debugowania
+    bootloader_ignore_signals=False,
+    strip=False,
+    upx=True,
+    upx_exclude=[],
+    runtime_tmpdir=None,
+    console=True,  # Pokazujemy konsolę dla logów
+    disable_windowed_traceback=False,
+    argv_emulation=False,
+    target_arch=None,
+    codesign_identity=None,
+    entitlements_file=None,
+    icon=str(app_path / 'assets' / 'icon.ico') if (app_path / 'assets' / 'icon.ico').exists() else None,
+) 

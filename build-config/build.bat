@@ -3,6 +3,9 @@ setlocal enabledelayedexpansion
 
 echo 🚀 Budowanie aplikacji Rubik Sensei do exe...
 
+:: Przejdź do katalogu głównego projektu (jeden poziom wyżej od build-config)
+cd /d "%~dp0\.."
+
 :: Sprawdź czy jesteśmy w odpowiednim katalogu
 if not exist "launcher.py" (
     echo ❌ Błąd: Nie znaleziono launcher.py. Upewnij się że jesteś w katalogu głównym aplikacji.
@@ -18,7 +21,7 @@ if not exist ".venv" (
 call .venv\Scripts\activate.bat
 python -m pip install --upgrade pip
 pip install -r backend\requirements.txt
-pip install -r requirements-build.txt
+pip install -r build-config\requirements-build.txt
 
 echo 📦 Krok 2: Instalowanie zależności Node.js...
 if not exist "node_modules" (
@@ -31,7 +34,7 @@ if exist "dist" rmdir /s /q dist
 if exist "build-config\build" rmdir /s /q build-config\build
 
 echo 🔨 Krok 4: Budowanie aplikacji z PyInstaller...
-pyinstaller --clean sensei.spec
+pyinstaller --clean --workpath=build-config\build build-config\rubik-sensei.spec
 
 echo ✅ Budowanie zakończone!
 echo 📁 Plik exe znajduje się w: dist\RubikSensei.exe
