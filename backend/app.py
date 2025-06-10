@@ -29,6 +29,23 @@ UPLOAD_FOLDER = os.path.abspath(
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
+# Obsługa ścieżek głównych dla lepszej integracji z aplikacją Electron
+@app.route('/')
+@app.route('/home')
+def serve_home():
+    """
+    Przekierowanie do endpointu API dla głównej strony.
+    """
+    return jsonify({'message': 'Backend API Rubik Sensei. Use /api endpoints for API access.'}), 200
+
+@app.route('/favicon.ico')
+def favicon():
+    """
+    Obsługa żądania favicon.ico
+    """
+    # Możemy albo zwrócić plik favicon, albo pusty odpowiedź 204
+    return '', 204
+
 # =========================================================
 # ===================== API KOSTEK =======================
 # =========================================================

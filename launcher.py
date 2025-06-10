@@ -107,7 +107,7 @@ class RubikSenseiLauncher:
                 self.backend_running = True
                 
                 # Uruchom Flask
-                app.run(debug=False, host='0.0.0.0', port=5000, use_reloader=False, threaded=True)
+                app.run(debug=False, host='0.0.0.0', port=2115, use_reloader=False, threaded=True)
                 
             except Exception as e:
                 self.logger.error(f"Błąd uruchamiania backendu Flask: {e}")
