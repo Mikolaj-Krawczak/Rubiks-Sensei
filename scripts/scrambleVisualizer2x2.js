@@ -32,8 +32,18 @@ function initScrambleVisualizer(containerId) {
     container.innerHTML = '';
 
     visualizerScene = new THREE.Scene();
-    visualizerScene.background = new THREE.Color(0xc2c2c2); // Jednolity szary kolor dla wszystkich wizualizatorów
-
+    const loader = new THREE.TextureLoader();
+    loader.load(
+        '../assets/images/background2.png',
+        (texture) => {
+            visualizerScene.background = texture;
+        },
+        undefined,
+        (error) => {
+            console.error('Błąd ładowania tła:', error);
+            visualizerScene.background = new THREE.Color(0xc2c2c2);
+        }
+    );
     visualizerCamera = new THREE.PerspectiveCamera(
         55,
         container.clientWidth / container.clientHeight,
@@ -42,7 +52,7 @@ function initScrambleVisualizer(containerId) {
     );
     visualizerCamera.position.set(4, 4, 6);
 
-    visualizerRenderer = new THREE.WebGLRenderer({ antialias: true });
+    visualizerRenderer = new THREE.WebGLRenderer({antialias: true});
     visualizerRenderer.setSize(container.clientWidth, container.clientHeight);
     container.appendChild(visualizerRenderer.domElement);
 
@@ -67,12 +77,12 @@ function initScrambleVisualizer(containerId) {
             for (let z = 0; z < 2; z++) {
                 const geometry = new THREE.BoxGeometry(VISUALIZER_CUBE_SIZE, VISUALIZER_CUBE_SIZE, VISUALIZER_CUBE_SIZE);
                 const materials = [
-                    new THREE.MeshLambertMaterial({ color: x === 1 ? visualizerColors.right : 0x111111 }), // Prawo
-                    new THREE.MeshLambertMaterial({ color: x === 0 ? visualizerColors.left : 0x111111 }),  // Lewo
-                    new THREE.MeshLambertMaterial({ color: y === 1 ? visualizerColors.up : 0x111111 }),    // Góra
-                    new THREE.MeshLambertMaterial({ color: y === 0 ? visualizerColors.down : 0x111111 }),  // Dół
-                    new THREE.MeshLambertMaterial({ color: z === 1 ? visualizerColors.front : 0x111111 }), // Przód
-                    new THREE.MeshLambertMaterial({ color: z === 0 ? visualizerColors.back : 0x111111 })   // Tył
+                    new THREE.MeshLambertMaterial({color: x === 1 ? visualizerColors.right : 0x111111}), // Prawo
+                    new THREE.MeshLambertMaterial({color: x === 0 ? visualizerColors.left : 0x111111}),  // Lewo
+                    new THREE.MeshLambertMaterial({color: y === 1 ? visualizerColors.up : 0x111111}),    // Góra
+                    new THREE.MeshLambertMaterial({color: y === 0 ? visualizerColors.down : 0x111111}),  // Dół
+                    new THREE.MeshLambertMaterial({color: z === 1 ? visualizerColors.front : 0x111111}), // Przód
+                    new THREE.MeshLambertMaterial({color: z === 0 ? visualizerColors.back : 0x111111})   // Tył
                 ];
 
                 const cube = new THREE.Mesh(geometry, materials);
@@ -80,9 +90,9 @@ function initScrambleVisualizer(containerId) {
                 cube.position.y = (y - 0.5) * (VISUALIZER_CUBE_SIZE + VISUALIZER_GAP);
                 cube.position.z = (z - 0.5) * (VISUALIZER_CUBE_SIZE + VISUALIZER_GAP);
 
-                const initialPos = { x, y, z };
+                const initialPos = {x, y, z};
                 cube.userData.initialLogicalPosition = initialPos;
-                cube.userData.logicalPosition = { ...initialPos };
+                cube.userData.logicalPosition = {...initialPos};
                 cube.userData.logicalRotation = new THREE.Quaternion();
 
                 visualizerCubeGroup.add(cube);
@@ -195,10 +205,14 @@ function getCubesOnLayer(axis, layerIndex) {
     return visualizerCubes.filter(cube => {
         const pos = cube.userData.logicalPosition;
         switch (axis) {
-            case 'x': return pos.x === layerIndex;
-            case 'y': return pos.y === layerIndex;
-            case 'z': return pos.z === layerIndex;
-            default: return false;
+            case 'x':
+                return pos.x === layerIndex;
+            case 'y':
+                return pos.y === layerIndex;
+            case 'z':
+                return pos.z === layerIndex;
+            default:
+                return false;
         }
     });
 }
@@ -209,16 +223,40 @@ function rotateFaceAnimated(move) {
         return;
     }
 
-    const { face, direction, double } = move;
+    const {face, direction, double} = move;
     let axis, layerIndex;
 
     switch (face) {
-        case 'F': axis = 'z'; layerIndex = 1; animationAxis = new THREE.Vector3(0, 0, 1); break;
-        case 'B': axis = 'z'; layerIndex = 0; animationAxis = new THREE.Vector3(0, 0, -1); break;
-        case 'U': axis = 'y'; layerIndex = 1; animationAxis = new THREE.Vector3(0, 1, 0); break;
-        case 'D': axis = 'y'; layerIndex = 0; animationAxis = new THREE.Vector3(0, -1, 0); break;
-        case 'L': axis = 'x'; layerIndex = 0; animationAxis = new THREE.Vector3(-1, 0, 0); break;
-        case 'R': axis = 'x'; layerIndex = 1; animationAxis = new THREE.Vector3(1, 0, 0); break;
+        case 'F':
+            axis = 'z';
+            layerIndex = 1;
+            animationAxis = new THREE.Vector3(0, 0, 1);
+            break;
+        case 'B':
+            axis = 'z';
+            layerIndex = 0;
+            animationAxis = new THREE.Vector3(0, 0, -1);
+            break;
+        case 'U':
+            axis = 'y';
+            layerIndex = 1;
+            animationAxis = new THREE.Vector3(0, 1, 0);
+            break;
+        case 'D':
+            axis = 'y';
+            layerIndex = 0;
+            animationAxis = new THREE.Vector3(0, -1, 0);
+            break;
+        case 'L':
+            axis = 'x';
+            layerIndex = 0;
+            animationAxis = new THREE.Vector3(-1, 0, 0);
+            break;
+        case 'R':
+            axis = 'x';
+            layerIndex = 1;
+            animationAxis = new THREE.Vector3(1, 0, 0);
+            break;
         default:
             console.error(`Nieznana ściana: ${face}`);
             return;
@@ -265,7 +303,7 @@ function processNextMove() {
 
 function updateLogicalPositionsAfterRotation(face, direction, double) {
     const turns = double ? 2 : 1;
-    
+
     for (let turn = 0; turn < turns; turn++) {
         applyLogicalMove(face, direction, false);
     }
@@ -273,7 +311,7 @@ function updateLogicalPositionsAfterRotation(face, direction, double) {
 
 function resetLogicalState() {
     visualizerCubes.forEach(cube => {
-        cube.userData.logicalPosition = { ...cube.userData.initialLogicalPosition };
+        cube.userData.logicalPosition = {...cube.userData.initialLogicalPosition};
         cube.userData.logicalRotation = new THREE.Quaternion();
     });
 }
@@ -292,7 +330,7 @@ function parseVisualizerMoves(scrambleString) {
             }
         }
         if (!['F', 'B', 'U', 'D', 'L', 'R'].includes(face)) return null;
-        return { face, direction, double };
+        return {face, direction, double};
     }).filter(move => move !== null);
 }
 
@@ -305,13 +343,32 @@ function applyLogicalMove(face, direction, double) {
         let layerIndex = -1;
 
         switch (face) {
-            case 'F': rotationAxis.set(0, 0, 1); layerIndex = 1; break;
-            case 'B': rotationAxis.set(0, 0, -1); layerIndex = 0; break;
-            case 'U': rotationAxis.set(0, 1, 0); layerIndex = 1; break;
-            case 'D': rotationAxis.set(0, -1, 0); layerIndex = 0; break;
-            case 'L': rotationAxis.set(-1, 0, 0); layerIndex = 0; break;
-            case 'R': rotationAxis.set(1, 0, 0); layerIndex = 1; break;
-            default: return;
+            case 'F':
+                rotationAxis.set(0, 0, 1);
+                layerIndex = 1;
+                break;
+            case 'B':
+                rotationAxis.set(0, 0, -1);
+                layerIndex = 0;
+                break;
+            case 'U':
+                rotationAxis.set(0, 1, 0);
+                layerIndex = 1;
+                break;
+            case 'D':
+                rotationAxis.set(0, -1, 0);
+                layerIndex = 0;
+                break;
+            case 'L':
+                rotationAxis.set(-1, 0, 0);
+                layerIndex = 0;
+                break;
+            case 'R':
+                rotationAxis.set(1, 0, 0);
+                layerIndex = 1;
+                break;
+            default:
+                return;
         }
 
         const rotationQuaternion = new THREE.Quaternion().setFromAxisAngle(rotationAxis.normalize(), angle);
