@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const scrambleLengthMenu = document.querySelector(".scramble-length-menu")
     const scrambleLengthSpan = document.querySelector("#scramble-length-span")
     const scrabbleLengthInput = document.querySelector("#scrabble-length-input")
-    
+
     // Checkboxy typów ruchów zostały usunięte - zawsze używamy wszystkich typów
 
     // POPRAWKA: Sprawdzenie czy krytyczne elementy istnieją
@@ -68,52 +68,65 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error(`Kontener o id '${visualizerContainerId}' nie został znaleziony.`);
             return null;
         }
-        
+
         // Konfiguracja podstawowych obiektów Three.js
         aspecto = container.clientWidth / container.clientHeight;
         frustum = 10;
-        
+
         cena = new THREE.Scene();
         camera = new THREE.OrthographicCamera(
-            -frustum * aspecto / 2, 
-            frustum * aspecto / 2, 
-            frustum / 2, 
-            -frustum / 2, 
-            1, 
+            -frustum * aspecto / 2,
+            frustum * aspecto / 2,
+            frustum / 2,
+            -frustum / 2,
+            1,
             2000
         );
-        
+
+        const loader = new THREE.TextureLoader();
+        loader.load(
+            '../assets/images/background2.png',
+            (texture) => {
+                cena.background = texture;
+            },
+            undefined,
+            (error) => {
+                console.error('Błąd ładowania tła:', error);
+                cena.background = new THREE.Color(0xc2c2c2);
+            }
+        );
+
         renderer = new THREE.WebGLRenderer({antialias: true});
         renderer.setPixelRatio(window.devicePixelRatio);
         renderer.setClearColor(0xc2c2c2, 1); // Szare tło zamiast białego
         renderer.setSize(container.clientWidth, container.clientHeight);
-        
+
         // Dodanie kontrolek orbity
         orbita = new THREE.OrbitControls(camera, renderer.domElement);
         orbita.enableKeys = false;
         orbita.enablePan = false;
-        
+
         // Dodanie canvasu do kontenera
         container.appendChild(renderer.domElement);
-        
+
         // Aktualizacja kamery
         updatePyraminxCamera();
-        
+
         // Stworzenie modelu pyraminxa
         let tetraedroMath = TetraedroMath(2);
         pyraminx = Pyraminx(tetraedroMath, vermelho, verde, azul, amarelo, preto);
         grupo = Grupo(pyraminx);
-        
+
         // Dodanie do sceny
         cena.add(pyraminx);
         cena.add(grupo);
-        
+
         // Ustawienie obsługi zdarzeń
         setupPyraminxEventListeners();
-        
+
         // Rozpoczęcie animacji
         animatePyraminx();
-        
+
         return {
             displayScrambledState: displayPyraminxScrambledState,
             resetVisualization: resetPyraminxVisualization,
@@ -139,12 +152,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Ustawienie event listenerów dla pyraminxa
     function setupPyraminxEventListeners() {
-        window.addEventListener('resize', function() {
+        window.addEventListener('resize', function () {
             updatePyraminxCamera();
             renderPyraminx();
         });
-        
-        orbita.addEventListener('change', function() {
+
+        orbita.addEventListener('change', function () {
             renderPyraminx();
         });
     }
@@ -152,7 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Funkcja animacji pyraminxa
     function animatePyraminx() {
         requestAnimationFrame(animatePyraminx);
-        
+
         if (grupo && grupo.estaVazio()) {
             tratarEventosPyraminx();
         } else {
@@ -160,7 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 rotacao();
             }
         }
-        
+
         renderPyraminx();
     }
 
@@ -168,7 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function tratarEventosPyraminx() {
         if (eventos.length != 0) {
             let eventData = eventos.shift();
-            
+
             if (eventData.reverse) {
                 rotacao = grupo.rotacionarReverse(eventData.moveType);
             } else {
@@ -193,25 +206,25 @@ document.addEventListener('DOMContentLoaded', () => {
     function parseAlgorithm(notation) {
         const moves = [];
         const tokens = notation.match(/[ULRBulrb]['2]?/g) || [];
-        
+
         tokens.forEach(token => {
             const move = token[0];
             const modifier = token.slice(1);
-            
+
             if (moveMapping[move]) {
                 const moveType = moveMapping[move];
-                
+
                 if (modifier === "'") {
-                    moves.push({ moveType: moveType, reverse: true });
+                    moves.push({moveType: moveType, reverse: true});
                 } else if (modifier === "2") {
-                    moves.push({ moveType: moveType, reverse: false });
-                    moves.push({ moveType: moveType, reverse: false });
+                    moves.push({moveType: moveType, reverse: false});
+                    moves.push({moveType: moveType, reverse: false});
                 } else {
-                    moves.push({ moveType: moveType, reverse: false });
+                    moves.push({moveType: moveType, reverse: false});
                 }
             }
         });
-        
+
         return moves;
     }
 
@@ -224,16 +237,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Reset pyraminxa przed wykonaniem scramble
         resetPyraminxVisualization();
-        
+
         // Poczekaj krótko na reset, potem wykonaj scramble
         setTimeout(() => {
             const moves = parseAlgorithm(scrambleString);
-            
+
             if (moves.length === 0) {
                 console.warn('Nie znaleziono prawidłowych ruchów w scramble:', scrambleString);
                 return;
             }
-            
+
             if (animated) {
                 // Dodaj ruchy do kolejki zdarzeń dla animacji
                 moves.forEach(move => {
@@ -267,20 +280,20 @@ document.addEventListener('DOMContentLoaded', () => {
         eventos = [];
         isAnimating = false;
         rotacao = null;
-        
+
         // Usuń obecny pyraminx i stwórz nowy
         if (pyraminx) {
             cena.remove(pyraminx);
             cena.remove(grupo);
         }
-        
+
         let tetraedroMath = TetraedroMath(2);
         pyraminx = Pyraminx(tetraedroMath, vermelho, verde, azul, amarelo, preto);
         grupo = Grupo(pyraminx);
-        
+
         cena.add(pyraminx);
         cena.add(grupo);
-        
+
         renderPyraminx();
     }
 
@@ -300,7 +313,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!pyraminxVisualizerInstance) {
         console.error("Nie udało się zainicjalizować wizualizatora pyraminxa.");
         const container = document.getElementById(visualizerContainerId);
-        if(container) container.innerHTML = "Błąd ładowania wizualizacji pyraminxa.";
+        if (container) container.innerHTML = "Błąd ładowania wizualizacji pyraminxa.";
     }
 
     // --- Generowanie tasowania ---
@@ -323,12 +336,12 @@ document.addEventListener('DOMContentLoaded', () => {
             seriesTimesDisplay.innerHTML = '';
         }
         if (!isSeriesMode) {
-             seriesTimesDisplay.innerHTML = '';
+            seriesTimesDisplay.innerHTML = '';
         }
 
         // POPRAWKA: Używam właściwej wartości z custom input dla długości scramble'a
         const length = parseInt(scrabbleLengthInput?.value, 10) || 15;
-        
+
         // Zawsze używaj wszystkich typów ruchów pyraminxa
         const includeFaceMoves = true;
         const includeTipMoves = true;
@@ -338,7 +351,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 includeFaceMoves,
                 includeTipMoves
             });
-            
+
             // Zapisz tasowanie do późniejszego użycia
             scrambles[currentSolveIndex] = currentScramble;
 
@@ -361,14 +374,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-     // --- Wizualizacja tasowania ---
+    // --- Wizualizacja tasowania ---
     function visualizeCurrentScramble() {
         if (pyraminxVisualizerInstance && typeof pyraminxVisualizerInstance.displayScrambledState === 'function') {
             if (currentScramble) {
                 // Zawsze używaj animacji z ustaloną prędkością
                 const animateScramble = true;
                 const fixedSpeed = 120; // Stała, szybka ale czytelna prędkość dla pyraminxa (120ms)
-                
+
                 // Ustaw stałą prędkość animacji
                 if (pyraminxVisualizerInstance.setAnimationSpeed) {
                     pyraminxVisualizerInstance.setAnimationSpeed(fixedSpeed);
@@ -377,14 +390,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 try {
                     pyraminxVisualizerInstance.displayScrambledState(currentScramble, animateScramble);
                 } catch (error) {
-                     console.error("Błąd wywołania displayScrambledState():", error);
+                    console.error("Błąd wywołania displayScrambledState():", error);
                 }
             } else {
                 console.warn("Brak wygenerowanego tasowania do wizualizacji.");
                 try {
                     pyraminxVisualizerInstance.displayScrambledState("", false);
                 } catch (error) {
-                     console.error("Błąd resetowania stanu wizualizatora:", error);
+                    console.error("Błąd resetowania stanu wizualizatora:", error);
                 }
             }
         } else {
@@ -415,7 +428,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Obsługa logiki serii
             if (isSeriesMode) {
                 seriesTimes[currentSolveIndex] = parseFloat(finalTime);
-                
+
                 // Aktualizuj wyświetlacz
                 renderSeriesTimes();
 
@@ -444,11 +457,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Wyświetlanie statystyk serii
     function displaySeriesStatistics() {
         if (seriesTimes.length === 0) return;
-        
+
         const avg = seriesTimes.reduce((a, b) => a + b, 0) / seriesTimes.length;
         const best = Math.min(...seriesTimes);
         const worst = Math.max(...seriesTimes);
-        
+
         const statsElement = document.createElement('div');
         statsElement.classList.add('series-stats');
         statsElement.innerHTML = `
@@ -457,7 +470,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <p>Najlepszy: ${best.toFixed(2)}s</p>
             <p>Najgorszy: ${worst.toFixed(2)}s</p>
         `;
-        
+
         seriesTimesDisplay.appendChild(statsElement);
     }
 
@@ -478,7 +491,7 @@ document.addEventListener('DOMContentLoaded', () => {
             tile.className = 'solve-tile';
             // Prosta struktura jak w kostce 3x3 - tylko czas bez numeru próby
             tile.textContent = time.toFixed(2);
-            
+
             // Dodaj event listenery dla pokazywania scramble w głównym okienku
             if (scrambles[index]) {
                 tile.title = scrambles[index];
@@ -493,7 +506,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 });
             }
-            
+
             grid.appendChild(tile);
         });
 
@@ -519,19 +532,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Event Listeners ---
-    
+
     // Obsługa klawiatury (spacja)
     document.addEventListener('keydown', (event) => {
         if (event.code === 'Space') {
             event.preventDefault();
-            
+
             if (isSeriesMode && currentSolveIndex >= totalSolvesInSeries) {
                 return; // Seria zakończona
             }
-            
+
             if (timerRunning) {
                 stopTimer();
-                
+
                 // Automatycznie wygeneruj nowy scramble jeśli w trybie serii
                 if (isSeriesMode && currentSolveIndex < totalSolvesInSeries) {
                     setTimeout(() => {
@@ -614,7 +627,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 seriesCountOptions.forEach(opt => opt.classList.remove('series-count-options-selected'));
                 option.classList.add('series-count-options-selected');
                 seriesCountOptionsList.classList.remove('series-count-options-visible');
-                
+
                 // Update series if in series mode
                 if (isSeriesMode) {
                     totalSolvesInSeries = Math.min(parseInt(option.textContent, 10) || 5, MAX_SERIES_LENGTH);

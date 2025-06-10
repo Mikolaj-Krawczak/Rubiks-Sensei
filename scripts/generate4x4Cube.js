@@ -1,4 +1,4 @@
-const CUBE_SIZE = 1;
+ const CUBE_SIZE = 1;
 const GAP = 0.02;
 const ANIMATION_DURATION = 500; // ms
 const cubespace = document.getElementById("cubespace");

@@ -37,10 +37,19 @@ function initScrambleVisualizer4x4(containerId) {
 
     // Konfiguracja sceny
     visualizerScene = new THREE.Scene();
-    
-    // Ustawienie szarego tła
-    visualizerScene.background = new THREE.Color(0xc2c2c2);
 
+    const loader = new THREE.TextureLoader();
+    loader.load(
+        '../assets/images/background2.png',
+        (texture) => {
+            visualizerScene.background = texture;
+        },
+        undefined,
+        (error) => {
+            console.error('Błąd ładowania tła:', error);
+            visualizerScene.background = new THREE.Color(0xc2c2c2);
+        }
+    );
     // Kamera
     visualizerCamera = new THREE.PerspectiveCamera(
         55,
@@ -51,7 +60,7 @@ function initScrambleVisualizer4x4(containerId) {
     visualizerCamera.position.set(6, 6, 8); // Pozycja dostosowana dla kostki 4x4
 
     // Renderer
-    visualizerRenderer = new THREE.WebGLRenderer({ antialias: true });
+    visualizerRenderer = new THREE.WebGLRenderer({antialias: true});
     visualizerRenderer.setSize(container.clientWidth, container.clientHeight);
     container.appendChild(visualizerRenderer.domElement);
 
@@ -84,12 +93,12 @@ function initScrambleVisualizer4x4(containerId) {
 
                 const geometry = new THREE.BoxGeometry(VISUALIZER_CUBE_SIZE, VISUALIZER_CUBE_SIZE, VISUALIZER_CUBE_SIZE);
                 const materials = [
-                    new THREE.MeshLambertMaterial({ color: x === 3 ? visualizerColors.right : 0x111111 }), // Prawo
-                    new THREE.MeshLambertMaterial({ color: x === 0 ? visualizerColors.left : 0x111111 }),  // Lewo
-                    new THREE.MeshLambertMaterial({ color: y === 3 ? visualizerColors.up : 0x111111 }),    // Góra
-                    new THREE.MeshLambertMaterial({ color: y === 0 ? visualizerColors.down : 0x111111 }),  // Dół
-                    new THREE.MeshLambertMaterial({ color: z === 3 ? visualizerColors.front : 0x111111 }), // Przód
-                    new THREE.MeshLambertMaterial({ color: z === 0 ? visualizerColors.back : 0x111111 })   // Tył
+                    new THREE.MeshLambertMaterial({color: x === 3 ? visualizerColors.right : 0x111111}), // Prawo
+                    new THREE.MeshLambertMaterial({color: x === 0 ? visualizerColors.left : 0x111111}),  // Lewo
+                    new THREE.MeshLambertMaterial({color: y === 3 ? visualizerColors.up : 0x111111}),    // Góra
+                    new THREE.MeshLambertMaterial({color: y === 0 ? visualizerColors.down : 0x111111}),  // Dół
+                    new THREE.MeshLambertMaterial({color: z === 3 ? visualizerColors.front : 0x111111}), // Przód
+                    new THREE.MeshLambertMaterial({color: z === 0 ? visualizerColors.back : 0x111111})   // Tył
                 ];
 
                 const cube = new THREE.Mesh(geometry, materials);
@@ -98,9 +107,9 @@ function initScrambleVisualizer4x4(containerId) {
                 cube.position.z = (z - 1.5) * (VISUALIZER_CUBE_SIZE + VISUALIZER_GAP);
 
                 // Zapisz początkową pozycję logiczną
-                const initialPos = { x, y, z };
+                const initialPos = {x, y, z};
                 cube.userData.initialLogicalPosition = initialPos;
-                cube.userData.logicalPosition = { ...initialPos };
+                cube.userData.logicalPosition = {...initialPos};
 
                 visualizerCubeGroup.add(cube);
                 visualizerCubes.push(cube);
@@ -133,30 +142,30 @@ function animateVisualizer4x4() {
     if (isAnimating && animationGroup) {
         const elapsed = Date.now() - animationStartTime;
         const progress = Math.min(elapsed / ANIMATION_DURATION, 1);
-        
+
         // Funkcja easingu
         const easedProgress = 1 - Math.pow(1 - progress, 3);
         const currentAngle = animationAngle * easedProgress;
-        
+
         animationGroup.setRotationFromAxisAngle(animationAxis, currentAngle);
 
         if (progress >= 1) {
             // Animacja zakończona
             isAnimating = false;
-            
+
             // Zastosuj finalną rotację i przenieś kostki z powrotem do głównej grupy
             const finalRotation = new THREE.Quaternion().setFromAxisAngle(animationAxis, animationAngle);
             const animatedCubes = [...animationGroup.children];
-            
+
             // Aktualizuj pozycje kostek na podstawie właśnie zakończonego ruchu
             if (currentAnimatingMove) {
                 updateLogicalPositionsAfterRotation4x4(currentAnimatingMove.face, currentAnimatingMove.direction, currentAnimatingMove.double);
             }
-            
+
             animatedCubes.forEach(cube => {
                 // Zastosuj skumulowaną rotację
                 cube.quaternion.multiplyQuaternions(finalRotation, cube.quaternion);
-                
+
                 // Przenieś kostkę z powrotem do głównej grupy
                 animationGroup.remove(cube);
                 visualizerCubeGroup.add(cube);
@@ -181,7 +190,7 @@ function animateVisualizer4x4() {
 // --- Funkcja wyświetlania zamieszczanego stanu ---
 function displayScrambledState4x4(scrambleString, animate = false) {
     console.log(`[Scramble4x4] displayScrambledState wywołane z: "${scrambleString}", animate: ${animate}`);
-    
+
     if (!scrambleString || scrambleString.trim() === "") {
         console.log("[Scramble4x4] Pusty scramble, resetowanie do stanu ułożonego");
         resetVisualization4x4();
@@ -212,33 +221,39 @@ function displayScrambledState4x4(scrambleString, animate = false) {
 // --- Funkcja pobierania kostek na warstwie ---
 function getCubesOnLayer4x4(face, layer = null) {
     const faceCubes = [];
-    
+
     visualizerCubes.forEach(cube => {
         const pos = cube.userData.logicalPosition;
         let shouldInclude = false;
-        
+
         switch (face) {
-            case "F": case "f":
+            case "F":
+            case "f":
                 if (face === "F") shouldInclude = (pos.z === 3);
                 else shouldInclude = (pos.z === 2); // f - druga warstwa od przodu
                 break;
-            case "B": case "b":
+            case "B":
+            case "b":
                 if (face === "B") shouldInclude = (pos.z === 0);
                 else shouldInclude = (pos.z === 1); // b - druga warstwa od tyłu
                 break;
-            case "U": case "u":
+            case "U":
+            case "u":
                 if (face === "U") shouldInclude = (pos.y === 3);
                 else shouldInclude = (pos.y === 2); // u - druga warstwa od góry
                 break;
-            case "D": case "d":
+            case "D":
+            case "d":
                 if (face === "D") shouldInclude = (pos.y === 0);
                 else shouldInclude = (pos.y === 1); // d - druga warstwa od dołu
                 break;
-            case "L": case "l":
+            case "L":
+            case "l":
                 if (face === "L") shouldInclude = (pos.x === 0);
                 else shouldInclude = (pos.x === 1); // l - druga warstwa od lewej
                 break;
-            case "R": case "r":
+            case "R":
+            case "r":
                 if (face === "R") shouldInclude = (pos.x === 3);
                 else shouldInclude = (pos.x === 2); // r - druga warstwa od prawej
                 break;
@@ -262,12 +277,12 @@ function getCubesOnLayer4x4(face, layer = null) {
                 shouldInclude = (pos.x >= 2);
                 break;
         }
-        
+
         if (shouldInclude) {
             faceCubes.push(cube);
         }
     });
-    
+
     return faceCubes;
 }
 
@@ -290,7 +305,7 @@ function rotateFaceAnimated4x4(move) {
     // Utwórz grupę animacji
     animationGroup = new THREE.Group();
     visualizerScene.add(animationGroup);
-    
+
     faceCubes.forEach(cube => {
         visualizerCubeGroup.remove(cube);
         animationGroup.add(cube);
@@ -342,7 +357,7 @@ function processNextMove4x4() {
 function updateLogicalPositionsAfterRotation4x4(face, direction, double) {
     const baseFace = face.replace(/[wW]/, '').toLowerCase();
     const clockwise = direction === "clockwise";
-    
+
     visualizerCubes.forEach(cube => {
         const pos = cube.userData.logicalPosition;
         let newX = pos.x, newY = pos.y, newZ = pos.z;
@@ -350,22 +365,28 @@ function updateLogicalPositionsAfterRotation4x4(face, direction, double) {
 
         // Określ które kostki należy obrócić na podstawie typu ruchu
         switch (face) {
-            case "F": case "f":
+            case "F":
+            case "f":
                 shouldRotate = (face === "F" ? pos.z === 3 : pos.z === 2);
                 break;
-            case "B": case "b":
+            case "B":
+            case "b":
                 shouldRotate = (face === "B" ? pos.z === 0 : pos.z === 1);
                 break;
-            case "U": case "u":
+            case "U":
+            case "u":
                 shouldRotate = (face === "U" ? pos.y === 3 : pos.y === 2);
                 break;
-            case "D": case "d":
+            case "D":
+            case "d":
                 shouldRotate = (face === "D" ? pos.y === 0 : pos.y === 1);
                 break;
-            case "L": case "l":
+            case "L":
+            case "l":
                 shouldRotate = (face === "L" ? pos.x === 0 : pos.x === 1);
                 break;
-            case "R": case "r":
+            case "R":
+            case "r":
                 shouldRotate = (face === "R" ? pos.x === 3 : pos.x === 2);
                 break;
             case "Fw":
@@ -453,7 +474,7 @@ function updateLogicalPositionsAfterRotation4x4(face, direction, double) {
                     break;
             }
 
-            cube.userData.logicalPosition = { x: newX, y: newY, z: newZ };
+            cube.userData.logicalPosition = {x: newX, y: newY, z: newZ};
         }
     });
 }
@@ -498,11 +519,11 @@ function parseVisualizerMoves4x4(scrambleString) {
 // --- Funkcja stosowania logicznego ruchu ---
 function applyLogicalMove4x4(face, direction, double) {
     updateLogicalPositionsAfterRotation4x4(face, direction, double);
-    
+
     // Dla trybu natychmiastowego, zastosuj również rotację do kostek
     const faceCubes = getCubesOnLayer4x4(face);
     const baseFace = face.replace(/[wW]/, '').toLowerCase();
-    
+
     // Określ oś rotacji
     let rotationAxis;
     switch (baseFace) {
@@ -525,13 +546,13 @@ function applyLogicalMove4x4(face, direction, double) {
             rotationAxis = new THREE.Vector3(1, 0, 0);
             break;
     }
-    
+
     // Określ kąt rotacji
     let rotationAngle = direction === "clockwise" ? -Math.PI / 2 : Math.PI / 2;
     if (double) {
         rotationAngle *= 2;
     }
-    
+
     // Zastosuj rotację do kostek
     const rotation = new THREE.Quaternion().setFromAxisAngle(rotationAxis, rotationAngle);
     faceCubes.forEach(cube => {
@@ -552,11 +573,11 @@ function updateVisualState4x4() {
 // --- Funkcja resetowania wizualizacji ---
 function resetVisualization4x4() {
     console.log("[Scramble4x4] Resetowanie wizualizacji");
-    
+
     // Zatrzymaj wszelkie animacje
     isAnimating = false;
     moveQueue = [];
-    
+
     if (animationGroup) {
         const childrenToMove = [...animationGroup.children];
         childrenToMove.forEach(cube => {
@@ -566,14 +587,14 @@ function resetVisualization4x4() {
         visualizerScene.remove(animationGroup);
         animationGroup = null;
     }
-    
+
     currentAnimatingMove = null;
 
     // Zresetuj pozycje logiczne i rotacje wszystkich kostek
     visualizerCubes.forEach(cube => {
-        cube.userData.logicalPosition = { ...cube.userData.initialLogicalPosition };
+        cube.userData.logicalPosition = {...cube.userData.initialLogicalPosition};
         cube.quaternion.set(0, 0, 0, 1); // Zresetuj do identyczności rotacji
-        
+
         const pos = cube.userData.logicalPosition;
         cube.position.x = (pos.x - 1.5) * (VISUALIZER_CUBE_SIZE + VISUALIZER_GAP);
         cube.position.y = (pos.y - 1.5) * (VISUALIZER_CUBE_SIZE + VISUALIZER_GAP);

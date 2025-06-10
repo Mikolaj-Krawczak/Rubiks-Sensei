@@ -10,7 +10,7 @@ loader.load(
     '../assets/images/background2.png',
     (texture) => { scene.background = texture; },
     undefined,
-    (error) => { console.error('Błąd ładowania tła:', error); scene.background = new THREE.Color(0xc2c2c2); }
+    (error) => { console.error('Błąd ładowania tła:', error); scene.background = new THREE.Color(0xff0000); }
 );
 
 const camera = new THREE.PerspectiveCamera(
@@ -21,7 +21,7 @@ const camera = new THREE.PerspectiveCamera(
 );
 camera.position.set(4, 4, 6);
 
-const renderer = new THREE.WebGLRenderer({ antialias: true });
+const renderer = new THREE.WebGLRenderer({antialias: true});
 renderer.setSize(cubespace.clientWidth, cubespace.clientHeight);
 cubespace.appendChild(renderer.domElement);
 
@@ -103,7 +103,7 @@ for (let x = 0; x < 2; x++) {
             cube.position.y = (y - 0.5) * (CUBE_SIZE + GAP);
             cube.position.z = (z - 0.5) * (CUBE_SIZE + GAP);
             cube.userData.originalPosition = cube.position.clone();
-            cube.userData.currentPosition = { x, y, z };
+            cube.userData.currentPosition = {x, y, z};
             cubeGroup.add(cube);
             cubes.push(cube);
         }
@@ -208,7 +208,7 @@ function rotateFace(face, direction, isReplay = false) {
         if (currentMoveIndex < moveHistory.length - 1) {
             moveHistory = moveHistory.slice(0, currentMoveIndex + 1);
         }
-        moveHistory.push({ face, direction });
+        moveHistory.push({face, direction});
         currentMoveIndex = moveHistory.length - 1;
     }
 }
@@ -440,14 +440,14 @@ function resetCube() {
         const originalX = Math.round((cube.userData.originalPosition.x / (CUBE_SIZE + GAP)) + 0.5);
         const originalY = Math.round((cube.userData.originalPosition.y / (CUBE_SIZE + GAP)) + 0.5);
         const originalZ = Math.round((cube.userData.originalPosition.z / (CUBE_SIZE + GAP)) + 0.5);
-        
+
         // Update the current position to the original indices (0 or 1)
         cube.userData.currentPosition = {
             x: originalX,
             y: originalY,
             z: originalZ
         };
-        
+
         // Reset the cube's position to its original position
         cube.position.copy(cube.userData.originalPosition);
         // Reset the cube's rotation

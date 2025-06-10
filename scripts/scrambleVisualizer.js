@@ -37,7 +37,18 @@ function initScrambleVisualizer(containerId) {
 
     // Konfiguracja sceny
     visualizerScene = new THREE.Scene();
-    visualizerScene.background = new THREE.Color(0xc2c2c2); // Jednolity szary kolor dla wszystkich wizualizatorów
+    const loader = new THREE.TextureLoader();
+    loader.load(
+        '../assets/images/background2.png',
+        (texture) => {
+            visualizerScene.background = texture;
+        },
+        undefined,
+        (error) => {
+            console.error('Błąd ładowania tła:', error);
+            visualizerScene.background = new THREE.Color(0xff0000);
+        }
+    );
 
     // Kamera
     visualizerCamera = new THREE.PerspectiveCamera(
@@ -49,7 +60,7 @@ function initScrambleVisualizer(containerId) {
     visualizerCamera.position.set(4, 4, 6); // Nieco inna pozycja być może
 
     // Renderer
-    visualizerRenderer = new THREE.WebGLRenderer({ antialias: true });
+    visualizerRenderer = new THREE.WebGLRenderer({antialias: true});
     visualizerRenderer.setSize(container.clientWidth, container.clientHeight);
     container.appendChild(visualizerRenderer.domElement);
 
@@ -81,12 +92,12 @@ function initScrambleVisualizer(containerId) {
 
                 const geometry = new THREE.BoxGeometry(VISUALIZER_CUBE_SIZE, VISUALIZER_CUBE_SIZE, VISUALIZER_CUBE_SIZE);
                 const materials = [
-                    new THREE.MeshLambertMaterial({ color: x === 2 ? visualizerColors.right : 0x111111 }), // Prawo
-                    new THREE.MeshLambertMaterial({ color: x === 0 ? visualizerColors.left : 0x111111 }),  // Lewo
-                    new THREE.MeshLambertMaterial({ color: y === 2 ? visualizerColors.up : 0x111111 }),    // Góra
-                    new THREE.MeshLambertMaterial({ color: y === 0 ? visualizerColors.down : 0x111111 }),  // Dół
-                    new THREE.MeshLambertMaterial({ color: z === 2 ? visualizerColors.front : 0x111111 }), // Przód
-                    new THREE.MeshLambertMaterial({ color: z === 0 ? visualizerColors.back : 0x111111 })   // Tył
+                    new THREE.MeshLambertMaterial({color: x === 2 ? visualizerColors.right : 0x111111}), // Prawo
+                    new THREE.MeshLambertMaterial({color: x === 0 ? visualizerColors.left : 0x111111}),  // Lewo
+                    new THREE.MeshLambertMaterial({color: y === 2 ? visualizerColors.up : 0x111111}),    // Góra
+                    new THREE.MeshLambertMaterial({color: y === 0 ? visualizerColors.down : 0x111111}),  // Dół
+                    new THREE.MeshLambertMaterial({color: z === 2 ? visualizerColors.front : 0x111111}), // Przód
+                    new THREE.MeshLambertMaterial({color: z === 0 ? visualizerColors.back : 0x111111})   // Tył
                 ];
 
                 const cube = new THREE.Mesh(geometry, materials);
@@ -95,9 +106,9 @@ function initScrambleVisualizer(containerId) {
                 cube.position.z = (z - 1) * (VISUALIZER_CUBE_SIZE + VISUALIZER_GAP);
 
                 // Zapisz początkową pozycję logiczną (0, 1 lub 2 dla x, y, z)
-                const initialPos = { x, y, z };
+                const initialPos = {x, y, z};
                 cube.userData.initialLogicalPosition = initialPos; // Zapisz początkową
-                cube.userData.logicalPosition = { ...initialPos }; // Ustaw aktualną pozycję logiczną
+                cube.userData.logicalPosition = {...initialPos}; // Ustaw aktualną pozycję logiczną
                 // Zapisz początkową rotację
                 cube.userData.logicalRotation = new THREE.Quaternion();
 
@@ -134,7 +145,7 @@ function animateVisualizer() {
         window.animFrameCounter = 0;
         window.lastAnimFrameLog = Date.now();
     }
-    
+
     window.animFrameCounter++;
     const now = Date.now();
     if (now - window.lastAnimFrameLog > 1000) {
@@ -151,7 +162,7 @@ function animateVisualizer() {
         if (animationGroup) {
             animationGroup.setRotationFromAxisAngle(animationAxis, rotationAmount);
             if (progress % 0.25 < 0.01) { // Log przy około 0%, 25%, 50%, 75%
-                console.log(`[DEBUG] Postęp animacji: ${(progress*100).toFixed(0)}%, kąt: ${rotationAmount.toFixed(2)}`);
+                console.log(`[DEBUG] Postęp animacji: ${(progress * 100).toFixed(0)}%, kąt: ${rotationAmount.toFixed(2)}`);
             }
         }
 
@@ -167,8 +178,8 @@ function animateVisualizer() {
                 console.error("currentAnimatingMove było nullem gdy animacja zakończyła się!");
                 // Próba naprawy - aktualizacja na podstawie osi/kąta animacji?
                 const face = animationAxis.x !== 0 ? (animationAxis.x > 0 ? "R" : "L")
-                          : animationAxis.y !== 0 ? (animationAxis.y > 0 ? "U" : "D")
-                          : (animationAxis.z > 0 ? "F" : "B");
+                    : animationAxis.y !== 0 ? (animationAxis.y > 0 ? "U" : "D")
+                        : (animationAxis.z > 0 ? "F" : "B");
                 const direction = animationAngle > 0 ? "counter-clockwise" : "clockwise";
                 updateLogicalPositionsAfterRotation(face, direction, false); // Załóż pojedynczy
             }
@@ -247,7 +258,7 @@ function displayScrambledState(scrambleString, animate = false) { // Added anima
         console.log("Starting animated scramble:", moves);
         // Store full move info in queue
         // Przechowaj pełne informacje o ruchu w kolejce
-        moveQueue = moves.map(m => ({ face: m.face, direction: m.direction, double: m.double }));
+        moveQueue = moves.map(m => ({face: m.face, direction: m.direction, double: m.double}));
         processNextMove();
     } else {
         // 3b. Apply all moves logically at once
@@ -270,7 +281,7 @@ function displayScrambledState(scrambleString, animate = false) { // Added anima
 // Funkcja do pobierania kostek na określonej warstwie (zmodyfikowana z generateCube)
 function getCubesOnLayer(axis, layerIndex) {
     const layerCubes = [];
-    
+
     // Print debugging information for all cubes' positions
     // Wydrukuj informacje debugowania dla pozycji wszystkich kostek
     console.log("[DEBUG] Looking for cubes on " + axis + "=" + layerIndex);
@@ -278,26 +289,26 @@ function getCubesOnLayer(axis, layerIndex) {
     visualizerCubes.forEach((cube, i) => {
         const pos = cube.userData.logicalPosition;
         if (i < 5) { // Only log the first few to avoid console spam
-                     // Loguj tylko kilka pierwszych, aby uniknąć spamu konsoli
+            // Loguj tylko kilka pierwszych, aby uniknąć spamu konsoli
             console.log(`Cube ${i}: x=${pos.x}, y=${pos.y}, z=${pos.z}`);
         }
     });
-    
+
     // This ensures we explicitly check the right property
     // To zapewnia, że jawnie sprawdzamy właściwą właściwość
     visualizerCubes.forEach(cube => {
         const pos = cube.userData.logicalPosition;
         let isOnLayer = false;
-        
+
         if (axis === 'x' && pos.x === layerIndex) isOnLayer = true;
         else if (axis === 'y' && pos.y === layerIndex) isOnLayer = true;
         else if (axis === 'z' && pos.z === layerIndex) isOnLayer = true;
-        
+
         if (isOnLayer) {
             layerCubes.push(cube);
         }
     });
-    
+
     console.log("[DEBUG] Found " + layerCubes.length + " cubes on " + axis + "=" + layerIndex);
     return layerCubes;
 }
@@ -305,7 +316,7 @@ function getCubesOnLayer(axis, layerIndex) {
 // Function to start a face rotation animation
 // Funkcja do rozpoczęcia animacji obrotu ściany
 function rotateFaceAnimated(move) { // Accepts the full move object
-                                    // Przyjmuje pełny obiekt ruchu
+    // Przyjmuje pełny obiekt ruchu
     if (isAnimating) {
         console.warn("Animation already in progress, skipping move:", move);
         return;
@@ -313,24 +324,49 @@ function rotateFaceAnimated(move) { // Accepts the full move object
 
     currentAnimatingMove = move; // Store the move being animated
                                  // Przechowaj ruch, który jest animowany
-    const { face, direction } = move;
+    const {face, direction} = move;
     console.log("[DEBUG] Starting rotation animation for face:", face, "direction:", direction);
 
     let layerAxis = '';
     let layerIndex = -1;
     switch (face) {
-        case "F": layerAxis = 'z'; layerIndex = 2; animationAxis = new THREE.Vector3(0, 0, 1); break;
-        case "B": layerAxis = 'z'; layerIndex = 0; animationAxis = new THREE.Vector3(0, 0, -1); break;
-        case "U": layerAxis = 'y'; layerIndex = 2; animationAxis = new THREE.Vector3(0, 1, 0); break;
-        case "D": layerAxis = 'y'; layerIndex = 0; animationAxis = new THREE.Vector3(0, -1, 0); break;
-        case "L": layerAxis = 'x'; layerIndex = 0; animationAxis = new THREE.Vector3(-1, 0, 0); break;
-        case "R": layerAxis = 'x'; layerIndex = 2; animationAxis = new THREE.Vector3(1, 0, 0); break;
-        default: return;
+        case "F":
+            layerAxis = 'z';
+            layerIndex = 2;
+            animationAxis = new THREE.Vector3(0, 0, 1);
+            break;
+        case "B":
+            layerAxis = 'z';
+            layerIndex = 0;
+            animationAxis = new THREE.Vector3(0, 0, -1);
+            break;
+        case "U":
+            layerAxis = 'y';
+            layerIndex = 2;
+            animationAxis = new THREE.Vector3(0, 1, 0);
+            break;
+        case "D":
+            layerAxis = 'y';
+            layerIndex = 0;
+            animationAxis = new THREE.Vector3(0, -1, 0);
+            break;
+        case "L":
+            layerAxis = 'x';
+            layerIndex = 0;
+            animationAxis = new THREE.Vector3(-1, 0, 0);
+            break;
+        case "R":
+            layerAxis = 'x';
+            layerIndex = 2;
+            animationAxis = new THREE.Vector3(1, 0, 0);
+            break;
+        default:
+            return;
     }
 
     const faceCubes = getCubesOnLayer(layerAxis, layerIndex);
     console.log("[DEBUG] Found", faceCubes.length, "cubes for face", face, "on axis", layerAxis, "at index", layerIndex);
-    
+
     if (faceCubes.length === 0) {
         console.error("[DEBUG] No cubes found for this face rotation!");
         currentAnimatingMove = null; // Abort if no cubes
@@ -369,7 +405,7 @@ function processNextMove() {
     }
 
     const move = moveQueue.shift(); // Get the full move object
-                                   // Pobierz pełny obiekt ruchu
+    // Pobierz pełny obiekt ruchu
     console.log(`[Proc] Processing move: ${JSON.stringify(move)}. Queue left: ${moveQueue.length}`);
 
     // !! Proper Double Move Handling !!
@@ -377,8 +413,8 @@ function processNextMove() {
     // Queue two separate 90-degree turns for double moves
     // Ustaw w kolejce dwa osobne obroty 90-stopniowe dla podwójnych ruchów
     if (move.double) {
-        const singleMove1 = { ...move, double: false };
-        const singleMove2 = { ...move, double: false };
+        const singleMove1 = {...move, double: false};
+        const singleMove2 = {...move, double: false};
         // Put the second turn back at the front of the queue
         // Umieść drugi obrót z powrotem na początku kolejki
         moveQueue.unshift(singleMove2);
@@ -407,17 +443,17 @@ function resetLogicalState() {
         // Reset logical position TO THE STORED INITIAL position
         // Resetuj pozycję logiczną DO ZAPISANEJ POCZĄTKOWEJ pozycji
         if (cube.userData.initialLogicalPosition) {
-            cube.userData.logicalPosition = { ...cube.userData.initialLogicalPosition };
+            cube.userData.logicalPosition = {...cube.userData.initialLogicalPosition};
         } else {
             // Fallback in case initial wasn't stored (should not happen)
             // Alternatywa w przypadku, gdy początkowa nie została zapisana (nie powinno się zdarzyć)
             const x = Math.round((cube.position.x / (VISUALIZER_CUBE_SIZE + VISUALIZER_GAP)) + 1);
             const y = Math.round((cube.position.y / (VISUALIZER_CUBE_SIZE + VISUALIZER_GAP)) + 1);
             const z = Math.round((cube.position.z / (VISUALIZER_CUBE_SIZE + VISUALIZER_GAP)) + 1);
-            cube.userData.logicalPosition = { x, y, z };
+            cube.userData.logicalPosition = {x, y, z};
         }
         cube.userData.logicalRotation = new THREE.Quaternion(); // Reset rotation to identity
-                                                               // Resetuj rotację do tożsamości
+        // Resetuj rotację do tożsamości
     });
 }
 
@@ -438,7 +474,7 @@ function parseVisualizerMoves(scrambleString) {
         }
         // Basic validation
         if (!['F', 'B', 'U', 'D', 'L', 'R'].includes(face)) return null;
-        return { face, direction, double };
+        return {face, direction, double};
     }).filter(move => move !== null); // Filter out any invalid parts
 }
 
@@ -454,13 +490,32 @@ function applyLogicalMove(face, direction, double) {
         let layerIndex = -1; // For identifying which cubes to move
 
         switch (face) {
-            case 'F': rotationAxis.set(0, 0, 1); layerIndex = 2; break;
-            case 'B': rotationAxis.set(0, 0, -1); layerIndex = 0; break;
-            case 'U': rotationAxis.set(0, 1, 0); layerIndex = 2; break;
-            case 'D': rotationAxis.set(0, -1, 0); layerIndex = 0; break;
-            case 'L': rotationAxis.set(-1, 0, 0); layerIndex = 0; break;
-            case 'R': rotationAxis.set(1, 0, 0); layerIndex = 2; break;
-            default: return; // Invalid face
+            case 'F':
+                rotationAxis.set(0, 0, 1);
+                layerIndex = 2;
+                break;
+            case 'B':
+                rotationAxis.set(0, 0, -1);
+                layerIndex = 0;
+                break;
+            case 'U':
+                rotationAxis.set(0, 1, 0);
+                layerIndex = 2;
+                break;
+            case 'D':
+                rotationAxis.set(0, -1, 0);
+                layerIndex = 0;
+                break;
+            case 'L':
+                rotationAxis.set(-1, 0, 0);
+                layerIndex = 0;
+                break;
+            case 'R':
+                rotationAxis.set(1, 0, 0);
+                layerIndex = 2;
+                break;
+            default:
+                return; // Invalid face
         }
 
         const rotationQuaternion = new THREE.Quaternion().setFromAxisAngle(rotationAxis.normalize(), rotationAngle);
