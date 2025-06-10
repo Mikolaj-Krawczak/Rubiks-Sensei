@@ -129,5 +129,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=str(app_path / 'assets' / 'icon.ico') if (app_path / 'assets' / 'icon.ico').exists() else None,
+    icon=str(app_path / 'assets' / 'logo.ico'),
 ) 

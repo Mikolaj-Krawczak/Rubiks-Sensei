@@ -27,7 +27,7 @@ Nasza aplikacja to unikalna hybryda:
 │               RubikSensei.exe            │
 ├─────────────────────────────────────────┤
 │  🐍 Python Backend (Flask)              │
-│  ├── HTTP Server (localhost:5000)       │
+│  ├── HTTP Server (localhost:2115)       │
 │  ├── API endpoints (/api/*)             │
 │  ├── SQLAlchemy database                │
 │  └── Business logic                     │

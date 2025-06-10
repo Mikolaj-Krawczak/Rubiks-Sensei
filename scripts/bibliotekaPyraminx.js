@@ -8,6 +8,7 @@ let currentAlgorithm = null;
 let rotacao; // Funkcja aktualnej rotacji
 let moveHistory = []; // Historia wykonanych ruchów
 let currentMoveIndex = -1; // Aktualny indeks w historii
+let animationSpeed = 50; // Prędkość animacji - wyższa wartość = wolniejsza animacja
 
 // Kolory pyraminxa - standardowa orientacja speedcubingowa
 let vermelho =  0x00ff00; // Czerwony - góra
@@ -67,6 +68,9 @@ function initPyraminxScene() {
     let tetraedroMath = TetraedroMath(2);
     pyraminx = Pyraminx(tetraedroMath, vermelho, verde, azul, amarelo, preto);
     grupo = Grupo(pyraminx);
+    
+    // Ustawienie większej liczby klatek animacji dla płynniejszego i wolniejszego ruchu
+    grupo.animationFrames = animationSpeed;
     
     // Dodanie do sceny
     cena.add(pyraminx);
@@ -239,10 +243,10 @@ function playSequence(notation) {
         console.log(`Wykonywanie algorytmu: ${notation}`);
         console.log(`Ruchy:`, moves);
         
-        // Ustaw timeout aby oznaczyć koniec animacji
+        // Ustaw timeout aby oznaczyć koniec animacji - dostosowany do wolniejszej animacji
         setTimeout(() => {
             isAnimating = false;
-        }, moves.length * 1000); // Około 1 sekunda na ruch
+        }, moves.length * (animationSpeed * 50)); // Dłuższy czas na ruch proporcjonalnie do liczby klatek
     }, 100); // Krótkie opóźnienie po resecie
 }
 
@@ -265,6 +269,9 @@ function resetPyraminx() {
     let tetraedroMath = TetraedroMath(2);
     pyraminx = Pyraminx(tetraedroMath, vermelho, verde, azul, amarelo, preto);
     grupo = Grupo(pyraminx);
+    
+    // Ustawienie wolniejszej animacji dla płynniejszych ruchów
+    grupo.animationFrames = animationSpeed;
     
     // Dodaj do sceny
     cena.add(pyraminx);
@@ -320,7 +327,7 @@ function stepForward() {
 async function fetchPyraminxAlgorithms() {
     try {
         // Pobieranie wszystkich kostek
-        const kostkiResponse = await fetch('http://localhost:5000/api/kostki');
+        const kostkiResponse = await fetch('http://localhost:2115/api/kostki');
         const kostki = await kostkiResponse.json();
         
         // Znajdź kostkę pyraminx
@@ -336,61 +343,61 @@ async function fetchPyraminxAlgorithms() {
                     id: 1,
                     nazwa: 'Basic Turn - U',
                     notacja: 'U',
-                    opis: 'Podstawowy obrót górnej warstwy'
+                    opis: ''
                 },
                 {
                     id: 2,
                     nazwa: 'Basic Turn - L',
                     notacja: 'L',
-                    opis: 'Podstawowy obrót lewej warstwy'
+                    opis: ''
                 },
                 {
                     id: 3,
                     nazwa: 'Basic Turn - R', 
                     notacja: 'R',
-                    opis: 'Podstawowy obrót prawej warstwy'
+                    opis: ''
                 },
                 {
                     id: 4,
                     nazwa: 'Basic Turn - B',
                     notacja: 'B',
-                    opis: 'Podstawowy obrót tylnej warstwy'
+                    opis: ''
                 },
                 {
                     id: 5,
                     nazwa: 'Tip Turn - u',
                     notacja: 'u',
-                    opis: 'Obrót górnego wierzchołka'
+                    opis: ''
                 },
                 {
                     id: 6,
                     nazwa: 'Tip Turn - l',
                     notacja: 'l',
-                    opis: 'Obrót lewego wierzchołka'
+                    opis: ''
                 },
                 {
                     id: 7,
                     nazwa: 'Tip Turn - r',
                     notacja: 'r',
-                    opis: 'Obrót prawego wierzchołka'
+                    opis: ''
                 },
                 {
                     id: 8,
                     nazwa: 'Tip Turn - b',
                     notacja: 'b',
-                    opis: 'Obrót tylnego wierzchołka'
+                    opis: ''
                 },
                 {
                     id: 9,
                     nazwa: 'Simple Algorithm',
                     notacja: 'U R U\' R\'',
-                    opis: 'Prosty algorytm pyraminxa'
+                    opis: ''
                 },
                 {
                     id: 10,
                     nazwa: 'Edge Flip',
                     notacja: 'R U R\' U R U\' R\'',
-                    opis: 'Algorytm do odwracania krawędzi'
+                    opis: ''
                 }
             ];
             displayPyraminxAlgorithms(sampleAlgorithms);
@@ -398,7 +405,7 @@ async function fetchPyraminxAlgorithms() {
         }
         
         // Pobieranie algorytmów dla pyraminxa
-        const algorytmyResponse = await fetch(`http://localhost:5000/api/algorytmy?kostka_id=${pyraminxKostka.id}`);
+        const algorytmyResponse = await fetch(`http://localhost:2115/api/algorytmy?kostka_id=${pyraminxKostka.id}`);
         const algorytmy = await algorytmyResponse.json();
         
         // Filtruj aktywne algorytmy
@@ -418,19 +425,19 @@ async function fetchPyraminxAlgorithms() {
                 id: 1,
                 nazwa: 'Basic Turn - U',
                 notacja: 'U',
-                opis: 'Podstawowy obrót górnej warstwy'
+                opis: ''
             },
             {
                 id: 2,
                 nazwa: 'Basic Turn - L',
                 notacja: 'L',
-                opis: 'Podstawowy obrót lewej warstwy'
+                opis: ''
             },
             {
                 id: 3,
                 nazwa: 'Simple Algorithm',
                 notacja: 'U R U\' R\'',
-                opis: 'Prosty algorytm pyraminxa'
+                opis: ''
             }
         ];
         displayPyraminxAlgorithms(sampleAlgorithms);
@@ -444,12 +451,40 @@ function displayPyraminxAlgorithms(algorytmy) {
     // Czyszczenie listy
     algorithmListContainer.innerHTML = '';
     
+    // Tymczasowe mapowanie notacji algorytmów do istniejących nazw plików w katalogu assets/images/algorithmsPyraminx
+    const algorithmImageMap = {
+        "U": "U",
+        "L": "L",
+        "R": "R",
+        "B": "B",
+        "u": "u",
+        "l": "l",
+        "r": "r", 
+        "b": "b",
+        "U R U' R'": "Simple_Algorithm",
+        "R U R' U R U' R'": "Edge_Flip"
+    };
+    
     // Dodawanie algorytmów
     algorytmy.forEach(alg => {
         const algorithmItem = document.createElement('div');
         algorithmItem.className = 'algorithm-item control-btn';
         
+        // Użyj tej samej obsługi obrazów jak w bibliotekaAlgorytmow.js
+        let imgPath;
+        
+        if (alg.sciezka_obrazu) {
+            // Jeśli algorytm ma zapisaną ścieżkę, użyj jej
+            imgPath = `../${alg.sciezka_obrazu}`;
+        } else {
+            // W przeciwnym razie użyj mapowania lub notacji jako nazwy pliku
+            const mappedImage = algorithmImageMap[alg.notacja];
+            const imageName = mappedImage || alg.notacja.replace(/['\s]/g, '_');
+            imgPath = `../assets/images/algorithmsPyraminx/${imageName}.png`;
+        }
+        
         algorithmItem.innerHTML = `
+            <img src="${imgPath}" alt="${alg.nazwa}" onerror="this.onerror=null; this.style.display='none';" />
             <div class="algorithm-item-description">
                 <h3>${alg.nazwa}</h3>
                 <p>${alg.notacja}</p>
