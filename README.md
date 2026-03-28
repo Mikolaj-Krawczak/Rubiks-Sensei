@@ -1,132 +1,200 @@
-# Rubick Sensei
+# Rubik's Sensei
 
-Witamy w projekcie Menedżera Algorytmów Kostki Rubika! Ta aplikacja umożliwia zarządzanie, przeglądanie i trenowanie algorytmów układania kostki Rubika.
+> **This is a demo version of a desktop application for learning and training with the Rubik's Cube.**
+> Approximately 2/3 of the planned features have been implemented. A ready-to-run `.exe` file is available in the `dist/` folder — no installation required.
+>
+> Before a full release, the application requires improvements and rework of certain logical and technical aspects. Nevertheless, it serves as a solid demonstration of desktop application development skills using Python (Flask), Electron, and SQLite.
 
-## Spis Treści
-1.  [Przedstawienie funkcjonalności](#funkcjonalność)
-2.  [Instalacja](#instalacja)
-3.  [Uruchamianie](#uruchamianie)
-    *   [Backend](#uruchamianie-backendu)
-    *   [Frontend](#uruchamianie-frontendu)
-4.  [Struktura Projektu](#struktura-projektu)
-5.  [Opis Plików Logiki Backendu (Python)](#opis-plików-logiki-backendu-python)
+---
 
+## Table of Contents
+1. [Features](#features)
+2. [Installation & Running](#installation--running)
+    - [Backend](#running-the-backend)
+    - [Frontend](#running-the-frontend)
+    - [Executable (.exe)](#executable-exe)
+3. [Project Structure](#project-structure)
+4. [Backend Logic Files](#backend-logic-files-python)
+5. [Building the .exe](#building-the-exe)
 
-## Funkcjonalność
+---
 
-Po wystartowaniu aplikacji pojawia się strona główna z opcjami przejścia między modułami przeglądu algorytmów, modułu treningowego oraz modułu zawodów
+## Features
+
+After launching the application, the home screen appears with options to navigate between the algorithm browser, training module, and competition module.
 
 ![image](https://github.com/user-attachments/assets/9f3fcf34-0e92-4c1a-a895-4d1d3c682412)
 
-Po wybraniu modułu aplikacja pyta jakim rodzajem kostki chcemy się zająć 
+After selecting a module, the app asks which cube type you want to work with.
 
 ![image](https://github.com/user-attachments/assets/9eeb6168-0209-453c-8ea7-97953d41bb39)
 
-Po wybranii interesującej nas opcji możemy przejść do np. nauki nowych algorytmów czy spróbować zmierzyć się ze swoimi rekordami w trybie pojedyńćzego ułożenia lub serii
+After selecting your choice, you can browse new algorithms or challenge your records in single-solve or series mode.
 
 ![image](https://github.com/user-attachments/assets/d8a30aac-3353-4812-9151-1f032707361d)
 
+---
 
+## Installation & Running
 
+### Running the Backend
 
+The backend handles business logic, algorithm database management, and exposes an API for the frontend.
 
-## Instalacja
+To start the backend:
+- **Linux/macOS:**
+  ```bash
+  ./start-backend.sh
+  ```
+- **Windows:**
+  ```bash
+  .\start-backend.bat
+  ```
 
-Aby zainstalować zależności frontendu, użyj menedżera pakietów npm:
+These scripts automatically:
+1. Create (if missing) and activate a Python virtual environment in `.venv`.
+2. Install required Python libraries from `backend/requirements.txt`.
+3. Start the Flask backend server.
+
+### Running the Frontend
+
+The frontend is the user interface that communicates with the backend.
+
+To start the frontend (after starting the backend):
 
 ```bash
 npm install
-```
-
-Zależności backendu (Python) zostaną automatycznie zainstalowane podczas pierwszego uruchomienia skryptu `start-backend.sh` lub `start-backend.bat`.
-
-## Uruchamianie
-
-### Uruchamianie Backendu
-
-Backend aplikacji odpowiada za logikę biznesową, zarządzanie bazą danych algorytmów oraz udostępnianie API dla frontendu.
-
-Aby uruchomić backend:
-*   **Na systemach Linux/macOS:**
-    ```bash
-    ./start-backend.sh
-    ```
-*   **Na systemie Windows:**
-    ```bash
-    .\start-backend.bat
-    ```
-
-Skrypty te automatycznie:
-1.  Utworzą (jeśli nie istnieje) i aktywują wirtualne środowisko Pythona w katalogu `.venv`.
-2.  Zainstalują wymagane biblioteki Python z pliku `backend/requirements.txt`.
-3.  Uruchomią serwer backendowy (aplikację Flask).
-
-### Uruchamianie Frontendu
-
-Frontend aplikacji jest interfejsem użytkownika, który komunikuje się z backendem.
-
-Aby uruchomić aplikację frontendową (po wcześniejszym uruchomieniu backendu):
-
-```bash
 npm start
 ```
 
-Spowoduje to uruchomienie serwera deweloperskiego frontendu. Aplikacja będzie dostępna jako desktopowe okienko electrona.
+This launches the Electron desktop window.
 
-## Struktura Projektu
+### Executable (.exe)
 
-Poniżej znajduje się opis głównych katalogów i plików w projekcie:
+A standalone executable is available at `dist/RubikSensei.exe` — no Python or Node.js installation needed on the target machine.
+
+---
+
+## Project Structure
 
 ```
 .
-├── .git/                   # Katalog Gita
-├── .idea/                  # Katalog konfiguracji IDE JetBrains (np. IntelliJ IDEA, PyCharm)
-├── .venv/                  # Wirtualne środowisko Pythona (tworzone automatycznie przez skrypty startowe backendu)
-├── assets/                 # Zasoby statyczne frontendu (np. obrazy, ikony używane w interfejsie)
-├── backend/                # Główny katalog backendu aplikacji
-│   ├── instance/           # Katalog instancji aplikacji Flask, zawiera plik bazy danych SQLite (database.db)
-│   ├── __pycache__/        # Pamięć podręczna skompilowanych plików Python
-│   ├── app.py              # Główny plik aplikacji backendowej (Flask)
-│   ├── db.py               # Moduł obsługi bazy danych (SQLAlchemy, SQLite)
-│   ├── examples.js         # Plik JavaScript z przykładami wywołań API backendu
-│   ├── models.py           # Definicje modeli bazy danych (SQLAlchemy ORM)
-│   ├── requirements.txt    # Lista zależności Pythona dla backendu
-│   ├── run.py              # Skrypt uruchamiający aplikację Flask
-│   └── README.md           # Dokumentacja README specyficzna dla backendu
-├── components/             # Katalog zawierający komponenty interfejsu użytkownika frontendu
-├── css/                    # Pliki stylów CSS dla frontendu
-├── node_modules/           # Zależności projektu Node.js (instalowane przez npm)
-├── pages/                  # Katalog zawierający definicje poszczególnych stron/widoków aplikacji frontendowej
-├── scripts/                # Dodatkowe skrypty JavaScript używane przez frontend
-│   ├── admin-algorithms.js # Skrypt JS do zarządzania algorytmami w panelu administracyjnym
-│   ├── admin-users.js      # Skrypt JS do zarządzania użytkownikami w panelu administracyjnym
-│   ├── bibliotekaAlgorytmow.js # Skrypt JS związany z funkcjonalnością biblioteki algorytmów
-│   ├── generateCube.js     # Skrypt JS do generowania wizualizacji kostki
-│   ├── handleNavigation.js # Skrypt JS obsługujący nawigację w aplikacji frontendowej
-│   ├── scrambleGenerator.js # Skrypt JS do generowania sekwencji mieszania (scramble)
-│   ├── scrambleVisualizer.js # Skrypt JS do wizualizacji sekwencji mieszania (scramble)
-│   └── training-3x3.js     # Skrypt JS obsługujący sesje treningowe dla kostki 3x3
-├── .gitignore              # Pliki i katalogi ignorowane przez Git
-├── main.js                 # Główny plik electrona  inicjujący frontend aplikacji
-├── package-lock.json       # Dokładne wersje zainstalowanych zależności npm, generowany automatycznie
-├── package.json            # Definicja projektu Node.js, zawiera listę zależności frontendu i skrypty npm
-├── README.md               # Ten plik - główna dokumentacja projektu
-├── start-backend.bat       # Skrypt startowy backendu dla systemu Windows
-└── start-backend.sh        # Skrypt startowy backendu dla systemów Linux/macOS
+├── backend/                # Python Flask backend
+│   ├── instance/           # Flask instance folder (SQLite database.db)
+│   ├── app.py              # Main Flask application file
+│   ├── db.py               # Database connection module (SQLAlchemy, SQLite)
+│   ├── models.py           # Database model definitions (SQLAlchemy ORM)
+│   ├── run.py              # Flask app startup script
+│   └── requirements.txt    # Python dependencies
+├── components/             # Frontend UI components
+├── css/                    # Frontend CSS stylesheets
+├── pages/                  # Frontend page/view definitions
+├── scripts/                # Frontend JavaScript scripts
+│   ├── generate2x2Cube.js
+│   ├── generateCube.js
+│   ├── scrambleGenerator.js
+│   ├── scrambleVisualizer.js
+│   ├── training-3x3.js
+│   └── ...
+├── assets/                 # Static assets (images, icons)
+├── dist/                   # Build output
+│   └── RubikSensei.exe     # Standalone executable
+├── launcher.py             # Application entry point (used by PyInstaller)
+├── main.js                 # Electron main process
+├── package.json            # Node.js project definition
+├── start-backend.bat       # Backend startup script (Windows)
+├── start-backend.sh        # Backend startup script (Linux/macOS)
+├── build.bat               # Build script (Windows)
+├── rubik-sensei.spec       # PyInstaller configuration
+└── BUILD.md                # Detailed build guide
 ```
 
-## Opis Plików Logiki Backendu (Python)
+---
 
-Poniżej znajduje się omówienie głównych plików Python odpowiadających za logikę backendu aplikacji:
+## Backend Logic Files (Python)
 
-*   ### `backend/app.py`
-    Centralny plik aplikacji backendowej, napisany przy użyciu frameworka Flask. Odpowiada za definiowanie endpointów API, obsługę żądań HTTP od frontendu, przetwarzanie danych oraz interakcję z modułami bazy danych (`db.py`) i modeli (`models.py`). Implementuje logikę biznesową aplikacji, w tym operacje na danych dotyczących kostek, algorytmów, użytkowników i ich ułożeń.
+- **`backend/app.py`** — Central Flask application file. Defines API endpoints, handles HTTP requests from the frontend, and implements business logic for cubes, algorithms, users, and solves.
 
-*   ### `backend/db.py`
-    Moduł ten zarządza połączeniem z bazą danych SQLite przy użyciu SQLAlchemy. Zawiera funkcje do inicjalizacji bazy danych (`init_db`), tworzenia tabel na podstawie zdefiniowanych modeli oraz dodawania początkowych, przykładowych danych. Dostarcza również mechanizm sesji SQLAlchemy (`get_db_session`) do interakcji z bazą danych przez inne części aplikacji, głównie `app.py`.
+- **`backend/db.py`** — Manages the SQLite database connection via SQLAlchemy. Handles initialization, table creation, and seeding of sample data. Provides the `get_db_session` mechanism for database interactions.
 
-*   ### `backend/models.py`
-    W tym pliku zdefiniowane są modele danych aplikacji przy użyciu ORM SQLAlchemy. Modele te (`Kostka`, `Algorytm`, `Uzytkownik`, `Ulozenie`) reprezentują strukturę tabel w bazie danych jako klasy Pythona. Ułatwiają one operacje na danych i zapewniają spójność danych. Definiują atrybuty encji oraz relacje między nimi.
+- **`backend/models.py`** — Defines data models using SQLAlchemy ORM (`Cube`, `Algorithm`, `User`, `Solve`). Represents database table structures as Python classes with defined attributes and relationships.
 
-*   ### `backend/run.py`
-    Skrypt służący do uruchomienia aplikacji backendowej Flask. Importuje instancję aplikacji z `app.py` i uruchamia serwer deweloperski Flask. Jest on wywoływany przez skrypty `start-backend.sh` i `start-backend.bat`.
+- **`backend/run.py`** — Entry script for starting the Flask development server. Imports the app instance from `app.py` and runs it. Invoked by `start-backend.sh` and `start-backend.bat`.
+
+---
+
+## Building the .exe
+
+The project uses **PyInstaller** to package the entire app (Flask backend + Electron frontend) into a single `.exe` file.
+
+### Architecture
+
+```
+┌─────────────────────────────────────────┐
+│               RubikSensei.exe            │
+├─────────────────────────────────────────┤
+│  Python Backend (Flask)                 │
+│  ├── HTTP Server (localhost:2115)       │
+│  ├── API endpoints (/api/*)             │
+│  ├── SQLAlchemy database                │
+│  └── Business logic                     │
+├─────────────────────────────────────────┤
+│  Frontend (Electron)                    │
+│  ├── Chromium renderer                  │
+│  ├── Node.js runtime                    │
+│  ├── HTML/CSS/JS files                  │
+│  └── Window management                  │
+└─────────────────────────────────────────┘
+```
+
+### Startup Sequence
+
+1. PyInstaller bootloader launches `launcher.py`
+2. Flask server starts on `localhost:2115` in a separate thread
+3. Electron starts and connects to the Flask server
+4. Chromium renders the UI from Flask endpoints
+5. Frontend and backend communicate via HTTP API
+
+### Build Commands
+
+**Recommended — use `build.bat`:**
+```batch
+.\build.bat
+```
+
+What `build.bat` does:
+1. Checks for `launcher.py`
+2. Creates/activates `.venv`
+3. Installs Python and Node.js dependencies
+4. Cleans previous builds
+5. Runs PyInstaller with correct parameters
+6. Verifies the resulting `.exe`
+
+**Manual build:**
+```bash
+.\.venv\Scripts\activate
+pyinstaller --clean --workpath=build-config\build rubik-sensei.spec
+```
+
+### PyInstaller Parameters
+
+| Parameter | Description |
+|-----------|-------------|
+| `--clean` | Clears cache and temp files before build |
+| `--workpath=build-config\build` | Sets working folder for temp files |
+| `rubik-sensei.spec` | Configuration file with all build settings |
+
+### Build Statistics
+
+- **RubikSensei.exe**: ~140–150 MB
+- **Temp build folder**: ~300–400 MB (can be deleted after build)
+- **Build time**: 60–90 seconds (hardware dependent)
+
+```
+RubikSensei.exe (142 MB)
+├── Python interpreter    (15 MB)
+├── Python libraries      (40 MB)
+├── Electron runtime      (60 MB)
+├── Application files     (20 MB)
+└── Resources & assets     (7 MB)
+```
