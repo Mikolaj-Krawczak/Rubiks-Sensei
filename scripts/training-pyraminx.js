@@ -361,7 +361,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             currentScramble = '';
             if (scrambleDisplay) {
-                scrambleDisplay.textContent = 'Tasowanie: Błąd generowania tasowania.';
+                scrambleDisplay.textContent = 'Scramble: Error generating scramble.';
             }
             console.error("Funkcja generatePyraminxScramble nie została znaleziona.");
         }
@@ -411,7 +411,7 @@ document.addEventListener('DOMContentLoaded', () => {
             startTime = Date.now();
             timerInterval = setInterval(updateTimer, 10);
             timerRunning = true;
-            const stopHint = isSeriesMode ? `Zatrzymaj czas ułożenia ${currentSolveIndex + 1}` : 'Naciśnij Spację, aby zatrzymać';
+            const stopHint = isSeriesMode ? `Stop timer — solve ${currentSolveIndex + 1}` : 'Press SPACE to stop';
             hintDisplay.textContent = stopHint;
         }
     }
@@ -423,7 +423,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const finalTime = ((Date.now() - startTime) / 1000).toFixed(2);
             timerDisplay.textContent = finalTime;
 
-            let nextHint = 'Naciśnij Spację, aby rozpocząć kolejny';
+            let nextHint = 'Press SPACE for next attempt';
 
             // Obsługa logiki serii
             if (isSeriesMode) {
@@ -465,10 +465,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const statsElement = document.createElement('div');
         statsElement.classList.add('series-stats');
         statsElement.innerHTML = `
-            <h3>Statystyki serii</h3>
-            <p>Średnia: ${avg.toFixed(2)}s</p>
-            <p>Najlepszy: ${best.toFixed(2)}s</p>
-            <p>Najgorszy: ${worst.toFixed(2)}s</p>
+            <h3>Series statistics</h3>
+            <p>Average: ${avg.toFixed(2)}s</p>
+            <p>Best: ${best.toFixed(2)}s</p>
+            <p>Worst: ${worst.toFixed(2)}s</p>
         `;
 
         seriesTimesDisplay.appendChild(statsElement);

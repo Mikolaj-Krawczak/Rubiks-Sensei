@@ -105,7 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             currentScramble = '';
             if (scrambleDisplay) {
-                scrambleDisplay.textContent = 'Tasowanie: Błąd generowania tasowania.';
+                scrambleDisplay.textContent = 'Scramble: Error generating scramble.';
             }
             console.error("Funkcja generateScramble nie została znaleziona.");
         }
@@ -229,10 +229,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const statsElement = document.createElement('div');
         statsElement.classList.add('series-stats');
         statsElement.innerHTML = `
-            <h3>Statystyki serii</h3>
-            <p>Średnia: ${avg.toFixed(2)}s</p>
-            <p>Najlepszy: ${best.toFixed(2)}s</p>
-            <p>Najgorszy: ${worst.toFixed(2)}s</p>
+            <h3>Series statistics</h3>
+            <p>Average: ${avg.toFixed(2)}s</p>
+            <p>Best: ${best.toFixed(2)}s</p>
+            <p>Worst: ${worst.toFixed(2)}s</p>
         `;
 
         // POPRAWKA: Sprawdź czy element istnieje przed dodaniem
@@ -593,7 +593,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Ustaw początkowy stan interfejsu
     if (scrambleDisplay) {
-        scrambleDisplay.textContent = 'Naciśnij "Scramble" aby wygenerować tasowanie';
+        scrambleDisplay.textContent = 'Press "Scramble" to generate a scramble';
     }
     if (hintDisplay) {
         hintDisplay.textContent = 'Generate a scramble first';
