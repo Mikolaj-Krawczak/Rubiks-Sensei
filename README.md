@@ -23,15 +23,15 @@
 
 After launching the application, the home screen appears with options to navigate between the algorithm browser, training module, and competition module.
 
-![image](https://github.com/user-attachments/assets/9f3fcf34-0e92-4c1a-a895-4d1d3c682412)
+![image](https://github.com/user-attachments/assets/3b63664a-c0b3-4efd-885e-046fefafa4a0)
 
 After selecting a module, the app asks which cube type you want to work with.
 
-![image](https://github.com/user-attachments/assets/9eeb6168-0209-453c-8ea7-97953d41bb39)
+![image](https://github.com/user-attachments/assets/d7739a36-7147-4821-b274-9d94b6c2c176)
 
 After selecting your choice, you can browse new algorithms or challenge your records in single-solve or series mode.
 
-![image](https://github.com/user-attachments/assets/d8a30aac-3353-4812-9151-1f032707361d)
+![image](https://github.com/user-attachments/assets/f9df6173-d90c-441a-967d-b16ced8fb367)
 
 ---
 
